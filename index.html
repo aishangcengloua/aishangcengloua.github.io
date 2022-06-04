@@ -176,7 +176,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-06-04 08:44:33" itemprop="dateModified" datetime="2022-06-04T08:44:33+08:00">2022-06-04</time>
+                <time title="Modified: 2022-06-04 19:11:28" itemprop="dateModified" datetime="2022-06-04T19:11:28+08:00">2022-06-04</time>
               </span>
 
           
@@ -204,15 +204,15 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">self.num_attention_heads = num_attention_heads</span><br><span class="line">self.attention_head_size = <span class="built_in">int</span>(hidden_size / num_attention_heads)</span><br><span class="line">self.all_head_size = hidden_size</span><br></pre></td></tr></table></figure>
 <p>定义 $\boldsymbol{W^q, W^k,W^v}$，通过全连接网络生成：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">self.key_layer = nn.Linear(input_size, hidden_size)</span><br><span class="line">self.query_layer = nn.Linear(input_size, hidden_size)</span><br><span class="line">self.value_layer = nn.Linear(input_size, hidden_size)</span><br></pre></td></tr></table></figure>
-<p>使用输入特征乘 $\boldsymbol{W^q, W^k,W^v}$ 得到 <strong>Query，Key，Value</strong> 矩阵，维度为 $(batch_size,seq_len, hidden_size)$：</p>
+<p>使用输入特征乘 $\boldsymbol{W^q, W^k,W^v}$ 得到 <strong>Query，Key，Value</strong> 矩阵，维度为 $(batch\_size,seq\_len, hidden\_size)$：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">key = self.key_layer(x)</span><br><span class="line">query = self.query_layer(x)</span><br><span class="line">value = self.value_layer(x)</span><br></pre></td></tr></table></figure>
-<p>求多头注意力机制的 $\boldsymbol{W^q, W^k,W^v}$，头数为 num_attention_heads，并要调换维度，即将 $seq_len$ 维度与 $num_attention_heads$ 维度对换，最终 $\boldsymbol{W^q, W^k,W^v}$ 维度为 $(batch_size,num_attention_heads,seq_len,attention_head_size)$：</p>
+<p>求多头注意力机制的 $\boldsymbol{W^q, W^k,W^v}$，头数为 num_attention_heads，并要调换维度，即将 $seq\_len$ 维度与 $num\_attention\_heads$ 维度对换，最终 $\boldsymbol{W^q, W^k,W^v}$ 维度为 $(batch\_size,num\_attention\_heads,seq\_len,attention\_head\_size)$：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">trans_to_multiple_heads</span>(<span class="params">self, x</span>):</span><br><span class="line">    new_size = x.size()[ : -<span class="number">1</span>] + (self.num_attention_heads, self.attention_head_size)</span><br><span class="line">    x = x.view(new_size)</span><br><span class="line">    <span class="keyword">return</span> x.permute(<span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">3</span>)</span><br><span class="line">key_heads = self.trans_to_multiple_heads(key)</span><br><span class="line">query_heads = self.trans_to_multiple_heads(query)</span><br><span class="line">value_heads = self.trans_to_multiple_heads(value)</span><br></pre></td></tr></table></figure>
-<p>将 $\boldsymbol{Q}$ 和 $\boldsymbol{K}$ 矩阵做点积运算，并进行缩放，得到注意力矩阵的维度为 $(batch_size,num_attention_heads,seq_len,seq_len)$：</p>
+<p>将 $\boldsymbol{Q}$ 和 $\boldsymbol{K}$ 矩阵做点积运算，并进行缩放，得到注意力矩阵的维度为 $(batch\_size,num\_attention\_heads,seq\_len,seq\_len)$：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">attention_scores = torch.matmul(query_heads, key_heads.permute(<span class="number">0</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>))</span><br><span class="line">attention_scores = attention_scores / math.sqrt(self.attention_head_size)</span><br></pre></td></tr></table></figure>
 <p>对注意力矩阵进行归一化，归一化的维度为 3，矩阵的维度不发生变化：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">attention_probs = F.softmax(attention_scores, dim = -<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
-<p>将注意力矩阵乘以矩阵 $\boldsymbol{V}$，得到输出特征，维度为 $(batch_size,num_attention_heads,seq_len,attention_head_size)$：</p>
+<p>将注意力矩阵乘以矩阵 $\boldsymbol{V}$，得到输出特征，维度为 $(batch\_size,num\_attention\_heads,seq\_len,attention\_head\_size)$：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">context = torch.matmul(attention_probs, value_heads)</span><br></pre></td></tr></table></figure>
 <p>将各头的注意力矩阵进行拼接，contiguous() 是将 tensor 的内存变成连续的，否则进行 view 操作时会报错，至于原因可参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/kdongyi/article/details/108180250"><strong>https://blog.csdn.net/kdongyi/article/details/108180250</strong></a>：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">context = context.permute(<span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">3</span>).contiguous()</span><br><span class="line">new_size = context.size()[ : -<span class="number">2</span>] + (self.all_head_size , )</span><br><span class="line">context = context.view(*new_size)</span><br></pre></td></tr></table></figure>
@@ -462,40 +462,40 @@
 
 <script>
   if (typeof MathJax === 'undefined') {
-    window.MathJax = {
-      loader: {
-        source: {
-          '[tex]/amsCd': '[tex]/amscd',
-          '[tex]/AMScd': '[tex]/amscd'
-        }
-      },
-      tex: {
-        inlineMath: {'[+]': [['$', '$']]},
-        tags: 'ams'
-      },
-      options: {
-        renderActions: {
-          findScript: [10, doc => {
-            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
-              const display = !!node.type.match(/; *mode=display/);
-              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
-              const text = document.createTextNode('');
-              node.parentNode.replaceChild(text, node);
-              math.start = {node: text, delim: '', n: 0};
-              math.end = {node: text, delim: '', n: 0};
-              doc.math.push(math);
-            });
-          }, '', false],
-          insertedScript: [200, () => {
-            document.querySelectorAll('mjx-container').forEach(node => {
-              let target = node.parentNode;
-              if (target.nodeName.toLowerCase() === 'li') {
-                target.parentNode.classList.add('has-jax');
-              }
-            });
-          }, '', false]
-        }
-      }
+     window.MathJax = {
+       loader: {
+         source: {
+           '[tex]/amsCd': '[tex]/amscd',
+           '[tex]/AMScd': '[tex]/amscd'
+         }
+       },
+       tex: {
+         inlineMath: {'[+]': [['$', '$']]},
+         tags: 'ams'
+       },
+       options: {
+         renderActions: {
+           findScript: [10, doc => {
+             document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+               const display = !!node.type.match(/; *mode=display/);
+               const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+               const text = document.createTextNode('');
+               node.parentNode.replaceChild(text, node);
+               math.start = {node: text, delim: '', n: 0};
+               math.end = {node: text, delim: '', n: 0};
+               doc.math.push(math);
+             });
+           }, '', false],
+           insertedScript: [200, () => {
+             document.querySelectorAll('mjx-container').forEach(node => {
+               let target = node.parentNode;
+               if (target.nodeName.toLowerCase() === 'li') {
+                 target.parentNode.classList.add('has-jax');
+               }
+             });
+           }, '', false]
+         }
+       }
     };
     (function () {
       var script = document.createElement('script');
