@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="# 前言 &amp;emsp;&amp;emsp;强化学习是机器学习领域除有监督学习、无监督学习外的另一个研究分支，它主要利用智能体与环境进行交互，从而学习到能获得良好结果的策略。与有监督学习不同，强化学习的动作并没有明确的标注信息，只有来自环境的反馈的奖励信息，它通常具有一定的滞后性，用于反映动作的“好与坏”。一个完整的强化 学习过程是从一开始什么都不懂，通过不断尝试，从错误或惩罚中学习，最 后找到规律，学会">
+<meta property="og:type" content="article">
+<meta property="og:title" content="强化学习">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="# 前言 &amp;emsp;&amp;emsp;强化学习是机器学习领域除有监督学习、无监督学习外的另一个研究分支，它主要利用智能体与环境进行交互，从而学习到能获得良好结果的策略。与有监督学习不同，强化学习的动作并没有明确的标注信息，只有来自环境的反馈的奖励信息，它通常具有一定的滞后性，用于反映动作的“好与坏”。一个完整的强化 学习过程是从一开始什么都不懂，通过不断尝试，从错误或惩罚中学习，最 后找到规律，学会">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/dbc62de270404be49f3b1ece58c682b2.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/d5d51d62eabd4c94a2f1b6562f5ba9ee.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/9f75c81d5238492498f6cfd2b0413d03.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/37f7ec73ff5f4d25aff7e2202331c82f.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/79aa5961edcb49e3935920db9f4b691d.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/a6a0a9ef9b6b4343a4c9015106b76358.png#pic_center">
+<meta property="article:published_time" content="2022-06-05T10:47:06.000Z">
+<meta property="article:modified_time" content="2022-06-05T10:48:42.752Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="PyTorch">
+<meta property="article:tag" content="强化学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/dbc62de270404be49f3b1ece58c682b2.png#pic_center">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>强化学习 | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">53</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">57</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          强化学习
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 18:47:06 / 修改时间：18:48:42" itemprop="dateCreated datePublished" datetime="2022-06-05T18:47:06+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>3.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>﻿# 前言</p>
+<p>&emsp;&emsp;强化学习是机器学习领域除有监督学习、无监督学习外的另一个研究分支，它主要利用智能体与环境进行交互，从而学习到能获得良好结果的策略。与有监督学习不同，强化学习的动作并没有明确的标注信息，只有来自环境的反馈的奖励信息，它通常具有一定的滞后性，用于反映动作的“好与坏”。一个完整的强化 学习过程是从一开始什么都不懂，通过不断尝试，从错误或惩罚中学习，最 后找到规律，学会达到目的的方法。<img src="https://img-blog.csdnimg.cn/dbc62de270404be49f3b1ece58c682b2.png#pic_center" alt="在这里插入图片描述"><br>应用领域：<br><strong><em>❑</em></strong> 游戏理论与多主体交互。<br><strong><em>❑</em></strong> 机器人。<br><strong><em>❑</em></strong> 电脑网络。<br><strong><em>❑</em></strong> 车载导航。<br><strong><em>❑</em></strong> 工业物流。</p>
+<h1 id="1-原理"><a href="#1-原理" class="headerlink" title="1    原理"></a>1    原理</h1><p>&emsp;&emsp;在强化学习问题中，具有感知和决策能力的对象叫作智能体(Agent)，它可以是一段算 法代码，也可以是具有机械结构的机器人软硬件系统。智能体通过与外界的环境进行交互从而完成某个任务，这里的环境(Environment)是指能受到智能体的动作而产生影响，并给出相应反馈的外界环境的总和。对于智能体来说，它通过感知环境的状态(State)而产生决策动作(Action)；对于环境来说，它从某个初始初始状态𝑠1开始，通过接受智能体的动作来动态地改变自身状态，并给出相应的奖励(Reward)信号。<br>&emsp;&emsp;从概率角度描述强化学习过程，它包含了如下 5 个基本对象：<br> <strong><em>❑ 状态𝑠</em></strong> ：反映了环境的状态特征，在时间戳𝑡上的状态记为$𝑠_𝑡$，它可以是原始的视觉图 像、语音波形等信号，也可以是高层抽象过后的特征，如小车的速度、位置等数据，所有的(有限)状态构成了状态空间$S$<br><strong><em>❑ 动作𝑎</em></strong> ：是智能体采取的行为，在时间戳𝑡上的状态记为$𝑎_𝑡$，可以是向左、向右等离散动 作，也可以是力度、位置等连续动作，所有的(有限)动作构成了动作空间$A$<br><strong><em>❑ 策略𝜋(𝑎|𝑠)</em></strong>　：代表了智能体的决策模型，接受输入为状态𝑠，并给出决策后执行动作的概率分布𝑝(𝑎|𝑠)，满足 <strong><em>∑𝜋(𝑎|𝑠)  = 1, 𝑎∈𝐴</em></strong>，这种具有一定随机性的动作概率输出称为随机性策略(Stochastic Policy)。特别地，当策略模型总是输出某个动作的概率为 1，其它为 0 时，这种策略模型称为确定性策略(Deterministic Policy)，即 <strong><em>𝑎 = 𝜋(𝑠)</em></strong><br><strong><em>❑ 奖励𝑟(𝑠, 𝑎)</em></strong> ：表达环境在状态𝑠时接受动作𝑎后给出的反馈信号，一般是一个标量值，它 在一定程度上反映了动作的好与坏，在时间戳𝑡上的获得的激励记为𝑟𝑡(部分资料上记为𝑟𝑡+1，这是因为激励往往具有一定滞后性)<br><strong><em>❑ 状态转移概率𝑝(𝑠′|𝑠, 𝑎)</em></strong> ：表达了环境模型状态的变化规律，即当前状态𝑠的环境在接受动作𝑎后，状态改变为𝑠′的概率分布，满足 <strong><em>∑ 𝑝(𝑠′|𝑠, 𝑎) = 1，𝑠′∈𝑆</em></strong><br>交互过程可由下图表示：<br><img src="https://img-blog.csdnimg.cn/d5d51d62eabd4c94a2f1b6562f5ba9ee.png#pic_center" alt="在这里插入图片描述"><br>由交互过程我们得到整个强化学习系统的输入是：<br><strong><em>❑</em></strong> State 为Observation。<br><strong><em>❑</em></strong> Actions 在每个状态下，有什么行动。<br><strong><em>❑</em></strong> Reward 进入每个状态时，能带来正面或负面的回报。<br>输出是：<br><strong><em>❑</em></strong> Policy 在每个状态下，会选择哪个行动。</p>
+<p>&emsp;&emsp;增强学习的任务就是找到一个最优的策略Policy，从而使Reward最多。智能体从环境的初始状态$𝑠_1$开始，通过策略模型𝜋(𝑎|𝑠)采样某个具体的动作$𝑎_1$执行，环境受到动作$𝑎_1$的影响，状态根据内部状态转移模型𝑝(𝑠′|𝑠, 𝑎)发生改变，变为新的状态$s_2$，同时给出智能体的反馈信号：奖励$𝑟_1$，由奖励函数𝑟($𝑠_1$, $𝑎_1$)产生。如此循环交互，直至达到游戏终止状态$𝑎_T$，这个过程产生了一系列的有序数据：𝜏 = $𝑠_1, 𝑎_1, 𝑟_1, 𝑠_2, 𝑎_2, 𝑟_2, ⋯ , 𝑠_𝑇$<br>&emsp;&emsp;这个序列代表了智能体与环境的一次交换过程，叫做轨迹(Trajectory)，记为𝜏，一次交互过程叫作一个回合(Episode)，𝑇代表了回合的时间戳数(或步数)。有些环境有明确的终止状态(Terminal State)，比如太空侵略者中的小飞机被击中后则游戏结束；而部分环境没有明确的终止标志，如部分游戏只要保持健康状态，则可以无限玩下去，此时𝑇代表∞。增强学习的算法就是需要根据这些样本来 改进策略，从而使得到的样本中的奖励更好。<br>&emsp;&emsp;强化学习有多种算法，目前比较常用的算法是，通过行为的价值来选取 特定行为的方法，如Q-learning、SARSA，使用神经网络学习的DQN(Deep Q Network)，以及DQN的后续算法，还有直接输出行为的Policy Gradients 等。</p>
+<h1 id="2-Q-Learning"><a href="#2-Q-Learning" class="headerlink" title="2    Q-Learning"></a>2    Q-Learning</h1><h2 id="2-1-原理"><a href="#2-1-原理" class="headerlink" title="2.1    原理"></a>2.1    原理</h2><p>&emsp;&emsp;Q-Learning算法是强化学习中重要且最基础的算法，大多数现代的强化 学习算法，大都是Q-Learning的一些改进。Q-Learning的核心是Q-Table。Q- Table的行和列分别表示State和Action的值，Q-Table的值Q(s,a)衡量当前 States采取行动a的主要依据。</p>
+<h2 id="2-2-主要流程"><a href="#2-2-主要流程" class="headerlink" title="2.2    主要流程"></a>2.2    主要流程</h2><p><strong><em>❑</em></strong> 初始化Q表(初始化为0或随机初始化)<br><strong><em>Repeat：</em></strong><br><strong><em>❑</em></strong> 生成一个在0与1之间的随机数，如果该数大于预先给定的一 个阈值ε，则选择随机动作；否则选择动点依据最高可能性的奖励基于当前状态s和Q表。<br><strong><em>❑</em></strong> 依据上步执行动作。<br><strong><em>❑</em></strong> 采取行动后观察奖励值r和新状态$s_{t+1}$。<br><strong><em>❑</em></strong> 基于奖励值r，利用式下式更新Q表。<img src="https://img-blog.csdnimg.cn/9f75c81d5238492498f6cfd2b0413d03.png" alt="在这里插入图片描述"><br>其中α为学习率，γ为折扣率。<br><strong><em>❑</em></strong> 把$s_{t+1}$赋给$s_{t}$</p>
+<p>流程图：<br><img src="https://img-blog.csdnimg.cn/37f7ec73ff5f4d25aff7e2202331c82f.png#pic_center" alt="在这里插入图片描述"></p>
+<h2 id="2-3-Q函数"><a href="#2-3-Q函数" class="headerlink" title="2.3    Q函数"></a>2.3    Q函数</h2><p>&emsp;&emps;Q-Learning算法的核心是Q(s,a)函数，其中s表示状态，a表示行动， Q(s,a)的值为在状态s执行a行为后的最大期望奖励值。Q(s,a)函数可以看作一 个表格，每一行表示一个状态，每一列代表一个行动。<img src="https://img-blog.csdnimg.cn/79aa5961edcb49e3935920db9f4b691d.png#pic_center" alt="在这里插入图片描述"><br>&emsp;&emsp;得到Q函数后，就可以在每个状态做出合适的决策了。如当处于$s_1$时， 只需考虑Q($s_1$, :)这些值，并挑选其中最大的Q函数值，并执行相应的动作。</p>
+<h2 id="2-4-贪婪策略"><a href="#2-4-贪婪策略" class="headerlink" title="2.4    贪婪策略"></a>2.4    贪婪策略</h2><p>&emsp;&emsp;在状态s1时，我们一般是执行根据max(Q($s_1$, : ))中对应的动作a。如果每次都按照这种策略选择行动就有可能局限于现有经验中，不 利于发现更有价值或更新的情况。所以，除根据经验选择行动外，一般还会给主体(Agent)一定的机会或概率，以探索的方式选择行动。 这种平衡“经验”和“探索”的方法又称为ε贪婪(ε-greedy)策略。根据预 先设置好的ε值(该值一般较小，如取0.1)，主体有ε的概率随机行动，有1- ε的概率根据经验选择行动。</p>
+<h2 id="2-5-PyTorch实现"><a href="#2-5-PyTorch实现" class="headerlink" title="2.5    PyTorch实现"></a>2.5    PyTorch实现</h2><p>&emsp;&emsp;本次用于训练的小游戏是机器人寻找目标星星，如果小机器人接触到五角、星，它就能赢得100分的奖励，如果它接触到小树将得到-100的惩罚。根据奖励进行不断优化最佳路径。<br><img src="https://img-blog.csdnimg.cn/a6a0a9ef9b6b4343a4c9015106b76358.png#pic_center" alt="在这里插入图片描述"><br>首先要创建游戏并进行交互主要包含了 5 个步骤：<br><strong><em>❑</em></strong> 创建游戏。并返回游戏对象env。<br><strong><em>❑</em></strong> 复位游戏状态。一般游戏环境都具有初始状态，通过调用 env.reset()即可复位游戏状 态，同时返回游戏的初始状态 observation。<br><strong><em>❑</em></strong> 显示游戏画面。通过调用 env.render()即可显示每个时间戳的游戏画面，一般用做测试。在训练时渲染画面会引入一定的计算代价，因此训练时可不显示画面。<br><strong><em>❑</em></strong> 与游戏环境交互。通过 env.step(action)即可执行 action 动作，并返回新的状态observation、当前奖励 reward、游戏是否结束标志 done。通过循环此步骤即可持续与环境交互，直至游戏回合结束。<br><strong><em>❑</em></strong> 销毁游戏。调用 env.close()即可。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Env</span>(tk.Tk):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(Env, self).__init__()</span><br><span class="line">        self.action_space = [<span class="string">&#x27;u&#x27;</span>, <span class="string">&#x27;d&#x27;</span>, <span class="string">&#x27;l&#x27;</span>, <span class="string">&#x27;r&#x27;</span>]</span><br><span class="line">        self.n_actions = <span class="built_in">len</span>(self.action_space)</span><br><span class="line">        self.title(<span class="string">&#x27;Q Learning&#x27;</span>)</span><br><span class="line">        self.geometry(<span class="string">&#x27;&#123;0&#125;x&#123;1&#125;&#x27;</span>.<span class="built_in">format</span>(HEIGHT * UNIT, HEIGHT * UNIT))</span><br><span class="line">        self.shapes = self.load_images()</span><br><span class="line">        self.canvas = self._build_canvas()</span><br><span class="line">        self.texts = []</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_build_canvas</span>(<span class="params">self</span>):</span><br><span class="line">        canvas = tk.Canvas(self, bg=<span class="string">&#x27;white&#x27;</span>,</span><br><span class="line">                           height=HEIGHT * UNIT,</span><br><span class="line">                           width=WIDTH * UNIT)</span><br><span class="line">        <span class="comment"># create grids</span></span><br><span class="line">        <span class="keyword">for</span> c <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, WIDTH * UNIT, UNIT):  <span class="comment"># 0~400 by 100</span></span><br><span class="line">            x0, y0, x1, y1 = c, <span class="number">0</span>, c, HEIGHT * UNIT</span><br><span class="line">            canvas.create_line(x0, y0, x1, y1)</span><br><span class="line">        <span class="keyword">for</span> r <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, HEIGHT * UNIT, UNIT):  <span class="comment"># 0~400 by 100</span></span><br><span class="line">            x0, y0, x1, y1 = <span class="number">0</span>, r, HEIGHT * UNIT, r</span><br><span class="line">            canvas.create_line(x0, y0, x1, y1)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 把图标加载到环境中</span></span><br><span class="line">        self.rectangle = canvas.create_image(<span class="number">50</span>, <span class="number">50</span>, image=self.shapes[<span class="number">0</span>])</span><br><span class="line">        self.tree1 = canvas.create_image(<span class="number">250</span>, <span class="number">150</span>, image=self.shapes[<span class="number">1</span>])</span><br><span class="line">        self.tree2 = canvas.create_image(<span class="number">150</span>, <span class="number">250</span>, image=self.shapes[<span class="number">1</span>])</span><br><span class="line">        self.star = canvas.create_image(<span class="number">250</span>, <span class="number">250</span>, image=self.shapes[<span class="number">2</span>])</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 对环境进行包装</span></span><br><span class="line">        canvas.pack()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> canvas</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">load_images</span>(<span class="params">self</span>):</span><br><span class="line">        rectangle = PhotoImage(</span><br><span class="line">            Image.<span class="built_in">open</span>(<span class="string">&quot;img/bob.png&quot;</span>).resize((<span class="number">65</span>, <span class="number">65</span>)))</span><br><span class="line">        tree = PhotoImage(</span><br><span class="line">            Image.<span class="built_in">open</span>(<span class="string">&quot;img/tree.png&quot;</span>).resize((<span class="number">65</span>, <span class="number">65</span>)))</span><br><span class="line">        star = PhotoImage(</span><br><span class="line">            Image.<span class="built_in">open</span>(<span class="string">&quot;img/star.jpg&quot;</span>).resize((<span class="number">65</span>, <span class="number">65</span>)))</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> rectangle, tree, star</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">text_value</span>(<span class="params">self, row, col, contents, action, font=<span class="string">&#x27;Helvetica&#x27;</span>, size=<span class="number">10</span>,</span></span><br><span class="line"><span class="params">                   style=<span class="string">&#x27;normal&#x27;</span>, anchor=<span class="string">&quot;nw&quot;</span></span>):</span><br><span class="line">        <span class="keyword">if</span> action == <span class="number">0</span>:</span><br><span class="line">            origin_x, origin_y = <span class="number">7</span>, <span class="number">42</span></span><br><span class="line">        <span class="keyword">elif</span> action == <span class="number">1</span>:</span><br><span class="line">            origin_x, origin_y = <span class="number">85</span>, <span class="number">42</span></span><br><span class="line">        <span class="keyword">elif</span> action == <span class="number">2</span>:</span><br><span class="line">            origin_x, origin_y = <span class="number">42</span>, <span class="number">5</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            origin_x, origin_y = <span class="number">42</span>, <span class="number">77</span></span><br><span class="line"></span><br><span class="line">        x, y = origin_y + (UNIT * col), origin_x + (UNIT * row)</span><br><span class="line">        font = (font, <span class="built_in">str</span>(size), style)</span><br><span class="line">        text = self.canvas.create_text(x, y, fill=<span class="string">&quot;black&quot;</span>, text=contents,</span><br><span class="line">                                       font=font, anchor=anchor)</span><br><span class="line">        <span class="keyword">return</span> self.texts.append(text)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">print_value_all</span>(<span class="params">self, q_table</span>):</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> self.texts:</span><br><span class="line">            self.canvas.delete(i)</span><br><span class="line">        self.texts.clear()</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(HEIGHT):</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(WIDTH):</span><br><span class="line">                <span class="keyword">for</span> action <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">4</span>):</span><br><span class="line">                    state = [i, j]</span><br><span class="line">                    <span class="keyword">if</span> <span class="built_in">str</span>(state) <span class="keyword">in</span> q_table.keys():</span><br><span class="line">                        temp = q_table[<span class="built_in">str</span>(state)][action]</span><br><span class="line">                        self.text_value(j, i, <span class="built_in">round</span>(temp, <span class="number">2</span>), action)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">coords_to_state</span>(<span class="params">self, coords</span>):</span><br><span class="line">        x = <span class="built_in">int</span>((coords[<span class="number">0</span>] - <span class="number">50</span>) / <span class="number">100</span>)</span><br><span class="line">        y = <span class="built_in">int</span>((coords[<span class="number">1</span>] - <span class="number">50</span>) / <span class="number">100</span>)</span><br><span class="line">        <span class="keyword">return</span> [x, y]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">state_to_coords</span>(<span class="params">self, state</span>):</span><br><span class="line">        x = <span class="built_in">int</span>(state[<span class="number">0</span>] * <span class="number">100</span> + <span class="number">50</span>)</span><br><span class="line">        y = <span class="built_in">int</span>(state[<span class="number">1</span>] * <span class="number">100</span> + <span class="number">50</span>)</span><br><span class="line">        <span class="keyword">return</span> [x, y]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">reset</span>(<span class="params">self</span>):</span><br><span class="line">        self.update()</span><br><span class="line">        time.sleep(<span class="number">0.5</span>)</span><br><span class="line">        x, y = self.canvas.coords(self.rectangle)</span><br><span class="line">        self.canvas.move(self.rectangle, UNIT / <span class="number">2</span> - x, UNIT / <span class="number">2</span> - y)</span><br><span class="line">        self.render()</span><br><span class="line">        <span class="comment"># return observation</span></span><br><span class="line">        <span class="keyword">return</span> self.coords_to_state(self.canvas.coords(self.rectangle))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">step</span>(<span class="params">self, action</span>):</span><br><span class="line">        state = self.canvas.coords(self.rectangle)</span><br><span class="line">        base_action = np.array([<span class="number">0</span>, <span class="number">0</span>])</span><br><span class="line">        self.render()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> action == <span class="number">0</span>:  <span class="comment"># up</span></span><br><span class="line">            <span class="keyword">if</span> state[<span class="number">1</span>] &gt; UNIT:</span><br><span class="line">                base_action[<span class="number">1</span>] -= UNIT</span><br><span class="line">        <span class="keyword">elif</span> action == <span class="number">1</span>:  <span class="comment"># down</span></span><br><span class="line">            <span class="keyword">if</span> state[<span class="number">1</span>] &lt; (HEIGHT - <span class="number">1</span>) * UNIT:</span><br><span class="line">                base_action[<span class="number">1</span>] += UNIT</span><br><span class="line">        <span class="keyword">elif</span> action == <span class="number">2</span>:  <span class="comment"># left</span></span><br><span class="line">            <span class="keyword">if</span> state[<span class="number">0</span>] &gt; UNIT:</span><br><span class="line">                base_action[<span class="number">0</span>] -= UNIT</span><br><span class="line">        <span class="keyword">elif</span> action == <span class="number">3</span>:  <span class="comment"># right</span></span><br><span class="line">            <span class="keyword">if</span> state[<span class="number">0</span>] &lt; (WIDTH - <span class="number">1</span>) * UNIT:</span><br><span class="line">                base_action[<span class="number">0</span>] += UNIT</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 移动</span></span><br><span class="line">        self.canvas.move(self.rectangle, base_action[<span class="number">0</span>], base_action[<span class="number">1</span>])</span><br><span class="line">        self.canvas.tag_raise(self.rectangle)</span><br><span class="line">        next_state = self.canvas.coords(self.rectangle)</span><br><span class="line">        <span class="comment"># 判断得分条件</span></span><br><span class="line">        <span class="keyword">if</span> next_state == self.canvas.coords(self.star):</span><br><span class="line">            reward = <span class="number">100</span></span><br><span class="line">            done = <span class="literal">True</span></span><br><span class="line">        <span class="keyword">elif</span> next_state <span class="keyword">in</span> [self.canvas.coords(self.tree1),</span><br><span class="line">                            self.canvas.coords(self.tree2)]:</span><br><span class="line">            reward = -<span class="number">100</span></span><br><span class="line">            done = <span class="literal">True</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            reward = <span class="number">0</span></span><br><span class="line">            done = <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">        next_state = self.coords_to_state(next_state)</span><br><span class="line">        <span class="keyword">return</span> next_state, reward, done</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 渲染环境</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">render</span>(<span class="params">self</span>):</span><br><span class="line">        time.sleep(<span class="number">0.03</span>)</span><br><span class="line">        self.update()</span><br></pre></td></tr></table></figure>
+<p>Q函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">QLearningAgent</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, actions</span>):</span><br><span class="line">        <span class="comment"># 四种动作分别用序列表示：[0, 1, 2, 3]</span></span><br><span class="line">        self.actions = actions</span><br><span class="line">        self.learning_rate = <span class="number">0.01</span></span><br><span class="line">        self.discount_factor = <span class="number">0.9</span></span><br><span class="line">        <span class="comment">#epsilon贪婪策略取值</span></span><br><span class="line">        self.epsilon = <span class="number">0.1</span></span><br><span class="line">        self.q_table = defaultdict(<span class="keyword">lambda</span>: [<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 采样 &lt;s, a, r, s&#x27;&gt;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">learn</span>(<span class="params">self, state, action, reward, next_state</span>):</span><br><span class="line">        current_q = self.q_table[state][action]</span><br><span class="line">        <span class="comment"># 更新Q表</span></span><br><span class="line">        new_q = reward + self.discount_factor * <span class="built_in">max</span>(self.q_table[next_state])</span><br><span class="line">        self.q_table[state][action] += self.learning_rate * (new_q - current_q)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 从Q-table中选取动作</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_action</span>(<span class="params">self, state</span>):</span><br><span class="line">        <span class="keyword">if</span> np.random.rand() &lt; self.epsilon:</span><br><span class="line">            <span class="comment"># 贪婪策略随机探索动作</span></span><br><span class="line">            action = np.random.choice(self.actions)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="comment"># 从q表中选择</span></span><br><span class="line">            state_action = self.q_table[state]</span><br><span class="line">            action = self.arg_max(state_action)</span><br><span class="line">        <span class="keyword">return</span> action</span><br><span class="line"></span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">arg_max</span>(<span class="params">state_action</span>):</span><br><span class="line">        max_index_list = []</span><br><span class="line">        max_value = state_action[<span class="number">0</span>]</span><br><span class="line">        <span class="keyword">for</span> index, value <span class="keyword">in</span> <span class="built_in">enumerate</span>(state_action):</span><br><span class="line">            <span class="keyword">if</span> value &gt; max_value:</span><br><span class="line">                max_index_list.clear()</span><br><span class="line">                max_value = value</span><br><span class="line">                max_index_list.append(index)</span><br><span class="line">            <span class="keyword">elif</span> value == max_value:</span><br><span class="line">                max_index_list.append(index)</span><br><span class="line">        <span class="keyword">return</span> random.choice(max_index_list)</span><br></pre></td></tr></table></figure>
+<p>训练：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">env = Env()</span><br><span class="line">agent = QLearningAgent(actions=<span class="built_in">list</span>(<span class="built_in">range</span>(env.n_actions)))</span><br><span class="line"><span class="comment">#共进行200次游戏</span></span><br><span class="line"><span class="keyword">for</span> episode <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">200</span>):</span><br><span class="line">    state = env.reset()</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        env.render()</span><br><span class="line">        <span class="comment"># agent产生动作</span></span><br><span class="line">        action = agent.get_action(<span class="built_in">str</span>(state))</span><br><span class="line">        next_state, reward, done = env.step(action)</span><br><span class="line">        <span class="comment"># 更新Q表</span></span><br><span class="line">        agent.learn(<span class="built_in">str</span>(state), action, reward, <span class="built_in">str</span>(next_state))</span><br><span class="line">        state = next_state</span><br><span class="line">        env.print_value_all(agent.q_table)</span><br><span class="line">        <span class="comment"># 当到达终点就终止游戏开始新一轮训练</span></span><br><span class="line">        <span class="keyword">if</span> done:</span><br><span class="line">            <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+<h1 id="3-SARSA-算法"><a href="#3-SARSA-算法" class="headerlink" title="3    SARSA 算法"></a>3    SARSA 算法</h1><p>&emsp;&emsp;SARSA 算法通过：$𝑄^π(𝑠_𝑡, 𝑎_𝑡)$ ← $𝑄^π(𝑠_𝑡, 𝑎_𝑡)$ + 𝛼(𝑟$(𝑠_𝑡, 𝑎_𝑡)$ + 𝛾$𝑄^π(𝑠_{𝑡+1}, 𝑎_{𝑡+1})$ − $𝑄^π(𝑠_𝑡, 𝑎_𝑡)$方式估计 Q 函数，在轨迹的每一步，只需要$𝑠_𝑡、𝑎_𝑡、𝑟_𝑡、𝑠_{𝑡+1}、𝑎_{𝑡+1}$数据即可更新一次 Q 网络，所以叫做 SARSA 算法(State Action Reward State Action)。SARSA 算法与Q-Leanring算法的不同之处就是在于 Q 表的更新方式的不同。</p>
+<h2 id="3-1-主要流程"><a href="#3-1-主要流程" class="headerlink" title="3.1    主要流程"></a>3.1    主要流程</h2><p><strong><em>❑</em></strong> 获取初始状态s。<br><strong><em>❑</em></strong> 执行上一步选择的行动a，获得奖励r和新状态next_s。<br><strong><em>❑</em></strong> 在新状态next_s，根据当前的Q表，选定要执行的下一行动next_a。<br><strong><em>❑</em></strong> 用r、next_a、next_s，根据SARSA逻辑更新Q表。<br><strong><em>❑</em></strong> 把next_s赋给s，把next_a赋给a。</p>
+<h2 id="3-2-PyTorch实现"><a href="#3-2-PyTorch实现" class="headerlink" title="3.2    PyTorch实现"></a>3.2    PyTorch实现</h2><p>&emsp;&emsp;SARSA算法与Q-Learning算法的差异是在Q表的更新方式，所以主要修改学习函数。<br><strong><em>❑</em></strong> 修改学习函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 采样 &lt;s, a, r,a&#x27;,s&#x27;&gt;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">learn</span>(<span class="params">self, state, action, reward,next_action,next_state</span>):</span><br><span class="line">        current_q = self.q_table[state][action]</span><br><span class="line">        <span class="comment"># 更新Q表</span></span><br><span class="line">        new_q = reward + self.discount_factor * (self.q_table[next_state][next_action])</span><br><span class="line">        self.q_table[state][action] += self.learning_rate * (new_q - current_q)</span><br></pre></td></tr></table></figure>
+<p><strong><em>❑</em></strong> 修改训练代码:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">env = Env()</span><br><span class="line">agent = QLearningAgent(actions=<span class="built_in">list</span>(<span class="built_in">range</span>(env.n_actions)))</span><br><span class="line"><span class="comment">#共进行200次游戏</span></span><br><span class="line"><span class="keyword">for</span> episode <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">200</span>):</span><br><span class="line">    state = env.reset()</span><br><span class="line">    action = agent.get_action(<span class="built_in">str</span>(state))</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        env.render()</span><br><span class="line">        <span class="comment">#获取新的状态、奖励分数</span></span><br><span class="line">        next_state, reward, done = env.step(action)</span><br><span class="line">        <span class="comment">#产生新的动作</span></span><br><span class="line">        next_action = agent.get_action(<span class="built_in">str</span>(state))</span><br><span class="line">        <span class="comment"># 更新Q表，sarsa根据新的状态及动作获取Q表的值</span></span><br><span class="line">        <span class="comment">#而不是基于新状态对所有动作的最大值</span></span><br><span class="line">        agent.learn(<span class="built_in">str</span>(state), action, reward, next_action,<span class="built_in">str</span>(next_state))</span><br><span class="line">        state = next_state</span><br><span class="line">        action=next_action</span><br><span class="line">        env.print_value_all(agent.q_table)</span><br><span class="line">        <span class="comment"># 当到达终点就终止游戏开始新一轮训练</span></span><br><span class="line">        <span class="keyword">if</span> done:</span><br><span class="line">            <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+<p><strong>github地址：</strong><a target="_blank" rel="noopener" href="https://github.com/aishangcengloua/MLData/tree/master/PyTorch/ReinforcementLearning">https://github.com/aishangcengloua/MLData/tree/master/PyTorch/ReinforcementLearning</a></p>
+<p><strong>参考文献：</strong><br><strong><em>❑</em></strong> ：<strong>Python深度学习基于PyTorch</strong><br><strong><em>❑</em></strong> ：<strong>TensorFlow深度学习</strong></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
+              <a href="/tags/PyTorch/" rel="tag"># PyTorch</a>
+              <a href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" rel="tag"># 强化学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/conda-%E7%8E%AF%E5%A2%83%E4%B8%8B%E6%9B%B4%E6%96%B0-pip-%E5%A4%B1%E8%B4%A5/" rel="prev" title="conda 环境下更新 pip 失败">
+      <i class="fa fa-chevron-left"></i> conda 环境下更新 pip 失败
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0/" rel="next" title="迁移学习">
+      迁移学习 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E5%8E%9F%E7%90%86"><span class="nav-text">1    原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-Q-Learning"><span class="nav-text">2    Q-Learning</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-%E5%8E%9F%E7%90%86"><span class="nav-text">2.1    原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-%E4%B8%BB%E8%A6%81%E6%B5%81%E7%A8%8B"><span class="nav-text">2.2    主要流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-Q%E5%87%BD%E6%95%B0"><span class="nav-text">2.3    Q函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-%E8%B4%AA%E5%A9%AA%E7%AD%96%E7%95%A5"><span class="nav-text">2.4    贪婪策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-PyTorch%E5%AE%9E%E7%8E%B0"><span class="nav-text">2.5    PyTorch实现</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-SARSA-%E7%AE%97%E6%B3%95"><span class="nav-text">3    SARSA 算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-%E4%B8%BB%E8%A6%81%E6%B5%81%E7%A8%8B"><span class="nav-text">3.1    主要流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-PyTorch%E5%AE%9E%E7%8E%B0"><span class="nav-text">3.2    PyTorch实现</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">53</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">126k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:29</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

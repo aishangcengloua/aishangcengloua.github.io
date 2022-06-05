@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言&amp;emsp;&amp;emsp;在机器学习模型中，我们会使用损失函数对模型的输出和标注信息计算他们之间的差异，然后使用损失进行反向传播，在反向传播中，我们的目的是不断地更新参数使得模型损失越来越小直至达到最小，这过程是优化参数的过程，基础的优化算法是使用梯度下降法(如下图)，梯度下降法利用了梯度的反方向是函数下降最快的方向的特性，该过程可以理解成寻找山谷。随后为了提高效率和准确率许多的改进的优化算法被">
+<meta property="og:type" content="article">
+<meta property="og:title" content="优化算法">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="前言&amp;emsp;&amp;emsp;在机器学习模型中，我们会使用损失函数对模型的输出和标注信息计算他们之间的差异，然后使用损失进行反向传播，在反向传播中，我们的目的是不断地更新参数使得模型损失越来越小直至达到最小，这过程是优化参数的过程，基础的优化算法是使用梯度下降法(如下图)，梯度下降法利用了梯度的反方向是函数下降最快的方向的特性，该过程可以理解成寻找山谷。随后为了提高效率和准确率许多的改进的优化算法被">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/f106af1dda3c43e7a79f35ab00f213f1.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/a3936c6b7ded4cdfaa85956564e41796.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/4cbb15c7066040bebc912664d46734a8.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/dcb5843843c84e189bac707011f322aa.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/a3dc3ca536a845c4bdc8d848352830bd.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/3ca0dec460d647788edc689172bd774d.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/9f97d5043af04aadb9a4d176b247a9c3.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/442473914fe548b385af1dbcde83cd4b.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/71e41ed786314382ae7c8e83db3473b7.png#pic_center">
+<meta property="article:published_time" content="2022-06-05T11:19:17.000Z">
+<meta property="article:modified_time" content="2022-06-05T11:20:02.378Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="深度学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/f106af1dda3c43e7a79f35ab00f213f1.png#pic_center">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>优化算法 | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">53</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">57</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          优化算法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 19:19:17 / 修改时间：19:20:02" itemprop="dateCreated datePublished" datetime="2022-06-05T19:19:17+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;&emsp;在机器学习模型中，我们会使用损失函数对模型的输出和标注信息计算他们之间的差异，然后使用损失进行反向传播，在反向传播中，我们的目的是不断地更新参数使得模型损失越来越小直至达到最小，这过程是优化参数的过程，基础的优化算法是使用梯度下降法(如下图)，梯度下降法利用了梯度的反方向是函数下降最快的方向的特性，该过程可以理解成寻找山谷。随后为了提高效率和准确率许多的改进的优化算法被提出，下面我们将介绍几种常用的优化算法。</p>
+<p><img src="https://img-blog.csdnimg.cn/f106af1dda3c43e7a79f35ab00f213f1.png#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="1-梯度下降算法"><a href="#1-梯度下降算法" class="headerlink" title="1    梯度下降算法"></a>1    梯度下降算法</h1><p>&emsp;&emsp;假设线性回归函数为：$\boldsymbol{h_\theta(x^{(i)}) = \theta    _1x^{(i)} + \theta_0}$，代价函数为：$\boldsymbol{J(\theta_0,<br>\theta_1) = \frac{1}{2m}\sum_{i=1}^{m}(h_\theta(x^{(i)}) - y^{(i)})^2}$，其中 $\boldsymbol{i= 1,2, … ,𝑚}$ 表示样本数，$\boldsymbol{𝑗 = 0,1}$ 表示特征数，这里我们使用偏置项 $\boldsymbol{x_0^{(i)} = 1}$。</p>
+<h2 id="1-1-BGD"><a href="#1-1-BGD" class="headerlink" title="1.1    BGD"></a>1.1    BGD</h2><p>&emsp;&emsp;批量梯度下降(BGD)是最原始的形式，在每一次迭代时使用所有样本来对参数进行更新，也即使用了所有样本只更新了一次参数。更新算法如下：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{repeat:\ \ \ \theta_j = \theta_j - \alpha\frac{1}{2m}\sum_{i=1}^{m}(h_\theta(x^{(i)}) - y^{(i)})x_j^{(i)}\ \ \ (for\ j = 0,1)}</script><p>优点：</p>
+<ul>
+<li>目标函数为凸函数时，能得到全局最优解。</li>
+<li>易于并行实现。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>当样本数目过多时，训练过程较慢，时间成本高。</li>
+</ul>
+<h2 id="1-2-SGD"><a href="#1-2-SGD" class="headerlink" title="1.2    SGD"></a>1.2    SGD</h2><p>&emsp;&emsp;随机梯度下降(SGD)在每一次迭代时使用一个样本来对参数进行更新。更新算法如下：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{repeat:\ \ \ for\ i=1,2,\cdots,m\{\theta_j = \theta_j - \alpha(h_\theta(x^{(i)}) - y^{(i)})x_j^{(i)}\ \ \ (for\ j = 0,1)\}}</script><p>优点：</p>
+<ul>
+<li>训练速度快。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>准确度下降，很大程度上并不是全局最优。</li>
+<li>不易于并行实现。</li>
+</ul>
+<h2 id="1-3-MBGD"><a href="#1-3-MBGD" class="headerlink" title="1.3    MBGD"></a>1.3    MBGD</h2><p>&emsp;&emsp;小批量梯度下降(MBGD)在每一次迭代时使用 $\boldsymbol{batch\_size}$ 个样本来对参数进行更新。更新算法如下：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{batch\_size = 10, m = 100}\\\boldsymbol{repeat:\ \ \ for\ i=1,11,\cdots,91\{\theta_j = \theta_j - \frac{\alpha}{10}\sum_{k=i}^{i+ 9}(h_\theta(x^{(i)}) - y^{(i)})x_j^{(i)}\ \ \ (for\ j = 0,1)\}}</script><p>MBGD 减少了 BGD 和 SGD 的缺点，结合了 BGD 和 SGD 的优点，我们在平时的实验过程中往往使用 MBGD。</p>
+<h1 id="2-基于动量的优化算法"><a href="#2-基于动量的优化算法" class="headerlink" title="2    基于动量的优化算法"></a>2    基于动量的优化算法</h1><h2 id="2-1-基于动量的SGD"><a href="#2-1-基于动量的SGD" class="headerlink" title="2.1    基于动量的SGD"></a>2.1    基于动量的SGD</h2><p>&emsp;&emsp;梯度下降法在遇到平坦或高曲率区域时，学习过程有时很慢。利用动量算法能比较好解决这个问题。动量算法与传统梯度下降优化的效果对比如下：</p>
+<p><img src="https://img-blog.csdnimg.cn/a3936c6b7ded4cdfaa85956564e41796.png#pic_center" alt="在这里插入图片描述"><br>从上图可以看出，不使用动量算法的 SGD 学习速度较慢，振幅较大； 而使用动量算法的 SGD，振幅较小，而且会较快到达极值点。动量(Momentum)是模拟物理里动量的概念，具有物理上惯性的含义，一个物体在运动时具有惯性，把这个思想运用到梯度下降计算中，可以增加算法的收敛速度和稳定性。在动量学习算法中，我们假设是单位质量，因此速度向量 $\boldsymbol{v}$ 也可以看作是粒子的动量。超参数 $\boldsymbol{α ∈ [0, 1)}$ 决定了之前梯度的贡献衰减得有快，示意图如下：</p>
+<p><img src="https://img-blog.csdnimg.cn/4cbb15c7066040bebc912664d46734a8.png#pic_center" alt="在这里插入图片描述"><br>由上图知动量算法每下降一步都是由前面下降方向的一个累积和当前点的梯度方向组合而成。含动量的随机梯度下降法的算法流程如下：<br><img src="https://img-blog.csdnimg.cn/dcb5843843c84e189bac707011f322aa.png#pic_center" alt="在这里插入图片描述"><br>在实践中，$\boldsymbol{\alpha}$ 的一般取值为 $\mathbf{0.5}$，$\mathbf{0.9}$ 和 $\mathbf{0.99}$。和学习率一样，$\boldsymbol{\alpha}$ 也会随着时间不断调整。一般初始值是一个较小的值，随后会慢慢变大。随着时间推移调整 $\boldsymbol{\alpha}$ 没有收缩 $\boldsymbol{ϵ}$ 重要。</p>
+<h2 id="2-2-基于NAG的SGD"><a href="#2-2-基于NAG的SGD" class="headerlink" title="2.2    基于NAG的SGD"></a>2.2    基于NAG的SGD</h2><p>&emsp;&emsp;Nesterov Accelerated Gradient，简称 NAG 算法，是普通动量算法的改进版本。普通动量算法中每一步都要将两个梯度方向(历史梯度、当前梯度)做一个合并再 下降，那就可以先按照历史梯度往前走那么一小步，按照前面一小步位置的“超前梯度”来做梯度合并。这样就可以先往前走一步，在靠前一点的位 置(如下图中的C点)看到梯度，然后按照那个位置再来修正这一步的梯度方向。<br><img src="https://img-blog.csdnimg.cn/a3dc3ca536a845c4bdc8d848352830bd.png#pic_center" alt="在这里插入图片描述"><br>仔细观察他们的示意图可以发现，普通动量的下降方向的合成是四边形合成而 NAG 是三角合成，NAG 更新规则如下：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{v\leftarrow\alpha - ϵ∇_\theta[\frac{1}{m}\sum_{i = 1}^{m}L(f(x^{(i)};\theta+\alpha v),y^{(i)})]},\\
+\boldsymbol{\theta\leftarrow\theta +     v}</script><p>其中参数 $\boldsymbol{α}$ 和 $\boldsymbol{ϵ}$ 发挥了和标准动量方法中类似的作用。Nesterov动量和标准动量之间的区别体现在梯度计算上。Nesterov 动量中，梯度计算在施加当前速度之后。因此，Nesterov 动量可以解释为往标准动量方法中添加了一个校正因子。含 Nesterov 动量的随机梯度下降法的算法流程如下：<br><img src="https://img-blog.csdnimg.cn/3ca0dec460d647788edc689172bd774d.png#pic_center" alt="在这里插入图片描述"><br>NAG 算法的预更新方法能防止大幅振荡，不会错过最小值，并会对参数更新更加敏感。</p>
+<h1 id="3-自适应优化算法"><a href="#3-自适应优化算法" class="headerlink" title="3    自适应优化算法"></a>3    自适应优化算法</h1><p>&emsp;&emsp;传统梯度下降算法对学习率这个超参数非常敏感，难以驾驭，对参数空 间的某些方向也没有很好的方法。这些不足在深度学习中，因高维空间、多层神经网络等因素，常会出现平坦、鞍点、悬崖等问题，因此，传统梯度下降法在深度学习中显得力不从心。上面介绍的动量算法在一定程度上缓解了对参数空间某些方向的问题，但需要新增一个超参数，而且对学习率的控制还不是很理想。为了更好地驾驭这个超参数，自适应优化算法被提出，使用自适应优化算法， 学习率不再是一个固定不变值，它会根据不同情况自动调整来适应相应的情况。</p>
+<h2 id="3-1-AdaGrad"><a href="#3-1-AdaGrad" class="headerlink" title="3.1    AdaGrad"></a>3.1    AdaGrad</h2><p>&emsp;&emsp;AdaGrad 算法能够独立地适应所有模型参数的学习率，缩放每个参数反比于其所有梯度历史平方值总和的平方根。具有损失最大偏导的参数相应地有一个快速下降的学习率，而具有小偏导的参数在学习率上有相对较小的下降。净效果是在参数空间中更为平缓的倾斜方向会取得更大的进步。因此，AdaGrad算法非常适合处理稀疏数据。对于训练深度神经网络模型而言，从训练开始时积累梯度平方会导致有效学习率过早和过量的减小从而使得模型的效果不好。算法流程如下：<br><img src="https://img-blog.csdnimg.cn/9f97d5043af04aadb9a4d176b247a9c3.png#pic_center" alt="在这里插入图片描述"><br>其中 $\boldsymbol{\delta}$ 一般取一个较小值，这是为了出现分母为零的情况，$\boldsymbol{\bigodot}$ 表示逐元运算。且由上面的算法流程可知：</p>
+<ul>
+<li>随着迭代时间越长，累积梯度 $\boldsymbol{r}$ 越大，导致学习速率 $\boldsymbol{\frac{ϵ}{\delta + \sqrt{r}}}$ 随着时间减小，在接近目标值时，不会因为学习速率过大而越过极值点。</li>
+<li>不同参数之间的学习速率不同，因此，与前面固定学习速率相比， 不容易在鞍点卡住。</li>
+<li>如果梯度累积参数 $\boldsymbol{r}$ 比较小，则学习速率会比较大，所以参数迭代的步长就会比较大。相反，如果梯度累积参数比较大，则学习速率会比较小， 所以迭代的步长会比较小。</li>
+</ul>
+<h2 id="3-2-RMSProp"><a href="#3-2-RMSProp" class="headerlink" title="3.2    RMSProp"></a>3.2    RMSProp</h2><p>&emsp;&emsp;RMSProp 算法通过修改AdaGrad得来，其目的是在非凸背景下效果更好。RMSProp 使用指数衰减平均以丢弃遥远过去的历史，使其能够在找到凸碗状结构后快速收敛，它就像一个初始化于该碗状结构的 AdaGrad 算法实例。相比于 AdaGrad，使用移动平均引入了一个新的超参数ρ，用来控制移动平均的长度范围。算法流程如下：<br><img src="https://img-blog.csdnimg.cn/442473914fe548b385af1dbcde83cd4b.png#pic_center" alt="在这里插入图片描述"></p>
+<h2 id="3-3-Adam"><a href="#3-3-Adam" class="headerlink" title="3.3    Adam"></a>3.3    Adam</h2><p>&emsp;&emsp;Adam(Adaptive Moment Estimation)本质上是带有动量项的 RMSprop，它利用梯度的一阶矩估计和二阶矩估计动态调整每个参数的学习率。Adam 的优点主要在于经过偏置校正后，每一次迭代学习率都有个确定范围，使得参数比较平稳。 Adam 是另一种学习速率自适应的深度神经网络方法，它利用梯度的一 阶矩估计和二阶矩估计动态调整每个参数的学习速率。算法流程如下：<br><img src="https://img-blog.csdnimg.cn/71e41ed786314382ae7c8e83db3473b7.png#pic_center" alt="在这里插入图片描述"><br>Adam 通常被认为对超参数的选择相当鲁棒，尽管学习率有时需要从建议的默认修改。</p>
+<h1 id="4-优化器的选择"><a href="#4-优化器的选择" class="headerlink" title="4    优化器的选择"></a>4    优化器的选择</h1><p>&emsp;&emsp;AdaGrad、RMSprop、和 Adam 被认为是自适应优化算法，因为它们会自动更新学习率。而使用 SGD 时，必须手动选择学习率和动量参数，通常会随着时间的推移而降低学习率。<br>&emsp;&emsp;有时可以考虑综合使用这些优化算法，如采用先使用 Adam，然后使用 SGD 的优化方法，这个想法，实际上是由于在训练的早期阶段 SGD 对参数调整和初始化非常敏感。因此，我们可以通过先使用 Adam 优化算法来进行训 练，这将大大地节省训练时间，且不必担心初始化和参数调整，一旦用 Adam 训练获得较好的参数后，就可以切换到 SGD + 动量优化，以达到最佳性能。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 机器学习</a>
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/" rel="prev" title="激活函数">
+      <i class="fa fa-chevron-left"></i> 激活函数
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E3%80%90Opencv%E3%80%91%E7%9B%AE%E6%A0%87%E8%BF%BD%E8%B8%AA%E2%80%94%E2%80%94%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E5%88%86%E7%A6%BB%E7%AE%97%E6%B3%95-MOG/" rel="next" title="【Opencv】目标追踪——高斯混合模型分离算法(MOG)">
+      【Opencv】目标追踪——高斯混合模型分离算法(MOG) <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E7%AE%97%E6%B3%95"><span class="nav-text">1    梯度下降算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-BGD"><span class="nav-text">1.1    BGD</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-SGD"><span class="nav-text">1.2    SGD</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-MBGD"><span class="nav-text">1.3    MBGD</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E5%9F%BA%E4%BA%8E%E5%8A%A8%E9%87%8F%E7%9A%84%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95"><span class="nav-text">2    基于动量的优化算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-%E5%9F%BA%E4%BA%8E%E5%8A%A8%E9%87%8F%E7%9A%84SGD"><span class="nav-text">2.1    基于动量的SGD</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-%E5%9F%BA%E4%BA%8ENAG%E7%9A%84SGD"><span class="nav-text">2.2    基于NAG的SGD</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E8%87%AA%E9%80%82%E5%BA%94%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95"><span class="nav-text">3    自适应优化算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-AdaGrad"><span class="nav-text">3.1    AdaGrad</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-RMSProp"><span class="nav-text">3.2    RMSProp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-Adam"><span class="nav-text">3.3    Adam</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-%E4%BC%98%E5%8C%96%E5%99%A8%E7%9A%84%E9%80%89%E6%8B%A9"><span class="nav-text">4    优化器的选择</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">53</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">126k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:29</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

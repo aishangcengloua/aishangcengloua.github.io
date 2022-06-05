@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言&amp;emsp;&amp;emsp;在人工智能带来的风险中，对抗攻击就是重要风险之一。攻击者可以通过各种手段绕过，或直接对机器学习模型进行攻击达到对抗目的，使我们的模型失效或误判。如果类似攻击发生在无人驾驶、金融AI等领域则将导致严重后果。所以，需要未雨绸缪，认识各种对抗攻击，并有效地破解各种对抗攻击。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对抗攻击">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/%E5%AF%B9%E6%8A%97%E6%94%BB%E5%87%BB/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="前言&amp;emsp;&amp;emsp;在人工智能带来的风险中，对抗攻击就是重要风险之一。攻击者可以通过各种手段绕过，或直接对机器学习模型进行攻击达到对抗目的，使我们的模型失效或误判。如果类似攻击发生在无人驾驶、金融AI等领域则将导致严重后果。所以，需要未雨绸缪，认识各种对抗攻击，并有效地破解各种对抗攻击。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/949bdab6932d41db8afe9a83ad323625.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/6e4f600e3b99407fa44cc15e834ffd5e.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/878844193d29475398768d8b88907c45.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_17,color_FFFFFF,t_70,g_se,x_16#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/c9128b0976ce40dda9a6e6cceadfbd91.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/09ba7a15ba8d47f4802c760d9001c23a.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center">
+<meta property="article:published_time" content="2022-06-05T11:00:54.000Z">
+<meta property="article:modified_time" content="2022-06-05T11:01:48.998Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="对抗攻击">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/949bdab6932d41db8afe9a83ad323625.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/%E5%AF%B9%E6%8A%97%E6%94%BB%E5%87%BB/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>对抗攻击 | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">53</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">57</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E5%AF%B9%E6%8A%97%E6%94%BB%E5%87%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          对抗攻击
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 19:00:54 / 修改时间：19:01:48" itemprop="dateCreated datePublished" datetime="2022-06-05T19:00:54+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E5%AF%B9%E6%8A%97%E6%94%BB%E5%87%BB/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E5%AF%B9%E6%8A%97%E6%94%BB%E5%87%BB/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>2.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;&emsp;在人工智能带来的风险中，对抗攻击就是重要风险之一。攻击者可以通过各种手段绕过，或直接对机器学习模型进行攻击达到对抗目的，使我们的模型失效或误判。如果类似攻击发生在无人驾驶、金融AI等领域则将导致严重后果。所以，需要未雨绸缪，认识各种对抗攻击，并有效地破解各种对抗攻击。</p>
+<h1 id="1-原理"><a href="#1-原理" class="headerlink" title="1    原理"></a>1    原理</h1><p>&emsp;&emsp;对抗攻击最核心的手段就是制造对抗样本去迷惑模型，比如在计算机视觉领域，攻击样本就是向原始样本中添加一些人眼无法察觉的噪声，这些噪声不会影响人类识别，但却很容易迷惑机器学习模型，使它做出错误的判断。如下图所示，在雪山样本中增加一些噪声，结果分类模型就把它视为狗了。<br><img src="https://img-blog.csdnimg.cn/949bdab6932d41db8afe9a83ad323625.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>&emsp;&emsp;机器学习算法的输入形式为数值型向量（Numeric Vectors）。通过设计 一种特别的输入以使模型输出错误的结果，这便被称为对抗性攻击。<br>&emsp;&emsp;由于机器学习算法的输入形式是一种数值型向量（Numeric Vectors）， 所以攻击者就会通过设计一种有针对性的数值型向量从而让机器学习模型做 出误判，这便被称为对抗性攻击。和其他攻击不同，对抗性攻击主要发生在构造对抗性数据的时候，之后该对抗性数据就如正常数据一样输入机器学习模型并得到欺骗的识别结果。</p>
+<h1 id="2-攻击方式"><a href="#2-攻击方式" class="headerlink" title="2    攻击方式"></a>2    攻击方式</h1><h2 id="2-1-针对模型的攻击"><a href="#2-1-针对模型的攻击" class="headerlink" title="2.1    针对模型的攻击"></a>2.1    针对模型的攻击</h2><h3 id="2-1-1-白盒攻击"><a href="#2-1-1-白盒攻击" class="headerlink" title="2.1.1    白盒攻击"></a>2.1.1    白盒攻击</h3><p>&emsp;&emsp;攻击者能够获知机器学习所使用的算法，以及算法所使用的参数。攻击者在产生对抗性攻击数据的过程中能够与机器学习的系统有所交互。</p>
+<h3 id="2-1-2-黑盒攻击"><a href="#2-1-2-黑盒攻击" class="headerlink" title="2.1.2    黑盒攻击"></a>2.1.2    黑盒攻击</h3><p>&emsp;&emsp;攻击者并不知道机器学习所使用的算法和参数，但攻击者仍能与机器学习的系统有所交互，比如可以通过传入任意输入观察输出，判断输出。</p>
+<h2 id="2-2-针对输出的攻击"><a href="#2-2-针对输出的攻击" class="headerlink" title="2.2    针对输出的攻击"></a>2.2    针对输出的攻击</h2><h3 id="2-2-1-无目标攻击"><a href="#2-2-1-无目标攻击" class="headerlink" title="2.2.1    无目标攻击"></a>2.2.1    无目标攻击</h3><p>&emsp;&emsp;对于一张图像，生成一个对抗样本，使得标注系统在其上的标注与原标 注无关，即只要攻击成功就好，而对抗样本的最终属于哪一类不做限制。</p>
+<h3 id="2-2-2-有目标攻击"><a href="#2-2-2-有目标攻击" class="headerlink" title="2.2.2    有目标攻击"></a>2.2.2    有目标攻击</h3><p>&emsp;&emsp;对于一张图像和一个目标标注句子，生成一个对抗样本，使得标注系统 在其上的标注与目标标注完全一致，即不仅要求攻击成功，还要求生成的对抗样本属于特定的类。</p>
+<h1 id="3-对抗样本生成方式"><a href="#3-对抗样本生成方式" class="headerlink" title="3    对抗样本生成方式"></a>3    对抗样本生成方式</h1><p>&emsp;&emsp;快速梯度符号法（<strong><em>FGSM</em></strong> ）攻击是一种以错误分类为目标的白盒攻击。这种攻击非常强大，但也很直观。它旨在通过利用神经网络的学习方式梯度来攻击神经网络。其训练目标是最大化损失函数 $J(x^<em>,y)$以获取对抗样本$x^</em>$，其中$J$是分类算法中衡量分类误差的损失函数，通常取交叉熵损失。最大化$J$即使添加噪声后的样本不再属于$y$类，由此则达到 了下图所示的目的。<br><img src="https://img-blog.csdnimg.cn/6e4f600e3b99407fa44cc15e834ffd5e.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>其中$x^*=x+ε·sign(∇_xJ(x,y))$，$sign()$是符号函数，括号里面是损失函数对$x$的偏导，$ε$表示对图片的扰动程度。从图中，$x$是正确分类为“熊猫”的原始输入图像，$y$模型参数$(x,\theta)$下的真实标签，$J(θ,x,y)$是用于训练网络的损失。攻击将梯度反向传播回输入数据以计算$∇_xJ(θ,x,y)$，然后，它通过一小步调整输入数据（$ε$，0.007在上图中）在方向$sign(∇_xJ(θ,x,y))$上使损失最大化。添加噪声之前，原始图像有 $0.557$ 可能被认为是一只熊猫，添加噪声 后，这张图像有 $0.993$ 的可能认为是一种长臂猿。</p>
+<h1 id="4-实例"><a href="#4-实例" class="headerlink" title="4    实例"></a>4    实例</h1><p>&emsp;&emsp;本次实例受到攻击的模型 <strong><em>MNIST</em></strong> 数据集分类的模型。可以训练并保存自己的 <strong><em>MNIST</em></strong> 模型，也可以从<a target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1fn83DF14tWmit0RTKWRhPq5uVXt73e0h"><strong><em>https://drive.google.com/drive/folders/1fn83DF14tWmit0RTKWRhPq5uVXt73e0h</em></strong></a>下载预训练模型。开始之前要先介绍一下重要的参数 $epsilons$ ：用于运行的 $epsilon$ 值列表。在列表中保留 0 很重要，因为它代表了原始测试集上的模型性能。此外，直观地说，我们预计 $epsilon$ 越大，扰动越明显，但在降低模型精度方面攻击越有效。由于这里的数据范围是[0，1]，任何 $epsilon$ 值不应超过 1。下面是攻击后的图片计算公式：</p>
+<script type="math/tex; mode=display">
+attack\_image=image+epsilon∗sign(image\_grad)=x+ϵ∗sign(∇ xJ(θ,x,y)) \tag 1</script><p>代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">import</span> torchvision</span><br><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transform</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader</span><br><span class="line"></span><br><span class="line"><span class="comment">#设置gpu</span></span><br><span class="line">device = <span class="string">&quot;cuda&quot;</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&quot;cpu&quot;</span></span><br><span class="line"><span class="comment">#数据下载</span></span><br><span class="line">dataset = torchvision.datasets.MNIST(</span><br><span class="line">    root = <span class="string">&#x27;data&#x27;</span>,</span><br><span class="line">    train = <span class="literal">False</span>,</span><br><span class="line">    download = <span class="literal">True</span>,</span><br><span class="line">    <span class="comment">#将PIL类型转成tensor</span></span><br><span class="line">    transform = transform.Compose([</span><br><span class="line">        transform.ToTensor()</span><br><span class="line">    ])</span><br><span class="line">)</span><br><span class="line">test_loader = DataLoader(dataset, batch_size = <span class="number">1</span>, shuffle = <span class="literal">True</span>)</span><br><span class="line"><span class="comment">#设置不同的干扰程度</span></span><br><span class="line">epsilons = [<span class="number">0</span>, <span class="number">.05</span>, <span class="number">.1</span>, <span class="number">.15</span>, <span class="number">.2</span>, <span class="number">.25</span>, <span class="number">.3</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment">#模型</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Net</span>(nn.Module) :</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(Net, self).__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(<span class="number">1</span>, <span class="number">10</span>, kernel_size = <span class="number">5</span>)</span><br><span class="line">        self.conv2 = nn.Conv2d(<span class="number">10</span>, <span class="number">20</span>, kernel_size = <span class="number">5</span>)</span><br><span class="line">        self.dropout = nn.Dropout2d()</span><br><span class="line">        self.fc1 = nn.Linear(<span class="number">320</span>, <span class="number">50</span>)</span><br><span class="line">        self.fc2 = nn.Linear(<span class="number">50</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = F.relu(F.max_pool2d(self.conv1(x), <span class="number">2</span>))</span><br><span class="line">        x = F.relu(F.max_pool2d(self.dropout(self.conv2(x)), <span class="number">2</span>))</span><br><span class="line">        x = x.view(-<span class="number">1</span>, <span class="number">320</span>)</span><br><span class="line">        x = F.relu(self.fc1(x))</span><br><span class="line">        <span class="comment">#传入self.training参数使得训练时使用dropout层，测试时不用</span></span><br><span class="line">        x = F.dropout(x, training = self.training)</span><br><span class="line">        x = self.fc2(x)</span><br><span class="line">        <span class="keyword">return</span> F.log_softmax(x, dim=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">model = Net().to(device)</span><br><span class="line"><span class="comment">#下载预训练好的参数</span></span><br><span class="line">model.load_state_dict(torch.load(<span class="string">&#x27;lenet_mnist_model.pth&#x27;</span>, map_location = <span class="string">&#x27;cpu&#x27;</span>))</span><br><span class="line"><span class="comment">#切换到训练模式</span></span><br><span class="line">model.<span class="built_in">eval</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment">#就算攻击后的图片，如公式（1）所示</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fgsm_attack</span>(<span class="params">image, epsilon, data_grad</span>) :</span><br><span class="line">    <span class="comment">#sign（）函数返回数值的符号，如果为正数返回1，如果为负数返回-1.否则返回0</span></span><br><span class="line">    sign_data_grad = torch.sign(data_grad)</span><br><span class="line">    attack_image = image + epsilon * sign_data_grad</span><br><span class="line">    <span class="comment">#因为经过上步骤之后，图片的像素值可能不再[0， 1]区间，所以要限制到[0, 1]之间</span></span><br><span class="line">    <span class="keyword">return</span> torch.clamp(attack_image, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">t</span>(<span class="params">model, epsilon, test_loader</span>) :</span><br><span class="line">    <span class="comment">#统计被攻击后依然分类正确的图片，也即攻击对分类没有影响</span></span><br><span class="line">    correct = <span class="number">0</span></span><br><span class="line">    <span class="comment">#记录攻击成功和攻击失败的图片</span></span><br><span class="line">    adv_examples = []</span><br><span class="line">    <span class="keyword">for</span> data, label <span class="keyword">in</span> test_loader :</span><br><span class="line">        data, label = data.to(device), label.to(device)</span><br><span class="line">        <span class="comment">#因为要计算输入图片的梯度，所以要使requires_grad参数为True</span></span><br><span class="line">        data.requires_grad = <span class="literal">True</span></span><br><span class="line">        <span class="comment">#输出</span></span><br><span class="line">        output = model(data)</span><br><span class="line">        <span class="comment">#输出的最大值对应的下标就是模型的分类情况</span></span><br><span class="line">        _, init_pred = torch.<span class="built_in">max</span>(output, dim = <span class="number">1</span>)</span><br><span class="line">        <span class="comment">#如果分类没有成功，则不必攻击，没有意义</span></span><br><span class="line">        <span class="keyword">if</span> init_pred.item() != label.item() :</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        <span class="comment">#计算损失值</span></span><br><span class="line">        loss = F.nll_loss(output, label)</span><br><span class="line">        <span class="comment">#梯度清零</span></span><br><span class="line">        model.zero_grad()</span><br><span class="line">        <span class="comment">#反向传播计算梯度</span></span><br><span class="line">        loss.backward()</span><br><span class="line">        <span class="comment">#得到输入图片的梯度值</span></span><br><span class="line">        data_grad = data.grad.data</span><br><span class="line">        <span class="comment">#对图片进行攻击</span></span><br><span class="line">        attack_data = fgsm_attack(data, epsilon, data_grad)</span><br><span class="line">        <span class="comment">#攻击后图片的模型分类输出</span></span><br><span class="line">        output = model(attack_data)</span><br><span class="line">        <span class="comment">#得到分类的种类</span></span><br><span class="line">        _, final_pred = torch.<span class="built_in">max</span>(output, dim = <span class="number">1</span>)</span><br><span class="line">        <span class="comment">#如果攻击后的模型预测与未攻击之前的一样，说明攻击失败</span></span><br><span class="line">        <span class="keyword">if</span> final_pred.item() == label.item() :</span><br><span class="line">            correct += <span class="number">1</span></span><br><span class="line">            <span class="comment">#记录攻击失败的攻击前、攻击后的模型预测情况和图片</span></span><br><span class="line">            <span class="keyword">if</span> epsilon == <span class="number">0</span> <span class="keyword">and</span> <span class="built_in">len</span>(adv_examples) &lt; <span class="number">5</span> :</span><br><span class="line">                adv_ex = attack_data.squeeze().detach().cpu().numpy()</span><br><span class="line">                adv_examples.append((init_pred.item(), final_pred.item(), adv_ex))</span><br><span class="line"></span><br><span class="line">        <span class="keyword">else</span> :</span><br><span class="line">            <span class="comment">#记录攻击成功的攻击前、攻击后的模型预测情况和图片</span></span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(adv_examples) &lt; <span class="number">5</span>:</span><br><span class="line">                adv_ex = attack_data.squeeze().detach().cpu().numpy()</span><br><span class="line">                adv_examples.append((init_pred.item(), final_pred.item(), adv_ex))</span><br><span class="line">    <span class="comment">#输出攻击失败的图片占比</span></span><br><span class="line">    final_acc = correct / <span class="built_in">float</span>(<span class="built_in">len</span>(test_loader))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Epsilon: &#123;&#125;\tTest Accuracy = &#123;&#125; / &#123;&#125; = &#123;&#125;&quot;</span>.<span class="built_in">format</span>(epsilon, correct, <span class="built_in">len</span>(test_loader), final_acc))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Return the accuracy and an adversarial example</span></span><br><span class="line">    <span class="keyword">return</span> final_acc, adv_examples</span><br><span class="line"></span><br><span class="line">accuracies = []</span><br><span class="line">examples = []</span><br><span class="line"></span><br><span class="line"><span class="comment"># Run test for each epsilon</span></span><br><span class="line"><span class="keyword">for</span> eps <span class="keyword">in</span> epsilons:</span><br><span class="line">    acc, ex = t(model, eps, test_loader)</span><br><span class="line">    accuracies.append(acc)</span><br><span class="line">    examples.append(ex)</span><br><span class="line"></span><br><span class="line"><span class="comment">#作出在不同的epsilon下攻击失败的图片占比</span></span><br><span class="line">fig1 = plt.figure()</span><br><span class="line">plt.plot(epsilons, accuracies, <span class="string">&#x27;o-&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;eps&#x27;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&#x27;acc&#x27;</span>)</span><br><span class="line">plt.xticks(np.arange(<span class="number">0</span>, <span class="number">0.35</span>, <span class="number">0.05</span>))</span><br><span class="line">plt.yticks(np.arange(<span class="number">0</span>, <span class="number">1.1</span>, <span class="number">0.1</span>))</span><br><span class="line">plt.savefig(<span class="string">&#x27;acc_Vs_eps.png&#x27;</span>)</span><br><span class="line">plt.show()</span><br><span class="line"></span><br><span class="line"><span class="comment">#展示在不同的epsilon情况的具体的攻击情况</span></span><br><span class="line">cnt = <span class="number">0</span></span><br><span class="line">fig2 = plt.figure(figsize = (<span class="number">8</span>, <span class="number">10</span>))</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(epsilons)) :</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(examples[i])) :</span><br><span class="line">        cnt += <span class="number">1</span></span><br><span class="line">        plt.subplot(<span class="built_in">len</span>(epsilons), <span class="built_in">len</span>(examples[i]), cnt)</span><br><span class="line">        <span class="comment"># plt.axis(&#x27;off&#x27;)</span></span><br><span class="line">        plt.xticks([], [])</span><br><span class="line">        plt.yticks([], [])</span><br><span class="line">        <span class="keyword">if</span> j == <span class="number">0</span>:</span><br><span class="line">            plt.ylabel(<span class="string">f&#x27;eps : <span class="subst">&#123;epsilons[i]&#125;</span>&#x27;</span>, fontsize = <span class="number">14</span>)</span><br><span class="line">        plt.title(<span class="string">f&#x27;<span class="subst">&#123;examples[i][j][<span class="number">0</span>]&#125;</span> -&gt; <span class="subst">&#123;examples[i][j][<span class="number">1</span>]&#125;</span>&#x27;</span>)</span><br><span class="line">        plt.imshow(examples[i][j][<span class="number">2</span>], cmap = <span class="string">&#x27;gray&#x27;</span>)</span><br><span class="line"></span><br><span class="line">plt.tight_layout()</span><br><span class="line">plt.savefig(<span class="string">&#x27;test.png&#x27;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p>$Accuracy$ 和 $epsilon$ 的关系如下 ：<br><img src="https://img-blog.csdnimg.cn/878844193d29475398768d8b88907c45.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_17,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>如前所述，随着 $epsilon$ 的增加，我们预计测试精度会降低。这是因为更大的 $epsilon$ 意味着我们朝着使损失最大化的方向迈出了更大的一步，当 $epsilon$ 仅为 $0.3$ 是精确度就已经降到了 $0.1$ 以下请注意，即使 $epsilon$ 值是线性间隔的，曲线中的趋势也不是线性的。<br>对抗样本如下：<br><img src="https://img-blog.csdnimg.cn/c9128b0976ce40dda9a6e6cceadfbd91.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>随着 $epsilon$ 的增加，测试精度会降低，但扰动变得更容易察觉。实际上，攻击者必须考虑在准确性降低和可感知性之间进行权衡。在上图中，展示了一些在每个 $epsilon$ 值上成功的对抗性示例。绘图的每一行显示不同的 $epsilon$ 值。第一行是 $epsilon=0$ 也就是 $ε=0$ 表示没有扰动的原始“干净”图像的示例。每张图片的标题显示“原始分类 -&gt; 对抗分类”。当 $epsilon=0.15$ 时扰动开始变得明显。然而，在所有情况下，尽管增加了噪音，人类仍然能够识别正确的类别，但机器无法识别。</p>
+<h1 id="5-流程图"><a href="#5-流程图" class="headerlink" title="5    流程图"></a>5    流程图</h1><p>&emsp;&emsp;上面所实现的攻击过程可以简化成以下流程图：<br><img src="https://img-blog.csdnimg.cn/09ba7a15ba8d47f4802c760d9001c23a.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>参考：<br><a target="_blank" rel="noopener" href="https://pytorch.org/tutorials/beginner/fgsm_tutorial.html#fast-gradient-sign-attack"><strong><em>https://pytorch.org/tutorials/beginner/fgsm_tutorial.html#fast-gradient-sign-attack</em></strong></a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
+              <a href="/tags/%E5%AF%B9%E6%8A%97%E6%94%BB%E5%87%BB/" rel="tag"># 对抗攻击</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E3%80%90OpenCv%E3%80%91%E5%9B%BE%E5%83%8F%E7%9A%84%E8%BD%AE%E5%BB%93%E6%9F%A5%E6%89%BE/" rel="prev" title="【OpenCv】图像的轮廓查找">
+      <i class="fa fa-chevron-left"></i> 【OpenCv】图像的轮廓查找
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/05/KNN-%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB/" rel="next" title="KNN 算法实现图像分类">
+      KNN 算法实现图像分类 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E5%8E%9F%E7%90%86"><span class="nav-text">1    原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E6%94%BB%E5%87%BB%E6%96%B9%E5%BC%8F"><span class="nav-text">2    攻击方式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-%E9%92%88%E5%AF%B9%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%94%BB%E5%87%BB"><span class="nav-text">2.1    针对模型的攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-1-%E7%99%BD%E7%9B%92%E6%94%BB%E5%87%BB"><span class="nav-text">2.1.1    白盒攻击</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-2-%E9%BB%91%E7%9B%92%E6%94%BB%E5%87%BB"><span class="nav-text">2.1.2    黑盒攻击</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-%E9%92%88%E5%AF%B9%E8%BE%93%E5%87%BA%E7%9A%84%E6%94%BB%E5%87%BB"><span class="nav-text">2.2    针对输出的攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-1-%E6%97%A0%E7%9B%AE%E6%A0%87%E6%94%BB%E5%87%BB"><span class="nav-text">2.2.1    无目标攻击</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-2-%E6%9C%89%E7%9B%AE%E6%A0%87%E6%94%BB%E5%87%BB"><span class="nav-text">2.2.2    有目标攻击</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E5%AF%B9%E6%8A%97%E6%A0%B7%E6%9C%AC%E7%94%9F%E6%88%90%E6%96%B9%E5%BC%8F"><span class="nav-text">3    对抗样本生成方式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-%E5%AE%9E%E4%BE%8B"><span class="nav-text">4    实例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5-%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="nav-text">5    流程图</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">53</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">126k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:29</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

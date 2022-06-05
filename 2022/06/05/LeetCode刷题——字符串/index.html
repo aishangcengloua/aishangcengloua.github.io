@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="344. 反转字符串&amp;emsp;&amp;emsp;编写一个函数，其作用是将输入的字符串反转过来。输入字符串以字符数组 s 的形式给出。不要给另外的数组分配额外的空间，你必须原地修改输入数组、使用 O(1) 的额外空间解决这一问题。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LeetCode刷题——字符串">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/LeetCode%E5%88%B7%E9%A2%98%E2%80%94%E2%80%94%E5%AD%97%E7%AC%A6%E4%B8%B2/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="344. 反转字符串&amp;emsp;&amp;emsp;编写一个函数，其作用是将输入的字符串反转过来。输入字符串以字符数组 s 的形式给出。不要给另外的数组分配额外的空间，你必须原地修改输入数组、使用 O(1) 的额外空间解决这一问题。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-06-05T11:27:27.000Z">
+<meta property="article:modified_time" content="2022-06-05T11:28:39.286Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="字符串">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/LeetCode%E5%88%B7%E9%A2%98%E2%80%94%E2%80%94%E5%AD%97%E7%AC%A6%E4%B8%B2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>LeetCode刷题——字符串 | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">53</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">57</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/LeetCode%E5%88%B7%E9%A2%98%E2%80%94%E2%80%94%E5%AD%97%E7%AC%A6%E4%B8%B2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          LeetCode刷题——字符串
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 19:27:27 / 修改时间：19:28:39" itemprop="dateCreated datePublished" datetime="2022-06-05T19:27:27+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">数据结构与算法</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/LeetCode%E5%88%B7%E9%A2%98%E2%80%94%E2%80%94%E5%AD%97%E7%AC%A6%E4%B8%B2/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/LeetCode%E5%88%B7%E9%A2%98%E2%80%94%E2%80%94%E5%AD%97%E7%AC%A6%E4%B8%B2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>942</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="344-反转字符串"><a href="#344-反转字符串" class="headerlink" title="344. 反转字符串"></a>344. 反转字符串</h2><p>&emsp;&emsp;编写一个函数，其作用是将输入的字符串反转过来。输入字符串以字符数组 <code>s</code> 的形式给出。不要给另外的数组分配额外的空间，你必须<strong>原地修改输入数组</strong>、使用 <code>O(1)</code> 的额外空间解决这一问题。</p>
+<p>示例一：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：s = [<span class="string">&quot;h&quot;</span>,<span class="string">&quot;e&quot;</span>,<span class="string">&quot;l&quot;</span>,<span class="string">&quot;l&quot;</span>,<span class="string">&quot;o&quot;</span>]</span><br><span class="line">输出：[<span class="string">&quot;o&quot;</span>,<span class="string">&quot;l&quot;</span>,<span class="string">&quot;l&quot;</span>,<span class="string">&quot;e&quot;</span>,<span class="string">&quot;h&quot;</span>]</span><br></pre></td></tr></table></figure>
+<p>示例二：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：s = [<span class="string">&quot;H&quot;</span>,<span class="string">&quot;a&quot;</span>,<span class="string">&quot;n&quot;</span>,<span class="string">&quot;n&quot;</span>,<span class="string">&quot;a&quot;</span>,<span class="string">&quot;h&quot;</span>]</span><br><span class="line">输出：[<span class="string">&quot;h&quot;</span>,<span class="string">&quot;a&quot;</span>,<span class="string">&quot;n&quot;</span>,<span class="string">&quot;n&quot;</span>,<span class="string">&quot;a&quot;</span>,<span class="string">&quot;H&quot;</span>]</span><br></pre></td></tr></table></figure>
+<p>思路：双指针。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">reverseString</span>(<span class="params">self, s: <span class="type">List</span>[<span class="built_in">str</span>]</span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        Do not return anything, modify s in-place instead.</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        i = <span class="number">0</span></span><br><span class="line">        j = <span class="built_in">len</span>(s) - <span class="number">1</span></span><br><span class="line">        <span class="keyword">while</span> i &lt; j :</span><br><span class="line">            s[i], s[j] = s[j], s[i]</span><br><span class="line">            i += <span class="number">1</span></span><br><span class="line">            j -= <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<h2 id="541-反转字符串-II"><a href="#541-反转字符串-II" class="headerlink" title="541. 反转字符串 II"></a>541. 反转字符串 II</h2><p>&emsp;&emsp;给定一个字符串 <code>s</code> 和一个整数 <code>k</code>，从字符串开头算起，每计数至 <code>2k</code> 个字符，就反转这 <code>2k</code> 字符中的前 <code>k</code> 个字符。</p>
+<ul>
+<li>如果剩余字符少于 <code>k</code> 个，则将剩余字符全部反转。</li>
+<li>如果剩余字符小于 <code>2k</code> 但大于或等于 <code>k</code> 个，则反转前 <code>k</code> 个字符，其余字符保持原样。</li>
+</ul>
+<p>示例一：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：s = <span class="string">&quot;abcdefg&quot;</span>, k = <span class="number">2</span></span><br><span class="line">输出：<span class="string">&quot;bacdfeg&quot;</span></span><br></pre></td></tr></table></figure>
+<p>示例二：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：s = <span class="string">&quot;abcd&quot;</span>, k = <span class="number">2</span></span><br><span class="line">输出：<span class="string">&quot;bacd&quot;</span></span><br></pre></td></tr></table></figure>
+<p>思路：我们直接按题意进行模拟：反转每个下标从 <code>2k</code> 的倍数开始的，长度为 <code>k</code> 的子串。若该子串长度不足 <code>k</code>，则反转整个子串。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">reverseStr</span>(<span class="params">self, s: <span class="built_in">str</span>, k: <span class="built_in">int</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">        s = <span class="built_in">list</span>(s)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="built_in">len</span>(s), <span class="number">2</span> * k) :</span><br><span class="line">            s[i : i + k] = s[i : i + k][ : : -<span class="number">1</span>]</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;&quot;</span>.join(s)</span><br></pre></td></tr></table></figure>
+<h2 id="剑指-Offer-05-替换空格"><a href="#剑指-Offer-05-替换空格" class="headerlink" title="剑指 Offer 05. 替换空格"></a>剑指 Offer 05. 替换空格</h2><p>&emsp;&emsp;请实现一个函数，把字符串 s 中的每个空格替换成 <code>&quot;%20&quot;</code>。</p>
+<p>示例一：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：s = <span class="string">&quot;We are happy.&quot;</span></span><br><span class="line">输出：<span class="string">&quot;We%20are%20happy.&quot;</span></span><br></pre></td></tr></table></figure>
+<p>思路：一次遍历直接替换。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">replaceSpace</span>(<span class="params">self, s: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">        s = <span class="built_in">list</span>(s)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(s)) :</span><br><span class="line">            <span class="keyword">if</span> s[i] == <span class="string">&#x27; &#x27;</span> :</span><br><span class="line">                s[i] = <span class="string">&#x27;%20&#x27;</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;&quot;</span>.join(s)</span><br></pre></td></tr></table></figure>
+<h2 id="151-颠倒字符串中的单词"><a href="#151-颠倒字符串中的单词" class="headerlink" title="151. 颠倒字符串中的单词"></a>151. 颠倒字符串中的单词</h2><p>&emsp;&emsp;给你一个字符串 <code>s</code> ，颠倒字符串中 单词 的顺序。<code>单词</code> 是由非空格字符组成的字符串。<code>s</code> 中使用至少一个空格将字符串中的 <code>单词</code> 分隔开。返回 <code>单词</code> 顺序颠倒且 <code>单词</code> 之间用单个空格连接的结果字符串。<strong>注意</strong>：输入字符串 <code>s</code> 中可能会存在前导空格、尾随空格或者单词间的多个空格。返回的结果字符串中，单词间应当仅用单个空格分隔，且不包含任何额外的空格。</p>
+<p> 示例一：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：s = <span class="string">&quot;the sky is blue&quot;</span></span><br><span class="line">输出：<span class="string">&quot;blue is sky the&quot;</span></span><br></pre></td></tr></table></figure>
+<p>示例二：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入：s = <span class="string">&quot;  hello world  &quot;</span></span><br><span class="line">输出：<span class="string">&quot;world hello&quot;</span></span><br><span class="line">解释：颠倒后的字符串中不能存在前导空格和尾随空格。</span><br></pre></td></tr></table></figure>
+<p>示例三：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入：s = <span class="string">&quot;a good   example&quot;</span></span><br><span class="line">输出：<span class="string">&quot;example good a&quot;</span></span><br><span class="line">解释：如果两个单词间有多余的空格，颠倒后的字符串需要将单词间的空格减少到仅有一个。</span><br></pre></td></tr></table></figure>
+<p>思路：双指针+反向遍历。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">reverseWords</span>(<span class="params">self, s: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">        <span class="comment"># 1、当快指针和慢指针同时指向空格时 fast 和 slow 都减一</span></span><br><span class="line">        <span class="comment"># 2、当慢指针遇到一个单词的额末尾字母时，停下</span></span><br><span class="line">        <span class="comment"># 3、当快指针遇到空格且慢指针不为空格的话，添加单词，这里要注意当 fast==0 时要另外处理</span></span><br><span class="line"></span><br><span class="line">        words = []</span><br><span class="line">        slow = <span class="built_in">len</span>(s) - <span class="number">1</span></span><br><span class="line">        <span class="keyword">for</span> fast <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(s) - <span class="number">1</span>, -<span class="number">1</span>, -<span class="number">1</span>) :</span><br><span class="line">            <span class="keyword">if</span> s[fast] != <span class="string">&#x27; &#x27;</span> :</span><br><span class="line">                <span class="keyword">if</span> fast == <span class="number">0</span> :</span><br><span class="line">                    words.append(s[fast : slow + <span class="number">1</span>])</span><br><span class="line">                <span class="keyword">else</span> :</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line">            <span class="keyword">else</span> :</span><br><span class="line">                <span class="keyword">if</span> s[slow] != <span class="string">&#x27; &#x27;</span> :</span><br><span class="line">                    words.append(s[fast + <span class="number">1</span> : slow + <span class="number">1</span>])</span><br><span class="line">                    slow = fast</span><br><span class="line">            slow -= <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot; &quot;</span>.join(words)</span><br></pre></td></tr></table></figure>
+<h2 id="459-重复的子字符串"><a href="#459-重复的子字符串" class="headerlink" title="459. 重复的子字符串"></a>459. 重复的子字符串</h2><p>&emsp;&emsp;给定一个非空的字符串 <code>s</code> ，检查是否可以通过由它的一个子串重复多次构成。</p>
+<p>示例一：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入: s = <span class="string">&quot;abab&quot;</span></span><br><span class="line">输出: true</span><br><span class="line">解释: 可由子串 <span class="string">&quot;ab&quot;</span> 重复两次构成。</span><br></pre></td></tr></table></figure>
+<p>示例二：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入: s = <span class="string">&quot;aba&quot;</span></span><br><span class="line">输出: false</span><br></pre></td></tr></table></figure>
+<p>示例三：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入: s = <span class="string">&quot;abcabcabcabc&quot;</span></span><br><span class="line">输出: true</span><br><span class="line">解释: 可由子串 <span class="string">&quot;abc&quot;</span> 重复四次构成。 (或子串 <span class="string">&quot;abcabc&quot;</span> 重复两次构成。)</span><br></pre></td></tr></table></figure>
+<p>思路：这道题有很多钟方法，这里介绍字符串匹配。假设 <code>s</code>  由 <code>n</code> 个重复的子字符串 <code>s&#39;</code> 构成，若 <code>n == 1</code> 则不满足要求，若 <code>n &gt;= 2</code>，则满足题目要求。然后我们将第一个 <code>s&#39;</code> 移到最后面，此时的字符串还是跟原始的 <code>s</code> 一样。然后我们将 <code>s</code> 扩展成 <code>s + s</code>，并且去除 <code>s + s</code> 的第一个字符和最后一个字符，相当于损坏了第一个 <code>s</code> 的第一个子字符串和第二个 <code>s</code> 的最后一个子字符串，如果在去除字符之后的字符串中我们还能找到原始的字符串 <code>s</code>，说明 <code>s</code> 满足条件。其实这里就相当于 <code>n &gt;= 2</code>，然后第二个 <code>s</code> 的第一个子字符串填补了第一个 <code>s</code> 的最后一子字符串。这两个是充要条件。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">repeatedSubstringPattern</span>(<span class="params">self, s: <span class="built_in">str</span></span>) -&gt; <span class="built_in">bool</span>:</span><br><span class="line">        <span class="keyword">return</span> s <span class="keyword">in</span> (s + s)[<span class="number">1</span> : <span class="built_in">len</span>(s) * <span class="number">2</span> - <span class="number">1</span>]</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"># Python</a>
+              <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" rel="tag"># 字符串</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/Python-%E4%B8%AD%E7%9A%84%E5%9B%BE%EF%BC%9A%E5%9B%BE%E7%9A%84%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84/" rel="prev" title="Python 中的图：图的存储结构">
+      <i class="fa fa-chevron-left"></i> Python 中的图：图的存储结构
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/05/Python-%E4%B8%AD%E7%9A%84%E5%9B%BE%EF%BC%9AA-%E7%AE%97%E6%B3%95/" rel="next" title="Python 中的图：A* 算法">
+      Python 中的图：A* 算法 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#344-%E5%8F%8D%E8%BD%AC%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-text">344. 反转字符串</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#541-%E5%8F%8D%E8%BD%AC%E5%AD%97%E7%AC%A6%E4%B8%B2-II"><span class="nav-text">541. 反转字符串 II</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%91%E6%8C%87-Offer-05-%E6%9B%BF%E6%8D%A2%E7%A9%BA%E6%A0%BC"><span class="nav-text">剑指 Offer 05. 替换空格</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#151-%E9%A2%A0%E5%80%92%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E7%9A%84%E5%8D%95%E8%AF%8D"><span class="nav-text">151. 颠倒字符串中的单词</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#459-%E9%87%8D%E5%A4%8D%E7%9A%84%E5%AD%90%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-text">459. 重复的子字符串</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">53</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">126k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:29</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

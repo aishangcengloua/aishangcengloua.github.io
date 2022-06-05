@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言&amp;emsp;&amp;emsp;卷积神经网络取得了突破性进展，效果也非常理想，但是卷积神经网络的学习过程难以从理论上难以解释，因此被不少人诟病。因此可视化其的学习过程十分重要，DeepDream 模型的目的也正是如此。DeepDearm 模型在2015年由谷歌提出，理论基础是2013年所提出的《Visualizing and Understanding Convolutional Neural Net">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DeepDearm 模型">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/DeepDearm-%E6%A8%A1%E5%9E%8B/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="前言&amp;emsp;&amp;emsp;卷积神经网络取得了突破性进展，效果也非常理想，但是卷积神经网络的学习过程难以从理论上难以解释，因此被不少人诟病。因此可视化其的学习过程十分重要，DeepDream 模型的目的也正是如此。DeepDearm 模型在2015年由谷歌提出，理论基础是2013年所提出的《Visualizing and Understanding Convolutional Neural Net">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/a46f6ff3a5394b24bb104b813a2b0894.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/73c78c56c6bb4b4bbc66a6c9d16c28a8.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/bedf2246f48340e79d79d3815c7dd784.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/d3c6a7a59552430096a65277dc160629.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/1d9b2c340fba45cb9891defe7c3d327c.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/772fd62917694486910afecef0b27613.png#pic_center">
+<meta property="article:published_time" content="2022-06-05T10:51:55.000Z">
+<meta property="article:modified_time" content="2022-06-05T11:46:55.856Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="PyTorch">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/a46f6ff3a5394b24bb104b813a2b0894.png#pic_center">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/DeepDearm-%E6%A8%A1%E5%9E%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>DeepDearm 模型 | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">53</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">57</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/DeepDearm-%E6%A8%A1%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DeepDearm 模型
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 18:51:55 / 修改时间：19:46:55" itemprop="dateCreated datePublished" datetime="2022-06-05T18:51:55+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/DeepDearm-%E6%A8%A1%E5%9E%8B/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/DeepDearm-%E6%A8%A1%E5%9E%8B/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>2.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;&emsp;卷积神经网络取得了突破性进展，效果也非常理想，但是卷积神经网络的学习过程难以从理论上难以解释，因此被不少人诟病。因此可视化其的学习过程十分重要，<strong><em>DeepDream</em></strong> 模型的目的也正是如此。<strong><em>DeepDearm</em></strong> 模型在2015年由谷歌提出，理论基础是2013年所提出的《<strong><em>Visualizing and Understanding Convolutional Neural Networks</em></strong>》，该文章提出了使用梯度上升的方法可视化网络每一层的特征，即用一张噪声图像输入网络，反向更新的时候不更新网络权重，而是更新初始图像的像素值，以这种训练图像的方式可视化网络。深度学习领域奠基性的经典教材《<strong><em>深度学习</em></strong>》的封面就是使用 <strong><em>DeepDream</em></strong> 模型生成的。<br><img src="https://img-blog.csdnimg.cn/a46f6ff3a5394b24bb104b813a2b0894.png#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="1-DeepDream原理"><a href="#1-DeepDream原理" class="headerlink" title="1    DeepDream原理"></a>1    DeepDream原理</h1><p>&emsp;&emsp;<strong><em>DeepDream</em></strong> 为了说明CNN学习到的各特征的意义，将采用放大处理的方式。具体来说就是使用梯度上升的方法可视化网络每一层的特征，即用一张噪声图像输入网络，但反向更新的时候不更新网络权重，而是更新初始图像的像素值，以这种“训练图像”的方式可视化网络。此外输入图像也可以是一些正常的图片，这样的话就是生成背景图像之类的。<br>&emsp;&emsp;<strong><em>DeepDream</em></strong> 如何放大图像特征？比如：有 一个网络学习了分类猫和狗的任务，给这个网络一张云的图像，这朵云可能比较像狗，那么机器提取的特征可能也会像狗。假设对应一个特征最后输入概率为[0.6，0.4]，0.6表示为狗的概率，0.4则表示为猫的概率，那么采用$L_2$范数可以很好达到放大特征的效果。对于这样一个特征，$L_2 = x_1^{2} + x_2^{2}$，若$x_1$ 越大，$x_2$越小，则$L_2$越大，所以只需要最大化$L_2$就能保证当$x_1$ &gt; $x_1$的时候， 迭代的轮数越多$x_1$越大，$x_2$越小，所以图像就会越来越像狗。每次迭代相当 于计算$L_2$范数，然后用梯度上升的方法调整图像。优化的就不再是优化权重参数，而是特征值或像素点，因此，构建损失函数时，不使用通常的交叉熵，而是最大化特征值的L2范数。使图像经过网络之后提取的特征更像网络隐含的特征。具体实现的时候还要通过多尺度、随机 移动等方法获取比较好的结果。</p>
+<h1 id="2-DeepDream算法流程"><a href="#2-DeepDream算法流程" class="headerlink" title="2    DeepDream算法流程"></a>2    DeepDream算法流程</h1><p>&emsp;&emsp;使用基本图像，它输入到预训练的CNN。并正向传播到特定层。<br>&emsp;&emsp;为了更好地理解该层学到了什么，我们需要最大化通过该层激活值。这里要解释一下什么是激活值，激活值表示属于某类的概率大小，比如说二分类问题中，用[0，1]表示两类的标签，我们规定当神经网络的输出大于0就被分类到1(100% 被激活)，小于0就分到0(没有被激活)，所以在此情况下激活值只有100%或者0%，但是我们在平常的多分类任务中希望它可以是0%~100%的任意值。激活值越大，激活程度越高，对于分类，也就意味着它属于这一类的概率越大。<strong><em>DeepDream</em></strong> 以该层输出为梯度，然后在输入图像上完成渐变上升，以最大化该层的激活值。不过，光这样做并不能产生好的图像。为了提高训练质量，需要使用一些技术使得到的图像更好。通常可以进行高斯模糊以使图像更平滑，使用多尺度(又称为八度)的图像进行计算。先连续缩小输入图像，然后，再逐步放大，并将结果合并为一个图像输出。<img src="https://img-blog.csdnimg.cn/73c78c56c6bb4b4bbc66a6c9d16c28a8.png#pic_center" alt="在这里插入图片描述"></p>
+<p>&emsp;&emsp;先对图像连续做二次等比例缩小，该比例是1.5，之所以要缩小，图像缩小是为了让图像的像素点调整后所得结果图案能显示的更加平滑，过程主要是抑制了图像的高频成分，放大了低频成分。缩小二次后，把图像每个像素点当作参数，对它们求偏导，这样就可以知道如何调整图像像素点能够对给定网络层的输出产生最大化的刺激。</p>
+<h1 id="3-PyTorch实现DeepDream"><a href="#3-PyTorch实现DeepDream" class="headerlink" title="3    PyTorch实现DeepDream"></a>3    PyTorch实现DeepDream</h1><p>&emsp;&emsp;本次实现是取 <strong><em>VGG19</em></strong> 模型为预训练模型，将获取的特征最大化之后展示在一张普通的图像上，本次使用的是梵高的星空图。为了训练更加有效，还使用对图像进行不同大小的缩放处理。<br><strong><em>1)</em></strong> 下载预训练模型。<strong><em>VGG19</em></strong> 模型包括了三种不同的模块，第一个是特征提取模块 <strong><em>(features)</em></strong> ，一共有36层，第二个是池化层 <strong><em>(avgpool)</em></strong> ，只有一层，第三个是分类层 <strong><em>(classifier)</em></strong> ，一共有6层。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vgg = models.vgg19(pretrained = <span class="literal">True</span>).to(device)</span><br><span class="line">modulelist = <span class="built_in">list</span>(vgg.features.modules())</span><br></pre></td></tr></table></figure>
+<p><strong><em>2)</em></strong> 函数 <strong><em>prod</em></strong> 主要功能是传入输入图像，正 向传播到 <strong><em>VGG19</em></strong> 的指定层(如第8层或第32层等)，然后，用梯度上升更新输入图像的特征值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">prod</span>(<span class="params">image, feature_layers, iterations, lr, transform, device, vgg, modulelist</span>) :</span><br><span class="line">    <span class="built_in">input</span> = transform(image).unsqueeze(<span class="number">0</span>)</span><br><span class="line">    <span class="built_in">input</span> = <span class="built_in">input</span>.to(device).requires_grad_(<span class="literal">True</span>)</span><br><span class="line">    vgg.zero_grad()</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations) :</span><br><span class="line">        out = <span class="built_in">input</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(feature_layers) :</span><br><span class="line">            out = modulelist[j + <span class="number">1</span>](out)</span><br><span class="line">        loss = out.norm()</span><br><span class="line">        loss.backward()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">with</span> torch.no_grad() :</span><br><span class="line">            <span class="built_in">input</span> += lr * <span class="built_in">input</span>.grad</span><br><span class="line"></span><br><span class="line">    <span class="built_in">input</span> = <span class="built_in">input</span>.squeeze()</span><br><span class="line">    <span class="comment"># input = input.transpose(0, 1)</span></span><br><span class="line">    <span class="comment"># input = input.transpose(1, 2)</span></span><br><span class="line">    <span class="built_in">input</span> = <span class="built_in">input</span>.permute(<span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>)</span><br><span class="line">    <span class="built_in">input</span> = np.clip(deprocess(<span class="built_in">input</span>, device).detach().cpu().numpy(), <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">    image = Image.fromarray(np.uint8(<span class="built_in">input</span> * <span class="number">255</span>))</span><br><span class="line">    <span class="keyword">return</span> image</span><br></pre></td></tr></table></figure>
+<p><strong><em>3)</em></strong> 函数 <strong><em>deep_dream_vgg</em></strong> 是一个递归函数，多次缩小图像，然后调用函数 <strong><em>prod</em></strong> 。接着再放大结果，并与按一定比例图像混合在一起，最终得到与输入图像相同大小的输出图像。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">deep_dream_vgg</span>(<span class="params">image, feature_layers, iterations, lr, transform, device, vgg, modulelist, octave_scale = <span class="number">2</span>, num_octaves = <span class="number">100</span></span>) :</span><br><span class="line">    <span class="keyword">if</span> num_octaves &gt; <span class="number">0</span> :</span><br><span class="line">        image1 = image.<span class="built_in">filter</span>(ImageFilter.GaussianBlur(<span class="number">2</span>))</span><br><span class="line">        <span class="keyword">if</span> (image1.size[<span class="number">0</span>] / octave_scale &lt; <span class="number">1</span> <span class="keyword">or</span> image1.size[<span class="number">1</span>] / octave_scale &lt; <span class="number">1</span>) :</span><br><span class="line">            size = image1.size</span><br><span class="line">        <span class="keyword">else</span> :</span><br><span class="line">            size = (<span class="built_in">int</span>(image1.size[<span class="number">0</span>] / octave_scale), <span class="built_in">int</span>(image1.size[<span class="number">1</span>] / octave_scale))</span><br><span class="line"></span><br><span class="line">        image1 = image1.resize(size, Image.ANTIALIAS)</span><br><span class="line">        image1 = deep_dream_vgg(image1, feature_layers, iterations, lr, transform, device, vgg, modulelist, octave_scale, num_octaves - <span class="number">1</span>)</span><br><span class="line">        size = (image.size[<span class="number">0</span>], image.size[<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">        image1 = image1.resize(size, Image.ANTIALIAS)</span><br><span class="line">        image = ImageChops.blend(image, image1, <span class="number">0.6</span>)</span><br><span class="line">        <span class="comment"># PIL.ImageChops.blend(image1, image2, alpha)</span></span><br><span class="line">        <span class="comment"># out = image1 * (1.0 - alpha) + image2 * alpha</span></span><br><span class="line">    img_result = prod(image, feature_layers, iterations, lr, transform, device, vgg, modulelist)</span><br><span class="line">    img_result = img_result.resize(image.size)</span><br><span class="line">    <span class="keyword">return</span> img_result</span><br></pre></td></tr></table></figure>
+<h1 id="4-全部代码-详细注释"><a href="#4-全部代码-详细注释" class="headerlink" title="4    全部代码(详细注释)"></a>4    全部代码(详细注释)</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image, ImageFilter, ImageChops</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> models</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> transforms</span><br><span class="line"></span><br><span class="line"><span class="comment">#下载图片</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">load_image</span>(<span class="params">path</span>) :</span><br><span class="line">    img = Image.<span class="built_in">open</span>(path)</span><br><span class="line">    <span class="keyword">return</span> img</span><br><span class="line"></span><br><span class="line"><span class="comment">#因为在图像处理过程中有归一化的操作，所以要&quot;反归一化&quot;</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">deprocess</span>(<span class="params">image, device</span>):</span><br><span class="line">    image = image * torch.tensor([<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>], device = device) + torch.tensor([<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], device = device)</span><br><span class="line">    <span class="keyword">return</span> image</span><br><span class="line"></span><br><span class="line"><span class="comment">#传入输入图像，正 向传播到VGG19的指定层，然后，用梯度上升更新 输入图像的特征值。</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">prod</span>(<span class="params">image, feature_layers, iterations, lr, transform, device, vgg, modulelist</span>) :</span><br><span class="line">    <span class="built_in">input</span> = transform(image).unsqueeze(<span class="number">0</span>)         <span class="comment">#对图像进行resize，转成tensor和归一化操作，要增加一个维度，表示一个样本，[1, C, H, W]</span></span><br><span class="line">    <span class="built_in">input</span> = <span class="built_in">input</span>.to(device).requires_grad_(<span class="literal">True</span>) <span class="comment">#对图片进行追踪计算梯度</span></span><br><span class="line">    vgg.zero_grad()                               <span class="comment">#梯度清零</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iterations) :</span><br><span class="line">        out = <span class="built_in">input</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(feature_layers) :          <span class="comment">#遍历features模块的各层</span></span><br><span class="line">            out = modulelist[j + <span class="number">1</span>](out)          <span class="comment">#以上一层的输出特征作为下一层的输入特征</span></span><br><span class="line">        loss = out.norm()                         <span class="comment">#计算特征的二范数</span></span><br><span class="line">        loss.backward()                           <span class="comment">#反向传播计算梯度，其中图像的每个像素点都是参数</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">with</span> torch.no_grad() :</span><br><span class="line">            <span class="built_in">input</span> += lr * <span class="built_in">input</span>.grad              <span class="comment">#更新原始图像的像素值</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">input</span> = <span class="built_in">input</span>.squeeze()                       <span class="comment">#训练完成后将表示样本数的维度去除</span></span><br><span class="line">    <span class="comment"># 交互维度</span></span><br><span class="line">    <span class="comment"># input = input.transpose(0, 1)</span></span><br><span class="line">    <span class="comment"># input = input.transpose(1, 2)</span></span><br><span class="line">    <span class="built_in">input</span> = <span class="built_in">input</span>.permute(<span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>)                <span class="comment">#维度转换，因为tensor的维度是(C, H, W)，而array是(H, W, C)</span></span><br><span class="line">    <span class="built_in">input</span> = np.clip(deprocess(<span class="built_in">input</span>, device).detach().cpu().numpy(), <span class="number">0</span>, <span class="number">1</span>)<span class="comment">#将像素值限制在(0, 1)之间</span></span><br><span class="line">    image = Image.fromarray(np.uint8(<span class="built_in">input</span> * <span class="number">255</span>))<span class="comment">#将array类型的图像转成PIL类型图像，要乘以255是因为转成tensor时函数自动除以了255</span></span><br><span class="line">    <span class="keyword">return</span> image</span><br><span class="line"></span><br><span class="line"><span class="comment">#多次缩小图像，然后调用函数 prod。接着在放大结果，并与按一定比例图像混合在一起，最终得到与输入 图像相同大小的输出图像。</span></span><br><span class="line"><span class="comment">#octave_scale参数决定了有多少个尺度的图像, num_octaves参数决定一共有多少张图像</span></span><br><span class="line"><span class="comment">#octave_scale和num_octaves两个参数的选定对生成图像的影响很大。</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">deep_dream_vgg</span>(<span class="params">image, feature_layers, iterations, lr, transform, device, vgg, modulelist, octave_scale = <span class="number">2</span>, num_octaves = <span class="number">100</span></span>) :</span><br><span class="line">    <span class="keyword">if</span> num_octaves &gt; <span class="number">0</span> :</span><br><span class="line">        image1 = image.<span class="built_in">filter</span>(ImageFilter.GaussianBlur(<span class="number">2</span>))<span class="comment">#高斯模糊</span></span><br><span class="line">        <span class="keyword">if</span> (image1.size[<span class="number">0</span>] / octave_scale &lt; <span class="number">1</span> <span class="keyword">or</span> image1.size[<span class="number">1</span>] / octave_scale &lt; <span class="number">1</span>) :<span class="comment">#当图像的大小小于octave_scale时图像尺度不再变化</span></span><br><span class="line">            size = image1.size</span><br><span class="line">        <span class="keyword">else</span> :</span><br><span class="line">            size = (<span class="built_in">int</span>(image1.size[<span class="number">0</span>] / octave_scale), <span class="built_in">int</span>(image1.size[<span class="number">1</span>] / octave_scale))</span><br><span class="line"></span><br><span class="line">        image1 = image1.resize(size, Image.ANTIALIAS)<span class="comment">#缩小图片</span></span><br><span class="line">        image1 = deep_dream_vgg(image1, feature_layers, iterations, lr, transform, device, vgg, modulelist, octave_scale, num_octaves - <span class="number">1</span>)<span class="comment">#递归</span></span><br><span class="line">        size = (image.size[<span class="number">0</span>], image.size[<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">        image1 = image1.resize(size, Image.ANTIALIAS)<span class="comment">#放大图像</span></span><br><span class="line">        image = ImageChops.blend(image, image1, <span class="number">0.6</span>) <span class="comment">#按一定比例将图像混合在一起</span></span><br><span class="line">        <span class="comment"># PIL.ImageChops.blend(image1, image2, alpha)</span></span><br><span class="line">        <span class="comment"># out = image1 * (1.0 - alpha) + image2 * alpha</span></span><br><span class="line">    img_result = prod(image, feature_layers, iterations, lr, transform, device, vgg, modulelist)</span><br><span class="line">    img_result = img_result.resize(image.size)</span><br><span class="line">    <span class="keyword">return</span> img_result</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="comment">#对图像进行预处理</span></span><br><span class="line">    tranform = transforms.Compose([</span><br><span class="line">        transforms.Resize((<span class="number">224</span>, <span class="number">224</span>)),</span><br><span class="line">        transforms.ToTensor(), <span class="comment">#将PIL类型转成tensor类型，注意再次过程中像素值已经转到了[0, 1]之间，方式是除以255</span></span><br><span class="line">        transforms.Normalize(mean = [<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], <span class="comment">#归一化</span></span><br><span class="line">                             std = [<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])</span><br><span class="line">    ])</span><br><span class="line"></span><br><span class="line">    device = torch.device(<span class="string">&quot;cuda:0&quot;</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&quot;cpu&quot;</span>)</span><br><span class="line">    vgg = models.vgg19(pretrained = <span class="literal">True</span>).to(device) </span><br><span class="line">    </span><br><span class="line">    modulelist = <span class="built_in">list</span>(vgg.features.modules())<span class="comment">#要注意网络层转成列表元素之后，第一个元素是全部的网络层，下标从1开始迭代网络层,这也是后面是modulelist[j + 1]的原因</span></span><br><span class="line">    night_sky = load_image(<span class="string">&#x27;starry_night.jpg&#x27;</span>)</span><br><span class="line">    night_sky_30 = deep_dream_vgg(night_sky, <span class="number">36</span>, <span class="number">6</span>, <span class="number">0.2</span>, tranform, device, vgg, modulelist)</span><br><span class="line">    plt.imshow(night_sky_30)</span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
+<p>运行结果：<br>输入图像：<br><img src="https://img-blog.csdnimg.cn/bedf2246f48340e79d79d3815c7dd784.png#pic_center" alt="在这里插入图片描述"></p>
+<p><strong><em>VGG19</em></strong> 的第10层学习的特征：<br><img src="https://img-blog.csdnimg.cn/d3c6a7a59552430096a65277dc160629.png#pic_center" alt="在这里插入图片描述"><br><strong><em>VGG19</em></strong> 的第20层学习的特征：<img src="https://img-blog.csdnimg.cn/1d9b2c340fba45cb9891defe7c3d327c.png#pic_center" alt="在这里插入图片描述"><br><strong><em>VGG19</em></strong> 的第30层学习的特征：<br><img src="https://img-blog.csdnimg.cn/772fd62917694486910afecef0b27613.png#pic_center" alt="在这里插入图片描述"><br>&emsp;&emsp;<strong><em>VGG19</em></strong> 预训练模型是基于ImageNet大数据集训练的模型，该数据集共有1000个类别。从上面的结果可以看出，越靠近顶部的层，其激活值表现就越全面或抽象，如像某些类别(比如狗)的图案。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
+              <a href="/tags/PyTorch/" rel="tag"># PyTorch</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0/" rel="prev" title="迁移学习">
+      <i class="fa fa-chevron-left"></i> 迁移学习
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E3%80%90Opencv%E3%80%91%E5%9F%BA%E4%BA%8E%E8%89%B2%E5%B7%AE%E7%9A%84%E7%AE%80%E5%8D%95%E7%9B%AE%E6%A0%87%E6%8F%90%E5%8F%96/" rel="next" title="【Opencv】基于色差的简单目标提取">
+      【Opencv】基于色差的简单目标提取 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1-DeepDream%E5%8E%9F%E7%90%86"><span class="nav-text">1    DeepDream原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-DeepDream%E7%AE%97%E6%B3%95%E6%B5%81%E7%A8%8B"><span class="nav-text">2    DeepDream算法流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-PyTorch%E5%AE%9E%E7%8E%B0DeepDream"><span class="nav-text">3    PyTorch实现DeepDream</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-%E5%85%A8%E9%83%A8%E4%BB%A3%E7%A0%81-%E8%AF%A6%E7%BB%86%E6%B3%A8%E9%87%8A"><span class="nav-text">4    全部代码(详细注释)</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">53</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">126k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:29</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

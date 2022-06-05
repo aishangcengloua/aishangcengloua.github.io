@@ -29,14 +29,14 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/f2d9f88f105e4c3286b86d871441eb60.png#pic_center">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/5620c0833a484a4fb1499fc927f433b8.png">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/4b56fc5755a74737939144eaaa5fbaa4.PNG">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/7898c62257c64232a598b577ff4f3f74.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/4b56fc5755a74737939144eaaa5fbaa4.PNG#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/7898c62257c64232a598b577ff4f3f74.png#pic_center">
 <meta property="article:published_time" content="2022-06-05T09:26:11.000Z">
-<meta property="article:modified_time" content="2022-06-05T09:37:28.936Z">
+<meta property="article:modified_time" content="2022-06-05T10:33:42.008Z">
 <meta property="article:author" content="Z.H.Chen">
 <meta property="article:tag" content="深度学习">
-<meta property="article:tag" content="LSTM">
 <meta property="article:tag" content="PyTorch">
+<meta property="article:tag" content="LSTM">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://img-blog.csdnimg.cn/f2d9f88f105e4c3286b86d871441eb60.png#pic_center">
 
@@ -134,17 +134,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">19</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">53</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">5</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">24</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">57</span></a>
 
   </li>
         <li class="menu-item menu-item-rss">
@@ -232,7 +232,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2022-06-05 17:26:11 / 修改时间：17:37:28" itemprop="dateCreated datePublished" datetime="2022-06-05T17:26:11+08:00">2022-06-05</time>
+              <time title="创建时间：2022-06-05 17:26:11 / 修改时间：18:33:42" itemprop="dateCreated datePublished" datetime="2022-06-05T17:26:11+08:00">2022-06-05</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -294,12 +294,9 @@
       
         <p>﻿tushare是一个开源的金融数据源，目前维护的数据非常丰富，质量也很高，对于一般的分析已经足够，可以省去自己到处去爬数据。我这里下载沪深300指数数据进行预测每日的最高价</p>
 <blockquote>
-<p><em>首先使用pip install tushare安装tushare工具包 ，github地址为：<br><a target="_blank" rel="noopener" href="https://github.com/aishangcengloua/MLData/blob/master/PyTorch/NLP/Forecast_stock/LSTM.ipynb">https://github.com/aishangcengloua/MLData/blob/master/PyTorch/NLP/Forecast_stock/LSTM.ipynb</a></em></p>
+<p>首先使用pip install tushare安装tushare工具包 ，github地址为：<br><a target="_blank" rel="noopener" href="https://github.com/aishangcengloua/MLData/blob/master/PyTorch/NLP/Forecast_stock/LSTM.ipynb">https://github.com/aishangcengloua/MLData/blob/master/PyTorch/NLP/Forecast_stock/LSTM.ipynb</a></p>
 </blockquote>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tushare <span class="keyword">as</span> ts</span><br><span class="line">cons = ts.get_apis()<span class="comment">#建立连接</span></span><br><span class="line">df = ts.bar(<span class="string">&#x27;000300&#x27;</span>, conn = cons, asset = <span class="string">&#x27;INDEX&#x27;</span>, start_date = <span class="string">&#x27;2010-01-01&#x27;</span>, end_date = <span class="string">&#x27;&#x27;</span>)</span><br><span class="line">df.info()<span class="comment">#查看没有缺失值之后保存</span></span><br><span class="line">df.columns<span class="comment">#可知沪深300指数（000300）的信息包括交易日期，开盘价，收盘价，最高价，最低价，交易量，成交金额，涨跌幅。</span></span><br><span class="line"><span class="comment"># df.to_csv(&#x27;sh300.csv&#x27;)</span></span><br></pre></td></tr></table></figure>
-<center>
-
-
 <p><img src="https://img-blog.csdnimg.cn/f2d9f88f105e4c3286b86d871441eb60.png#pic_center" alt="在这里插入图片描述"></p>
 <p>导入所需的包</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd </span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim </span><br><span class="line"><span class="keyword">from</span> torch.utils.tensorboard <span class="keyword">import</span> SummaryWriter</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> Dataset, DataLoader</span><br><span class="line"><span class="keyword">from</span> matplotlib <span class="keyword">import</span> pyplot <span class="keyword">as</span> plt</span><br></pre></td></tr></table></figure>
@@ -307,9 +304,6 @@
 <p>比如：n = 3，X=[ [ ‘open1’, ‘close1’, ‘low1’, ‘vol1’, ‘amount1’, ‘p_change1’] , [ ‘open2’, ‘close2’, ‘low2’, ‘vol2’, ‘amount2’, ‘p_change2’]，   [ ‘open3’, ‘close3’, ‘low3’, ‘vol3’, ‘amount3’, ‘p_change3’] ]，Y=[ high4 ]。</p>
 <p>我们要确保我们输入网络的的数据的维度是[batch，TIME_STEP，input_size]。其次是我将数据划分为8 ：2，2份作为预测数据。要注意的是，生成迭代数据的时候，batch_size 取值要大一些，否则训练时损失振幅会很大，导致预测效果不好。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">TIME_STEP = <span class="number">5</span><span class="comment">#指定序列长度</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">dataset</span>() :</span><br><span class="line">    df = pd.read_csv(<span class="string">&#x27;sh300.csv&#x27;</span>)</span><br><span class="line">    columns = df.columns</span><br><span class="line">    df_index = df[<span class="string">&#x27;datetime&#x27;</span>]<span class="comment">#获取日期，方便后面作图</span></span><br><span class="line">    df = df[[ <span class="string">&#x27;open&#x27;</span>, <span class="string">&#x27;close&#x27;</span>, <span class="string">&#x27;high&#x27;</span>, <span class="string">&#x27;low&#x27;</span>, <span class="string">&#x27;vol&#x27;</span>, <span class="string">&#x27;amount&#x27;</span>, <span class="string">&#x27;p_change&#x27;</span>]]</span><br><span class="line">    min_high, max_high = <span class="built_in">min</span>(df[<span class="string">&#x27;high&#x27;</span>]), <span class="built_in">max</span>(df[<span class="string">&#x27;high&#x27;</span>])<span class="comment">#保存标签的最大，最小值以便后续恢复真实值</span></span><br><span class="line">    df = df.apply(<span class="keyword">lambda</span> x : (x - <span class="built_in">min</span>(x)) / (<span class="built_in">max</span>(x) - <span class="built_in">min</span>(x)))<span class="comment">#将数据进行归一化</span></span><br><span class="line">    df1 = df[[ <span class="string">&#x27;open&#x27;</span>, <span class="string">&#x27;close&#x27;</span>, <span class="string">&#x27;low&#x27;</span>, <span class="string">&#x27;vol&#x27;</span>, <span class="string">&#x27;amount&#x27;</span>, <span class="string">&#x27;p_change&#x27;</span>]]</span><br><span class="line">    data = []</span><br><span class="line">    target = []</span><br><span class="line">    index = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(df.shape[<span class="number">0</span>] - TIME_STEP) :</span><br><span class="line">        data.append(df1.iloc[i : i + TIME_STEP].values)<span class="comment">#实现时间序列数据的提取</span></span><br><span class="line">        target.append(df[<span class="string">&#x27;high&#x27;</span>].iloc[i + TIME_STEP])<span class="comment">#保存今天的真实值，因为我们是用前n天来预测今天的最高值</span></span><br><span class="line">        index.append(df_index.iloc[i + TIME_STEP])</span><br><span class="line">    </span><br><span class="line">    target = torch.tensor(target, dtype = torch.float32)</span><br><span class="line">    data = torch.tensor(data, dtype = torch.float32)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> min_high, max_high, data, target, index</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Stock_dataset</span>(<span class="title class_ inherited__">Dataset</span>) :</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, data, target, model = <span class="string">&#x27;train&#x27;</span></span>) :</span><br><span class="line">        <span class="built_in">super</span>(Stock_dataset, self).__init__()</span><br><span class="line">        self.model = model</span><br><span class="line">        <span class="keyword">if</span> model == <span class="string">&#x27;train&#x27;</span> :</span><br><span class="line">            self.data = data[ : <span class="built_in">int</span>(data.shape[<span class="number">0</span>] * <span class="number">0.8</span>)]</span><br><span class="line">            self.target = target[ : <span class="built_in">int</span>(target.shape[<span class="number">0</span>] * <span class="number">0.8</span>)]</span><br><span class="line">        <span class="keyword">else</span> :</span><br><span class="line">            self.data = data[<span class="built_in">int</span>(data.shape[<span class="number">0</span>] * <span class="number">0.8</span>) : ]</span><br><span class="line">            self.target = target[<span class="built_in">int</span>(target.shape[<span class="number">0</span>] * <span class="number">0.8</span>) : ]</span><br><span class="line">         </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, item</span>) :</span><br><span class="line">        <span class="keyword">return</span> self.data[item], self.target[item]</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>) :</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">len</span>(self.data)</span><br><span class="line">    </span><br><span class="line">min_high, max_high, data, target, index = dataset()</span><br><span class="line"><span class="built_in">print</span>(target.shape, <span class="built_in">len</span>(index))</span><br><span class="line">train_data = Stock_dataset(data, target, model = <span class="string">&#x27;train&#x27;</span>)</span><br><span class="line">test_data = Stock_dataset(data, target, model = <span class="string">&#x27;test&#x27;</span>)</span><br><span class="line">test_index = index[<span class="built_in">int</span>(target.shape[<span class="number">0</span>] * <span class="number">0.8</span>) : ]</span><br><span class="line"></span><br><span class="line">train_loader = DataLoader(train_data, batch_size = <span class="number">64</span>, shuffle = <span class="literal">True</span>, drop_last = <span class="literal">False</span>)<span class="comment">#生成可迭代数据</span></span><br><span class="line">test_loader = DataLoader(test_data, batch_size = <span class="number">64</span>, shuffle = <span class="literal">False</span>, drop_last = <span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
-<center>
-
-
 <p><img src="https://img-blog.csdnimg.cn/5620c0833a484a4fb1499fc927f433b8.png" alt="在这里插入图片描述"></p>
 <p>​    </p>
 <p>构建网络，使用LSTM，后将LSTM网络的输出经过线性神经元进行输出。要注意的是LSTM输入和输出的隐含状态为（h， c），当将输出输入到linear网络时，只取最后一次TIME_STEP的输出。</p>
@@ -318,16 +312,10 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">TIME_STEP = <span class="number">5</span></span><br><span class="line">INPUT_SIZE = <span class="number">6</span></span><br><span class="line">HIDDEN_SIZE = <span class="number">64</span></span><br><span class="line">EPOCH = <span class="number">180</span></span><br><span class="line">model = LSTM(INPUT_SIZE = INPUT_SIZE, HIDDEN_SIZE = HIDDEN_SIZE).cuda()</span><br><span class="line">criterion = nn.MSELoss()</span><br><span class="line">optimizer = optim.Adam(model.parameters(), lr = <span class="number">0.001</span>)</span><br></pre></td></tr></table></figure>
 <p>训练，用Tensorboard可视化，关于 Tensorboard 的使用<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_53598445/article/details/121301078">点这里</a>。model 的输出是一个矩阵，为了计算loss准确所以要对输出进行降维</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">writer = SummaryWriter(log_dir = <span class="string">&#x27;logs&#x27;</span>)</span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(EPOCH) :</span><br><span class="line">    model.train()</span><br><span class="line">    train_loss = <span class="number">0.0</span></span><br><span class="line">    <span class="keyword">for</span> x, label <span class="keyword">in</span> train_loader :</span><br><span class="line">        x, label = x.cuda(), label.cuda()</span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        out = model(x)</span><br><span class="line">        loss = criterion(torch.squeeze(out), label)<span class="comment">#降维</span></span><br><span class="line">        loss.backward()</span><br><span class="line">        optimizer.step()</span><br><span class="line"><span class="comment">#         train_loss += loss.item()</span></span><br><span class="line"><span class="comment">#     print(f&#x27;train_loss : &#123;train_loss / len(train_loader.dataset) : 0.4f&#125;&#x27;)</span></span><br><span class="line">    writer.add_scalar(<span class="string">&#x27;sh300&#x27;</span>, loss, epoch)<span class="comment">#可视化</span></span><br></pre></td></tr></table></figure>
-<center>
-
-
-<p><img src="https://img-blog.csdnimg.cn/4b56fc5755a74737939144eaaa5fbaa4.PNG" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/4b56fc5755a74737939144eaaa5fbaa4.PNG#pic_center" alt="在这里插入图片描述"></p>
 <p>预测及可视化，在可视化中，为了更好的观察预测效果，我只选择了一百天进行可视化，且为了时间的有序，将它们进行逆序</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">model.<span class="built_in">eval</span>()</span><br><span class="line">pred = []</span><br><span class="line">test_target = []</span><br><span class="line"><span class="keyword">for</span> x, label <span class="keyword">in</span> test_loader :</span><br><span class="line">    x, label = x.cuda(), label.cuda()</span><br><span class="line">    out = model(x)</span><br><span class="line"><span class="comment">#     print(out)</span></span><br><span class="line">    test_target.append(label.detach().cpu())</span><br><span class="line">    pred.append(out.detach().cpu())</span><br><span class="line">test_target = torch.cat(test_target, dim = <span class="number">0</span>).numpy().squeeze()<span class="comment">#将各个batch的输出进行拼接，转成数组再进行降维</span></span><br><span class="line">pred = torch.cat(pred, dim = <span class="number">0</span>).numpy().squeeze()</span><br><span class="line"></span><br><span class="line">test_target = test_target * (max_high - min_high) + min_high<span class="comment">#还原原始的数据</span></span><br><span class="line">pred = pred * (max_high - min_high) + min_high</span><br><span class="line">test_index = np.array(test_index)</span><br><span class="line">plt.plot(test_index[ : <span class="number">101</span>][ : : -<span class="number">1</span>], test_target[ : <span class="number">101</span>][ : : -<span class="number">1</span>], <span class="string">&#x27;r&#x27;</span>, label = <span class="string">&#x27;test_target&#x27;</span>)</span><br><span class="line">plt.plot(test_index[ : <span class="number">101</span>][ : : -<span class="number">1</span>], pred[ : <span class="number">101</span>][ : : -<span class="number">1</span>], <span class="string">&#x27;b&#x27;</span>, label = <span class="string">&#x27;prediction&#x27;</span>)</span><br><span class="line">plt.legend(loc = <span class="string">&#x27;upper left&#x27;</span>)</span><br><span class="line">plt.xticks(np.arange(<span class="number">0</span>,<span class="number">101</span>,<span class="number">25</span>), [test_index[<span class="number">100</span>], test_index[<span class="number">75</span>], test_index[<span class="number">50</span>], test_index[<span class="number">25</span>], test_index[<span class="number">0</span>]])</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
-<center>
-
-
-<p><img src="https://img-blog.csdnimg.cn/7898c62257c64232a598b577ff4f3f74.png" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/7898c62257c64232a598b577ff4f3f74.png#pic_center" alt="在这里插入图片描述"></p>
 <p>看上去效果是非常好的。</p>
 
     </div>
@@ -339,8 +327,8 @@
       <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
-              <a href="/tags/LSTM/" rel="tag"># LSTM</a>
               <a href="/tags/PyTorch/" rel="tag"># PyTorch</a>
+              <a href="/tags/LSTM/" rel="tag"># LSTM</a>
           </div>
 
         
@@ -430,20 +418,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-count">57</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-count">53</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -497,13 +485,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">61k</span>
+    <span title="站点总字数">126k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">1:41</span>
+    <span title="站点阅读时长">3:29</span>
 </div>
 <!--
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动

@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言&amp;emsp;&amp;emsp;Hough变换是实现边缘检测的一种有效方法，其基本思想是将测量空间的一点变换到参量空间的一条曲线或曲面，而具有同一参量特征的点变换后在参量空间中相交，通过判断交点处的积累程度来完成特 征曲线的检测。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【OpenCv】霍夫直线检测">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/%E3%80%90OpenCv%E3%80%91%E9%9C%8D%E5%A4%AB%E7%9B%B4%E7%BA%BF%E6%A3%80%E6%B5%8B/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="前言&amp;emsp;&amp;emsp;Hough变换是实现边缘检测的一种有效方法，其基本思想是将测量空间的一点变换到参量空间的一条曲线或曲面，而具有同一参量特征的点变换后在参量空间中相交，通过判断交点处的积累程度来完成特 征曲线的检测。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/64100f724418433081bc664409610d9d.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/d8b534a8ef3543029459d03145af5e50.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_17,color_FFFFFF,t_70,g_se,x_16#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/7ac9ad092de04348a84be04a4d4c0b8e.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_17,color_FFFFFF,t_70,g_se,x_16#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/a220aa987f0e4e0698eedd3aa685e24d.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/f6320bded9244ea08fa7d461f27cc9b6.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/237a541294ca45d4bffba326725dc444.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_15,color_FFFFFF,t_70,g_se,x_16#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/26e7458220644cf6868d5efe41530bda.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_15,color_FFFFFF,t_70,g_se,x_16#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/379fb78303764ca59dfe1ac590c7c20e.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_10,color_FFFFFF,t_70,g_se,x_16#pic_center">
+<meta property="article:published_time" content="2022-06-05T10:55:55.000Z">
+<meta property="article:modified_time" content="2022-06-05T10:56:34.571Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="opencv">
+<meta property="article:tag" content="直线检测">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/64100f724418433081bc664409610d9d.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/%E3%80%90OpenCv%E3%80%91%E9%9C%8D%E5%A4%AB%E7%9B%B4%E7%BA%BF%E6%A3%80%E6%B5%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>【OpenCv】霍夫直线检测 | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">53</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">57</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E3%80%90OpenCv%E3%80%91%E9%9C%8D%E5%A4%AB%E7%9B%B4%E7%BA%BF%E6%A3%80%E6%B5%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【OpenCv】霍夫直线检测
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 18:55:55 / 修改时间：18:56:34" itemprop="dateCreated datePublished" datetime="2022-06-05T18:55:55+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E3%80%90OpenCv%E3%80%91%E9%9C%8D%E5%A4%AB%E7%9B%B4%E7%BA%BF%E6%A3%80%E6%B5%8B/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E3%80%90OpenCv%E3%80%91%E9%9C%8D%E5%A4%AB%E7%9B%B4%E7%BA%BF%E6%A3%80%E6%B5%8B/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>2.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;&emsp;Hough变换是实现边缘检测的一种有效方法，其基本思想是将测量空间的一点变换到参量空间的一条曲线或曲面，而具有同一参量特征的点变换后在参量空间中相交，通过判断交点处的积累程度来完成特 征曲线的检测。</p>
+<h1 id="1-原理"><a href="#1-原理" class="headerlink" title="1    原理"></a>1    原理</h1><p>&emsp;&emsp;保罗·哈夫于1962年提出了Hough变换法，并申请了专利。该方法 将图像空间中的检测问题转换到参数空间，通过在参数空间里进行简单的累加统计完成检测任务，并用大多数边界点满足的某种参数形式来描述图像的区域边界曲线。这种方法对于被噪声干扰或间断区域边界的图像具有良好的容错性。Hough变换最初主要应用于检测图像空间中的直线，最早的直线变换是在两个笛卡儿坐标系之间进行的，这给检测斜率无穷大的直线带来了困难。1972年，杜达（Duda）将变换形式进行了转化，将数据空间中的点变换为$ρ-θ$参数空间中的曲线，改善了其检测直线的性能。该方法被不断地研究和发展，在图像分析、计算机视觉、模式识别等领域得到了非常广泛的应用，已经成为模式识别的一种重要工具。<br>&emsp;&emsp;直线的方程可由下面式子表示：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&y = kx + b
+\end{aligned}</script><p>其中，$k$和$b$分别是斜率和截距。现在将$y=kx+b$转换成$b=-xk+y$，因为$k$和$b$都是确定值所以在$x-y$平面上的一条线在$k-b$平面上代表一个点。<br><img src="https://img-blog.csdnimg.cn/64100f724418433081bc664409610d9d.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>反过来在$k-b$平面上的一条直线$b=-xk+y$在$x-y$平面上代表一个点，因为此时$x$和$y$在直线$b=-xk+y$中分别是斜率和截距为定值。<img src="https://img-blog.csdnimg.cn/d8b534a8ef3543029459d03145af5e50.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_17,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>其次是过$x-y$平面上的某一点（$x_0$，$y_0$） 的所有直线的参数都满足方程$y_0=kx_0+b$。即过$x-y$平面上点（$x_0$，$y_0$）的一族直线在参数$k-b$平面上对应于一条直线。同样的道理将该族直线$y_0=kx_0+b$转变到$k-b$平面上有$b=-x_0k+y_0$，此时斜率($-x_0$)和斜距($y_0$)固定，$b$为$k$的函数，所以在$k-b$平面上对应于一条直线。<br><img src="https://img-blog.csdnimg.cn/7ac9ad092de04348a84be04a4d4c0b8e.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_17,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>有了上面的知识，再来看看在$x-y$平面上三点共线是怎么等效到到$k-b$平面的。<img src="https://img-blog.csdnimg.cn/a220aa987f0e4e0698eedd3aa685e24d.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>可以看出如果笛卡尔坐标系的点共线，这些点在霍夫空间对应的直线交于一点：这也是必然，共线只有一种取值可能。再来考虑特殊情况，当三点共线恰好垂直$x$轴呢？此时直线的斜率$k$为无穷大，$y=kx+b$形式的直线方程无法表示$x=c$（$c$为常数）形式的直线。所以在实际应用中，一般采用距离和角度参数方程来表示如下：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&ρ=xcosθ+ysinθ
+\end{aligned}</script><p>其中，$ρ$为原点到直线的垂直距离，$θ$为$ρ$与$x$轴的夹角，转换过程如下，注意的是这个并不是极坐标表达式，只是形式写起来跟极坐标的形式是一样的。这是因为$ρ$和$θ$都是固定的，对应唯一的直线，而如果是极坐标，那其他对的$ρ$和$θ$也会满足这一直线。<br><img src="https://img-blog.csdnimg.cn/f6320bded9244ea08fa7d461f27cc9b6.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>&emsp;&emsp;根据$ρ=xcosθ+ysinθ$，直线上不同的点在参数空间中被变换为一族相交于$p$点的正弦曲线，因此可以通过检测参数空间中的局部最大值$p$点，来实现$x-y$坐标系中直线的检测。<img src="https://img-blog.csdnimg.cn/237a541294ca45d4bffba326725dc444.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_15,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="2-算法流程"><a href="#2-算法流程" class="headerlink" title="2    算法流程"></a>2    算法流程</h1><p>①将参数空间量化成$m×n$（$m$为$θ$的等份数，$n$为$ρ$的等份数）个单元，并设置累加器矩阵$Q[m×n]$；<br>②给参数空间中的每个单元分配一个累加器$Q$($θ_i$，$p_j$)（$0&lt;i&lt;m-<br>1$， $0&lt;j&lt;n-1$），并把累加器的初始值置为零；<br>③将直角坐标系中的各点（$x_k$，$y_k$）（$k=1$，$2$，…，$s$，$s$为直角坐 标系中的点数）代入式$ρ=xcosθ+ysinθ$，然后将$θ_0～θ_{m-1}$也都代入其中，分别计算出相应的值$p_j$；<br>④在参数空间中，找到每一个（$θ_i$，$p_j$）所对应的单元，并将该 单元的累加器加1，即$Q$($θ_i$，$p_j$) $=$ $Q$($θ_i$，$p_j$) $+1$，对该单元进行一次投票；<br>⑤待$x-y$坐标系中的所有点都进行运算之后，检查参数空间的累加 器，必有一个出现最大值，这个累加器对应单元的参数值作为所求直线的参数输出。当然你可以指定一个阈值，就是投票数达到多少就可以认定为一条直线，这样就可以一次性输出多条直线。<br>例子：<img src="https://img-blog.csdnimg.cn/26e7458220644cf6868d5efe41530bda.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_15,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>将$r$($p$)分成了9份，区间是[0，9]，$r$一定是取有效值，因为我们的图像的最长直线就是其对角线；然后将$θ$以90°为步长分成了4个区间，当然你可以分成你想要的$θ$区间。然后开始遍历 <strong><em>Canny</em></strong> 图像(很关键，我们在利用霍夫变换进行直线检测时，要先对图像进行边缘检测)。<br><img src="https://img-blog.csdnimg.cn/379fb78303764ca59dfe1ac590c7c20e.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_10,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>遇到黑点直接跳过，我们只关注白点。然后将每个白点的坐标($x_0$，$y_0$)和四个角度$θ$($θ_1=90°$，$θ_2=180°$，$θ_3=270°$，$θ_4=360°$)带入到$r=xcosθ+ysinθ$中，得到对应的$r_1$，$r_2$，$r_3$，$r_4$，根据这些$r$值在对应区间进行投票。不断重复上述步骤直至图像遍历完毕。就可以根据$r$的投票数来确定直线。</p>
+<h1 id="3-优缺点"><a href="#3-优缺点" class="headerlink" title="3    优缺点"></a>3    优缺点</h1><p>&emsp;&emsp;霍夫变换是一种全局性的检测方法，具有极佳的抗干扰能力，可 以很好地抑制数据点集中存在的干扰，同时还可以将数据点集拟合成多条直线。但是，霍夫变换的精度不容易控制，参数的微变就可能影响效果的大幅度变化，因此，不适合对拟合直线的精度要求较高的实际问题。同时，它所要求的巨大计算量使其处理速度很慢，从而限制了它在实时性要求很高的领域的应用</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/opencv/" rel="tag"># opencv</a>
+              <a href="/tags/%E7%9B%B4%E7%BA%BF%E6%A3%80%E6%B5%8B/" rel="tag"># 直线检测</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E3%80%90Opencv%E3%80%91%E5%9F%BA%E4%BA%8E%E8%89%B2%E5%B7%AE%E7%9A%84%E7%AE%80%E5%8D%95%E7%9B%AE%E6%A0%87%E6%8F%90%E5%8F%96/" rel="prev" title="【Opencv】基于色差的简单目标提取">
+      <i class="fa fa-chevron-left"></i> 【Opencv】基于色差的简单目标提取
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E3%80%90OpenCv%E3%80%91%E6%A3%80%E6%B5%8B%E9%BB%91%E7%99%BD%E6%A3%8B/" rel="next" title="【OpenCv】检测黑白棋">
+      【OpenCv】检测黑白棋 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E5%8E%9F%E7%90%86"><span class="nav-text">1    原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E7%AE%97%E6%B3%95%E6%B5%81%E7%A8%8B"><span class="nav-text">2    算法流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-text">3    优缺点</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">53</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">126k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:29</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

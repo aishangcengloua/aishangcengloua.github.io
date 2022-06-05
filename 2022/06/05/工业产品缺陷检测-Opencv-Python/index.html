@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="问题描述如下图所示为某种用于试剂检验的产品，需要利用机器视觉的方法检测产品的缺陷。 本设计的目的是综合运用图像处理的知识，检测产品是否有严重缺陷。 在检测算法之前， 作为图像的预处理， 检测和定位产品的外轮廓，矫正产品的姿态，对于后续的算法处理有着重要的意义。数据为真实的工业产品成像，分为放在OK，NG目录下。数据提取地址链接 提取码：s3jl，OK目录下的图像没有缺陷，NG目录是有缺陷的产品，包">
+<meta property="og:type" content="article">
+<meta property="og:title" content="工业产品缺陷检测 Opencv+Python">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/%E5%B7%A5%E4%B8%9A%E4%BA%A7%E5%93%81%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B-Opencv-Python/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="问题描述如下图所示为某种用于试剂检验的产品，需要利用机器视觉的方法检测产品的缺陷。 本设计的目的是综合运用图像处理的知识，检测产品是否有严重缺陷。 在检测算法之前， 作为图像的预处理， 检测和定位产品的外轮廓，矫正产品的姿态，对于后续的算法处理有着重要的意义。数据为真实的工业产品成像，分为放在OK，NG目录下。数据提取地址链接 提取码：s3jl，OK目录下的图像没有缺陷，NG目录是有缺陷的产品，包">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/7f7ab2467c43495ba7a8053cdd9d6425.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/1544c7a71bb245bd8010516ba5210ed0.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/b3479076cd0f4f93bfcffbaf48e9b694.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/aaf8de3173a64ed194f7333953bb6b5d.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/30602c4df3ff479d8b243e9f6c967370.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/0aadf0e58c134c429ac30b1b9688f46a.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/3386e735ba5d4419a84930e977062d7d.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/c0afd510ad9f42ce96927cff869bc716.png#pic_center">
+<meta property="article:published_time" content="2022-06-05T09:58:20.000Z">
+<meta property="article:modified_time" content="2022-06-05T10:37:03.353Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="机器视觉">
+<meta property="article:tag" content="opencv">
+<meta property="article:tag" content="产品缺陷检测">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/7f7ab2467c43495ba7a8053cdd9d6425.png#pic_center">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/%E5%B7%A5%E4%B8%9A%E4%BA%A7%E5%93%81%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B-Opencv-Python/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>工业产品缺陷检测 Opencv+Python | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">53</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">57</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E5%B7%A5%E4%B8%9A%E4%BA%A7%E5%93%81%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B-Opencv-Python/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          工业产品缺陷检测 Opencv+Python
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 17:58:20 / 修改时间：18:37:03" itemprop="dateCreated datePublished" datetime="2022-06-05T17:58:20+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%9C%BA%E5%99%A8%E8%A7%86%E8%A7%89/" itemprop="url" rel="index"><span itemprop="name">机器视觉</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E5%B7%A5%E4%B8%9A%E4%BA%A7%E5%93%81%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B-Opencv-Python/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E5%B7%A5%E4%B8%9A%E4%BA%A7%E5%93%81%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B-Opencv-Python/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>2.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><p>如下图所示为某种用于试剂检验的产品，需要利用机器视觉的方法检测产品的缺陷。 本设计的目的是综合运用图像处理的知识，检测产品是否有严重缺陷。 在检测算法之前， 作为图像的预处理， 检测和定位产品的外轮廓，矫正产品的姿态，对于后续的算法处理有着重要的意义。<br><img src="https://img-blog.csdnimg.cn/7f7ab2467c43495ba7a8053cdd9d6425.png#pic_center" alt="在这里插入图片描述"><br>数据为真实的工业产品成像，分为放在OK，NG目录下。数据提取地址<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1mfA0OoOSo6SAmioCol5uSw">链接</a> 提取码：s3jl，OK目录下的图像没有缺陷，NG目录是有缺陷的产品，包括如下两种缺陷：<br><img src="https://img-blog.csdnimg.cn/1544c7a71bb245bd8010516ba5210ed0.png#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h1><h2 id="1-介绍"><a href="#1-介绍" class="headerlink" title="1    介绍"></a>1    介绍</h2><p>&emsp;&emsp;随着机器学习的发展,对于工业产品的缺陷检测,深度网络模型检测缺陷的准确率远远高于传统图像处理算法。但是由于成本过高和深度学习的不可解释性,使用传统图像处理方法检测产品缺陷检测在工业上仍占着很大一部分比例。本次课程设计主要是针对磁盘的两种缺陷:胶带和大气泡进行检测。</p>
+<h2 id="2-方法"><a href="#2-方法" class="headerlink" title="2    方法"></a>2    方法</h2><h3 id="2-1-产品水平矫正"><a href="#2-1-产品水平矫正" class="headerlink" title="2.1    产品水平矫正"></a>2.1    产品水平矫正</h3><p>&emsp;&emsp;在本次实验中,因图片过大,首先将图片大小重塑至700×700×3。其次要计算产品的倾斜角度,本实验使用的方法是霍夫直线检测算法,该算法通过一种投票算法检测具有特定形状的物体,该过程在一个参数空间中通过计算累计结果的局部最大值得到一个符合该特定形状的集合作为霍夫变换结果,该方法可以进行圆,直线,椭圆等形状的检测。在检测过程中发现在产品上下有一大部分的区域会影响到目标区域的检测,因此将图片裁剪至350×700×3。在检测完直线之后,分别计算每条直线的斜率大小,若两条直线斜率之差小于0.01可近似为一条直线,以相同斜率最多的直线为最终的旋转参考直线。根据目标直线斜率计算倾斜角度,最后对图片进行旋转矫正,结果如图1所示。</p>
+<p><img src="https://img-blog.csdnimg.cn/b3479076cd0f4f93bfcffbaf48e9b694.png#pic_center" alt="在这里插入图片描述"></p>
+<h3 id="2-2-定位产品的外轮廓"><a href="#2-2-定位产品的外轮廓" class="headerlink" title="2.2    定位产品的外轮廓"></a>2.2    定位产品的外轮廓</h3><p>&emsp;&emsp;先对矫正后的图片进行5×5卷积核的高斯滤波,目的是去掉一些噪声点。其次是对滤波后的图片进行Canny算子边缘检测,查找轮廓之前要进行边缘检测是因为cv2.findContours的图片参数要是Canny算子描述的图片。然后进行卷积核为5×5单位阵卷积核的膨胀、闭操作。最后使用cv2.findContours函数对图片进行轮廓检测如图2所示。</p>
+<p><img src="https://img-blog.csdnimg.cn/aaf8de3173a64ed194f7333953bb6b5d.png#pic_center" alt="在这里插入图片描述"></p>
+<h3 id="2-3-产品对齐"><a href="#2-3-产品对齐" class="headerlink" title="2.3    产品对齐"></a>2.3    产品对齐</h3><p>&emsp;&emsp;本实验的对齐是以无缺陷的图片为模板而进行的。我们在上述步骤中得到了OK图片和NG图片的多个外轮廓,所以我们要先筛选出产品的外轮廓。本实验首先采用的方法是求得每个轮廓的最小外接矩形面积,返回最大的最小外接矩形,随即将NG图片大小重塑到OK图片大小,这一步的目的是为了下一步对产品进行多边拟合时有更好的效果。大小匹配完成之后,再对所得图片进行轮廓查找,将所得的轮廓进行筛选后对产品进行多边拟合最终得到四边形的四个顶点。上述步骤所得的四个顶点不能直接用于产品图片对齐,这是因为对齐时四个顶点要由上到下、由左到右的顺序进行排列。因此我们要先将四个顶点进行排列,第一、四个点对列求和后的最小最大的下标获得,第二、三个点由对列求方差后的最小最大下标获得。排列完成之后,我们要将所得点与模板点进行匹配得到变换矩阵m,这里使用的函数是cv2.getPerspectiveTransform,最后使用cv2.warpPerspective函数结合变换矩阵对产品进行对齐,效果如图3所示。从图3我们可以看出产品此时并不是十分的水平,原因是产品的顶点并不是尖点,所以在进行多边形拟合之后上下边并不平行。</p>
+<p><img src="https://img-blog.csdnimg.cn/30602c4df3ff479d8b243e9f6c967370.png#pic_center" alt="在这里插入图片描述"></p>
+<h3 id="2-4-缺陷检测"><a href="#2-4-缺陷检测" class="headerlink" title="2.4    缺陷检测"></a>2.4    缺陷检测</h3><p>&emsp;&emsp;产品检测是以OK图片为模板,用两种NG图片分别与OK图片进行对比,描述出缺陷之处。首先将对齐好的OK和NG图片进行高斯滤波，卷积核大小为3×3。再对图片进行闭操作,卷积核为3×3的单位阵,迭代次数为1。然后对图片进行Canny算子边缘检测,最后对两张图片进行轮廓查找,如图4。</p>
+<p><img src="https://img-blog.csdnimg.cn/0aadf0e58c134c429ac30b1b9688f46a.png#pic_center" alt="在这里插入图片描述"><br>在获得OK和NG图片的轮廓图之后,就可以用来缺陷检测。因为提供的产品图像之间可能存在旋转、平移、微小的缩放,所以我们不能直接将OK图减去NG图得到缺陷。本次实验我的思路是:因为旋转、平移、微小之间的差异属于几何特征,所以我使用Hu矩对两张图片的轮廓进行比较。具体过程如下:首先对NG图的轮廓进行迭代,用NG图的轮廓与OK图进行对比,得到一系列的相似度,如果这一系列相似度的最小值大于我所设的阈值(本次实验设置为0.45),那么就可以说明NG图的这个轮廓是缺陷处的轮廓。然后在NG图上绘出这个轮廓如图5。最后统计缺陷轮廓的个数(本实验设置为30),当大于某个阈值时那么就可以说明这张图片就是有缺陷的图片,之所以轮廓个数大于某一值才能认定为缺陷图片,是因为可能出现误检地情况, 如图5的喇叭处就是误保留的轮廓再者就是商标和英文字符串是我们不需要关心的但也被检测在内。</p>
+<p><img src="https://img-blog.csdnimg.cn/3386e735ba5d4419a84930e977062d7d.png#pic_center" alt="在这里插入图片描述"></p>
+<h2 id="3-实验结果及分析"><a href="#3-实验结果及分析" class="headerlink" title="3    实验结果及分析"></a>3    实验结果及分析</h2><p>&emsp;&emsp;基于上述的缺陷检测的方法分别对OK图片和两种NG图片进行检测,结果如表1所示。由表1可知本实验的检测方法在OK图上的正确率只有0.87,原因可能是受光照的影响而导致图片在边缘检测时边缘差异变大而导致轮廓受影响较大;在胶带缺陷上正确率是0.80,原因是缺陷主要集中在产品中间的白色宽带上,使得轮廓的检测并没有很多(小于所设的阈值);而检测方法在大气泡缺陷的图片上正确率有1.00,这是因为大气泡缺陷形成了大量”离散块”,使得检测到的轮廓很多,轮廓个数很容易超过阈值。</p>
+<p><img src="https://img-blog.csdnimg.cn/c0afd510ad9f42ce96927cff869bc716.png#pic_center" alt="在这里插入图片描述"></p>
+<h2 id="4-讨论"><a href="#4-讨论" class="headerlink" title="4    讨论"></a>4    讨论</h2><p>&emsp;&emsp;本次实验主要是针对工业产品的缺陷进行检测,我主要是利用了Hu矩描述图片的不变性来判断轮廓的所属类型来达到检测缺陷的目的,只能是粗略地定位,因为绝大部分的缺陷轮廓都是曲线,如果需要更加精确的定位,可能需要运用特征描述子进行特征匹配来实现。其次就是我的方法的误检地区域很多,特别是在图片的喇叭部分。总的来说,检测方法不是很理想,还需要做更多的尝试来达到精确定位缺陷的目标。<br><strong>代码</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cv2 <span class="keyword">as</span> cv </span><br><span class="line"><span class="keyword">import</span> math</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> os </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Horizontal_correction</span>(<span class="params">path</span>) :</span><br><span class="line">    img = cv.imread(path, cv.IMREAD_COLOR)</span><br><span class="line">    img = cv.resize(img, (<span class="number">700</span>, <span class="number">700</span>))</span><br><span class="line">    img = img[<span class="number">300</span> : <span class="number">650</span>]</span><br><span class="line">    gimg = cv.cvtColor(img, cv.COLOR_BGR2GRAY)</span><br><span class="line">    canny = cv.Canny(gimg, <span class="number">70</span>, <span class="number">150</span>)</span><br><span class="line">    lines = cv.HoughLines(canny, <span class="number">1</span>, np.pi / <span class="number">180</span>, <span class="number">200</span>)</span><br><span class="line">    lines = np.array(lines)</span><br><span class="line">    angles = []</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> lines:</span><br><span class="line">        <span class="keyword">for</span> rho, theta <span class="keyword">in</span> line :</span><br><span class="line">            a = np.cos(theta)</span><br><span class="line">            b = np.sin(theta)</span><br><span class="line"></span><br><span class="line">            x0 = rho * a</span><br><span class="line">            y0 = rho * b</span><br><span class="line"></span><br><span class="line">            x1 = <span class="built_in">int</span>(x0 + <span class="number">1000</span> * (-b))</span><br><span class="line">            y1 = <span class="built_in">int</span>(y0 + <span class="number">1000</span> * a)</span><br><span class="line">            x2 = <span class="built_in">int</span>(x0 - <span class="number">1000</span> * (-b))</span><br><span class="line">            y2 = <span class="built_in">int</span>(y0 - <span class="number">1000</span> * a)</span><br><span class="line"></span><br><span class="line"><span class="comment">#             cv.line(img, (x1, y1), (x2, y2), (0, 0, 255), 2)</span></span><br><span class="line"></span><br><span class="line">            dy = y2 - y1</span><br><span class="line">            dx = x2 - x1</span><br><span class="line">            angle = math.atan2(dy, dx) * <span class="number">180</span> / math.pi</span><br><span class="line">            angles.append(angle)</span><br><span class="line"></span><br><span class="line">    angles = <span class="built_in">sorted</span>(angles, key = <span class="keyword">lambda</span> x : x)</span><br><span class="line">    best_angle = <span class="number">0</span></span><br><span class="line">    angles_temp = []</span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> i &lt;= <span class="built_in">len</span>(angles) - <span class="number">2</span> :</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(i, <span class="built_in">len</span>(angles)) :</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">abs</span>(angles[j] - angles[i]) &lt; <span class="number">1e-2</span> :</span><br><span class="line">                <span class="keyword">if</span> j == <span class="built_in">len</span>(angles) - <span class="number">1</span> :</span><br><span class="line">                    angles_temp.append(angles[i : j + <span class="number">1</span>])</span><br><span class="line">                    i = j</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">            <span class="keyword">else</span> :</span><br><span class="line">                angles_temp.append(angles[i : j])</span><br><span class="line">                i = j</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">    cnt = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i, lst <span class="keyword">in</span> <span class="built_in">enumerate</span>(angles_temp) :</span><br><span class="line">            <span class="keyword">if</span> cnt &lt; <span class="built_in">len</span>(lst) :</span><br><span class="line">                cnt = <span class="built_in">len</span>(lst)</span><br><span class="line">                best_angle = angles_temp[i][<span class="number">0</span>]</span><br><span class="line">        </span><br><span class="line">    RotateMatrix = cv.getRotationMatrix2D((img.shape[<span class="number">1</span>] / <span class="number">2</span>, img.shape[<span class="number">0</span>] / <span class="number">2</span>), best_angle, <span class="number">1</span>)</span><br><span class="line">    RotImg = cv.warpAffine(img, RotateMatrix, (img.shape[<span class="number">1</span>], img.shape[<span class="number">0</span>]))</span><br><span class="line"></span><br><span class="line"><span class="comment">#     concatenate = np.concatenate((img, RotImg), axis = 1)</span></span><br><span class="line"><span class="comment">#     print(RotImg.shape, img.shape)</span></span><br><span class="line"><span class="comment">#     print(angles)</span></span><br><span class="line"><span class="comment">#     cv.imshow(&#x27;concatenate&#x27;, concatenate)</span></span><br><span class="line"><span class="comment">#     cv.waitKey(0)</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> RotImg</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Rect</span>(<span class="params">contours</span>) :</span><br><span class="line">    areaInitial = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(contours)) :</span><br><span class="line">        contour = contours[i].squeeze()</span><br><span class="line">        min_x, min_y = np.<span class="built_in">min</span>(contour, axis = <span class="number">0</span>)</span><br><span class="line">        max_x, max_y = np.<span class="built_in">max</span>(contour, axis = <span class="number">0</span>)</span><br><span class="line"><span class="comment">#         cv.rectangle(imgGray, (min_x, min_y), (max_x, max_y), color = (0, 0, 255))</span></span><br><span class="line">        area = (max_x - min_x) * (max_y - min_y)</span><br><span class="line">        <span class="keyword">if</span> area &gt; areaInitial :</span><br><span class="line">            areaInitial = area</span><br><span class="line">            rectPoint = [min_y, min_x, max_y, max_x]</span><br><span class="line">    <span class="keyword">return</span> rectPoint</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Biggest</span>(<span class="params">contours</span>) :</span><br><span class="line">    biggest = np.array([])</span><br><span class="line">    max_Area = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> contour <span class="keyword">in</span> contours :</span><br><span class="line">        area = cv.contourArea(contour)</span><br><span class="line">        <span class="keyword">if</span> area &gt; <span class="number">5000</span>:</span><br><span class="line">            C = cv.arcLength(contour, <span class="literal">True</span>)</span><br><span class="line">            approx = cv.approxPolyDP(contour, <span class="number">0.02</span> * C, <span class="literal">True</span>)</span><br><span class="line">            <span class="keyword">if</span> area &gt; max_Area <span class="keyword">and</span> <span class="built_in">len</span>(approx) == <span class="number">4</span>:</span><br><span class="line">                biggest = approx</span><br><span class="line">                max_Area = area</span><br><span class="line">    <span class="keyword">return</span> biggest</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">FindContours</span>(<span class="params">img</span>) :</span><br><span class="line">    imgGray = img.copy()</span><br><span class="line">    imgBlur = cv.GaussianBlur(imgGray, (<span class="number">5</span>, <span class="number">5</span>), <span class="number">1</span>)</span><br><span class="line">    imgCanny = cv.Canny(imgBlur, <span class="number">100</span>, <span class="number">200</span>)</span><br><span class="line">    kernel = np.ones((<span class="number">5</span>, <span class="number">5</span>))</span><br><span class="line">    imgDilate = cv.dilate(imgCanny, kernel, iterations = <span class="number">2</span>)</span><br><span class="line">    imgErode = cv.erode(imgDilate, kernel, iterations = <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    contours, hierarchy = cv.findContours(imgErode, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)</span><br><span class="line"><span class="comment">#     cv.drawContours(imgGray, contours, -1, (0, 0, 255), 2)</span></span><br><span class="line"><span class="comment">#     cv.imshow(&#x27;imgGray&#x27;, imgGray)</span></span><br><span class="line"><span class="comment">#     cv.waitKey(0)</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> contours</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Reorder</span>(<span class="params">points</span>):</span><br><span class="line">    points = points.reshape((<span class="number">4</span>, <span class="number">2</span>))</span><br><span class="line">    Newpoints = np.zeros((<span class="number">4</span>, <span class="number">2</span>), dtype=np.int32)</span><br><span class="line">    xsum = np.<span class="built_in">sum</span>(points, axis = <span class="number">1</span>)</span><br><span class="line">    xdiff = np.diff(points, axis = <span class="number">1</span>)</span><br><span class="line">    Newpoints[<span class="number">0</span>] = points[np.argmin(xsum)]</span><br><span class="line">    Newpoints[<span class="number">3</span>] = points[np.argmax(xsum)]</span><br><span class="line">    Newpoints[<span class="number">1</span>] = points[np.argmin(xdiff)]</span><br><span class="line">    Newpoints[<span class="number">2</span>] = points[np.argmax(xdiff)]</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> np.float32(Newpoints)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">ImageAlignment</span>(<span class="params">img1, img2</span>) :</span><br><span class="line">    contours1  = FindContours(img1)</span><br><span class="line">    contours2 = FindContours(img2)</span><br><span class="line">    </span><br><span class="line">    rectPoint1 = Rect(contours1)</span><br><span class="line">    rectPoint2 = Rect(contours2)</span><br><span class="line">    img1 = img1[rectPoint1[<span class="number">0</span>] : rectPoint1[<span class="number">2</span>], rectPoint1[<span class="number">1</span>] : rectPoint1[<span class="number">3</span>]]</span><br><span class="line">    img2 = img2[rectPoint2[<span class="number">0</span>] : rectPoint2[<span class="number">2</span>], rectPoint2[<span class="number">1</span>] : rectPoint2[<span class="number">3</span>]]</span><br><span class="line">    img2 = cv.resize(img2, (img1.shape[<span class="number">1</span>], img1.shape[<span class="number">0</span>]), cv.INTER_CUBIC)</span><br><span class="line">    </span><br><span class="line">    contours1 = FindContours(img1)</span><br><span class="line">    contours2 = FindContours(img2)</span><br><span class="line">    </span><br><span class="line">    targetAreaPoint1 = Biggest(contours1)</span><br><span class="line">    targetAreaPoint2 = Biggest(contours2)</span><br><span class="line">    pts1 = np.float32(Reorder(targetAreaPoint1))</span><br><span class="line">    pts2 = np.float32(Reorder(targetAreaPoint2))</span><br><span class="line">    pts = np.float32([[<span class="number">0</span>, <span class="number">0</span>], [img1.shape[<span class="number">1</span>], <span class="number">0</span>], [<span class="number">0</span>, img1.shape[<span class="number">0</span>]], [img1.shape[<span class="number">1</span>], img1.shape[<span class="number">0</span>]]])</span><br><span class="line">    </span><br><span class="line">    RotateMatrix1 = cv.getPerspectiveTransform(pts1, pts)</span><br><span class="line">    RotateMatrix2 = cv.getPerspectiveTransform(pts2, pts)</span><br><span class="line"></span><br><span class="line">    out_img1 = cv.warpPerspective(img1, RotateMatrix1, (img1.shape[<span class="number">1</span>], img1.shape[<span class="number">0</span>]))</span><br><span class="line">    out_img2 = cv.warpPerspective(img2, RotateMatrix2, (img1.shape[<span class="number">1</span>], img1.shape[<span class="number">0</span>]))</span><br><span class="line"><span class="comment">#     cv.imshow(&#x27;out_img1&#x27;, out_img1)</span></span><br><span class="line"><span class="comment">#     cv.imshow(&#x27;out_img2&#x27;, out_img2)</span></span><br><span class="line"><span class="comment">#     concatenate = np.concatenate((out_img1, out_img2), axis = 1)</span></span><br><span class="line"><span class="comment">#     cv.imshow(&#x27;concatenate&#x27;, concatenate)</span></span><br><span class="line"><span class="comment">#     cv.imshow(&#x27;img1&#x27;, img1)</span></span><br><span class="line"><span class="comment">#     cv.imshow(&#x27;img2&#x27;, img2)</span></span><br><span class="line"><span class="comment">#     cv.waitKey(0)</span></span><br><span class="line">    <span class="keyword">return</span> out_img1, out_img2</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Detect</span>(<span class="params">img1, img2</span>) :</span><br><span class="line">    cimg1, cimg2 = img1.copy(), img2.copy()</span><br><span class="line">    cimg1 = cv.cvtColor(cimg1, cv.COLOR_BGR2GRAY)</span><br><span class="line">    cimg2 = cv.cvtColor(cimg2, cv.COLOR_BGR2GRAY)</span><br><span class="line">    imgBlur1 = cv.GaussianBlur(cimg1, (<span class="number">3</span>, <span class="number">3</span>), <span class="number">0</span>)</span><br><span class="line">    imgBlur2 = cv.GaussianBlur(cimg2, (<span class="number">3</span>, <span class="number">3</span>), <span class="number">0</span>)</span><br><span class="line">    kernel = np.ones((<span class="number">3</span>, <span class="number">3</span>))</span><br><span class="line">    imgErode1 = cv.erode(imgBlur1, kernel, iterations = <span class="number">1</span>)</span><br><span class="line">    imgErode2 = cv.erode(imgBlur2, kernel, iterations = <span class="number">1</span>)</span><br><span class="line"><span class="comment">#     ret1, imgThresh1 = cv.threshold(imgErode1, 100, 255, cv.THRESH_BINARY)</span></span><br><span class="line"><span class="comment">#     ret2, imgThresh2 = cv.threshold(imgErode2, 100, 255, cv.THRESH_BINARY)</span></span><br><span class="line">    </span><br><span class="line">    imgCanny1 = cv.Canny(imgErode1, <span class="number">70</span>, <span class="number">120</span>)</span><br><span class="line">    imgCanny2 = cv.Canny(imgErode2, <span class="number">70</span>, <span class="number">120</span>)</span><br><span class="line">    </span><br><span class="line">    contours1, hierarchy1 = cv.findContours(imgCanny1, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)</span><br><span class="line">    contours2, hierarchy2 = cv.findContours(imgCanny2, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)</span><br><span class="line">    </span><br><span class="line">    contoursNum = <span class="number">0</span></span><br><span class="line"><span class="comment">#     cv.drawContours(img1, contours1, -1, (0, 255, 0), 1)</span></span><br><span class="line"><span class="comment">#     cv.drawContours(img2, contours2, -1, (0, 0, 255), 1)</span></span><br><span class="line"><span class="comment">#     concatenate = np.concatenate((img1, img2), axis = 1)</span></span><br><span class="line"><span class="comment">#     cv.imshow(&#x27;concatenate&#x27;, concatenate)</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(contours2)) :</span><br><span class="line">        defects = []</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(contours1)) :</span><br><span class="line">            similiarity = cv.matchShapes(contours2[i], contours1[j], cv.CONTOURS_MATCH_I1, <span class="number">0</span>)</span><br><span class="line">            defects.append(similiarity)</span><br><span class="line">        min_similarity = <span class="built_in">min</span>(defects)</span><br><span class="line">        <span class="keyword">if</span> min_similarity &gt; <span class="number">0.45</span> :</span><br><span class="line">            cv.drawContours(img2, contours2, i, (<span class="number">0</span>, <span class="number">255</span>, <span class="number">0</span>), <span class="number">1</span>)</span><br><span class="line">            contoursNum += <span class="number">1</span> </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> contoursNum &gt; <span class="number">30</span> :</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;Approximately defect(s) detected&#x27;</span>)</span><br><span class="line">    <span class="keyword">else</span> :</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;Unable to detect defects&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#     cv.imshow(&#x27;canny1&#x27;, img1)</span></span><br><span class="line">    cv.imshow(<span class="string">&#x27;canny2&#x27;</span>, img2)</span><br><span class="line">    cv.waitKey(<span class="number">0</span>)</span><br><span class="line">    </span><br><span class="line">daqipao_path = <span class="built_in">list</span>(<span class="built_in">sorted</span>(os.listdir(<span class="string">&#x27;opencv_course_design_data/NG/daqipao/&#x27;</span>)))</span><br><span class="line">jiaodai_path = <span class="built_in">list</span>(<span class="built_in">sorted</span>(os.listdir(<span class="string">&#x27;opencv_course_design_data/NG/jiaodai/&#x27;</span>)))</span><br><span class="line">OK_path = <span class="built_in">list</span>(<span class="built_in">sorted</span>(os.listdir(<span class="string">&#x27;opencv_course_design_data/OK/&#x27;</span>)))</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> path <span class="keyword">in</span> daqipao_path :</span><br><span class="line">    RotImg1 = RotImg2 = Horizontal_correction(<span class="string">&#x27;opencv_course_design_data/OK/OK_0032.bmp&#x27;</span>)</span><br><span class="line">    RotImg2 = Horizontal_correction(os.path.join(<span class="string">&#x27;opencv_course_design_data/NG/daqipao&#x27;</span>, path))</span><br><span class="line">    imgAlignment1, imgAlignment2 = ImageAlignment(RotImg1, RotImg2)</span><br><span class="line">    Detect(imgAlignment1, imgAlignment2)</span><br><span class="line"><span class="comment"># for path in jiaodai_path :</span></span><br><span class="line"><span class="comment">#     RotImg1 = RotImg2 = Horizontal_correction(&#x27;opencv_course_design_data/OK/OK_0032.bmp&#x27;)</span></span><br><span class="line"><span class="comment">#     RotImg2 = Horizontal_correction(os.path.join(&#x27;opencv_course_design_data/NG/jiaodai&#x27;, path))</span></span><br><span class="line"><span class="comment">#     imgAlignment1, imgAlignment2 = ImageAlignment(RotImg1, RotImg2)</span></span><br><span class="line"><span class="comment">#     Detect(imgAlignment1, imgAlignment2)</span></span><br><span class="line"><span class="comment"># for path in OK_path :</span></span><br><span class="line"><span class="comment">#     RotImg1 = RotImg2 = Horizontal_correction(&#x27;opencv_course_design_data/OK/OK_0032.bmp&#x27;)</span></span><br><span class="line"><span class="comment">#     RotImg2 = Horizontal_correction(os.path.join(&#x27;opencv_course_design_data/OK/&#x27;, path))</span></span><br><span class="line"><span class="comment">#     imgAlignment1, imgAlignment2 = ImageAlignment(RotImg1, RotImg2)</span></span><br><span class="line"><span class="comment">#     Detect(imgAlignment1, imgAlignment2)</span></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E8%A7%86%E8%A7%89/" rel="tag"># 机器视觉</a>
+              <a href="/tags/opencv/" rel="tag"># opencv</a>
+              <a href="/tags/%E4%BA%A7%E5%93%81%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B/" rel="tag"># 产品缺陷检测</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E5%9F%BA%E4%BA%8E-HoG-%E7%9A%84%E5%9B%BE%E5%83%8F%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB%E7%A0%94%E7%A9%B6/" rel="prev" title="基于 HoG 的图像特征提取及其分类研究">
+      <i class="fa fa-chevron-left"></i> 基于 HoG 的图像特征提取及其分类研究
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/05/Python-Numpy-%E5%BA%93%E6%95%99%E7%A8%8B/" rel="next" title="Python Numpy 库教程">
+      Python Numpy 库教程 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-text">解决方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%BB%8B%E7%BB%8D"><span class="nav-text">1    介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%96%B9%E6%B3%95"><span class="nav-text">2    方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E4%BA%A7%E5%93%81%E6%B0%B4%E5%B9%B3%E7%9F%AB%E6%AD%A3"><span class="nav-text">2.1    产品水平矫正</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E5%AE%9A%E4%BD%8D%E4%BA%A7%E5%93%81%E7%9A%84%E5%A4%96%E8%BD%AE%E5%BB%93"><span class="nav-text">2.2    定位产品的外轮廓</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E4%BA%A7%E5%93%81%E5%AF%B9%E9%BD%90"><span class="nav-text">2.3    产品对齐</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B"><span class="nav-text">2.4    缺陷检测</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C%E5%8F%8A%E5%88%86%E6%9E%90"><span class="nav-text">3    实验结果及分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E8%AE%A8%E8%AE%BA"><span class="nav-text">4    讨论</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">53</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">126k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:29</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

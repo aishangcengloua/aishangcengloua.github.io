@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1    定义&amp;emsp;&amp;emsp;激活函数 (Activation functions) 对于人工神经网络模型去学习、理解非常复杂和非线性的函数来说具有十分重要的作用。它们将非线性特性引入到神经网络中。在下图中，输入的 inputs 通过加权，求和后，还被作用了一个函数，这个函数就是激活函数。引入激活函数是为了增加神经网络模型的非线性。没有激活函数的每层都相当于矩阵相乘。就算你叠加了若干层之后">
+<meta property="og:type" content="article">
+<meta property="og:title" content="激活函数">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="1    定义&amp;emsp;&amp;emsp;激活函数 (Activation functions) 对于人工神经网络模型去学习、理解非常复杂和非线性的函数来说具有十分重要的作用。它们将非线性特性引入到神经网络中。在下图中，输入的 inputs 通过加权，求和后，还被作用了一个函数，这个函数就是激活函数。引入激活函数是为了增加神经网络模型的非线性。没有激活函数的每层都相当于矩阵相乘。就算你叠加了若干层之后">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2076a4e3b2ad4eac9c75c74ffbcb8ede.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/d965af45e97a409a828d082480f1d064.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/fe7116031cc14dbcbc272b91c967f2c6.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_12,color_FFFFFF,t_70,g_se,x_16#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/05e7390b3cd84914a07d489c89847e27.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/600ebf00777349dda56b058e7e6d4a36.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_13,color_FFFFFF,t_70,g_se,x_16#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/4e2f998d4f6241b098e583da08723e03.png#pic_center">
+<meta property="article:published_time" content="2022-06-05T11:17:36.000Z">
+<meta property="article:modified_time" content="2022-06-05T11:18:39.615Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="深度学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/2076a4e3b2ad4eac9c75c74ffbcb8ede.png#pic_center">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>激活函数 | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">53</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">57</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          激活函数
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 19:17:36 / 修改时间：19:18:39" itemprop="dateCreated datePublished" datetime="2022-06-05T19:17:36+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>2.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="1-定义"><a href="#1-定义" class="headerlink" title="1    定义"></a>1    定义</h1><p>&emsp;&emsp;激活函数 (<strong><em>Activation functions</em></strong>) 对于人工神经网络模型去学习、理解非常复杂和非线性的函数来说具有十分重要的作用。它们将非线性特性引入到神经网络中。在下图中，输入的 inputs 通过加权，求和后，还被作用了一个函数，这个函数就是激活函数。引入激活函数是为了增加神经网络模型的非线性。没有激活函数的每层都相当于矩阵相乘。就算你叠加了若干层之后，无非还是个矩阵相乘罢了。<br><img src="https://img-blog.csdnimg.cn/2076a4e3b2ad4eac9c75c74ffbcb8ede.png#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="2-激活函数的必要性"><a href="#2-激活函数的必要性" class="headerlink" title="2    激活函数的必要性"></a>2    激活函数的必要性</h1><p>&emsp;&emsp;如果不用激活函数，每一层输出都是上层输入的线性函数，无论神经网络有多少层，输出都是输入的线性组合，这种情况就是最原始的感知机(<strong><em>Perceptron</em></strong>)。这种情况无论有多少层神经网络均可以仅使用输入层和输出层代替，不同的地方就是线性函数的系数不同。激活函数给神经元引入了非线性因素，使得神经网络可以任意逼近任何非线性函数，这样神经网络就可以应用到众多的非线性模型中。</p>
+<h1 id="3-常用的激活函数"><a href="#3-常用的激活函数" class="headerlink" title="3    常用的激活函数"></a>3    常用的激活函数</h1><h2 id="3-1-单位阶跃函数"><a href="#3-1-单位阶跃函数" class="headerlink" title="3.1    单位阶跃函数"></a>3.1    单位阶跃函数</h2><p>&emsp;&emsp;单位阶跃函数，又称赫维赛德阶跃函数，方程式如下：</p>
+<script type="math/tex; mode=display">f(x)= \begin{cases} 0,& x < 0\\ 1, & x  \geq 0
+\end{cases}</script><p>函数曲线如下：</p>
+<p><img src="https://img-blog.csdnimg.cn/d965af45e97a409a828d082480f1d064.png#pic_center" alt="在这里插入图片描述"><br>可以看出是个不连续函数，它是一个几乎必然是零的随机变量的累积分布函数，激活值只有 0 和 1，即百分百确定和百分百不确定，适合二分类问题。导数方程式如下：</p>
+<script type="math/tex; mode=display">
+f'(x) = \begin{cases} 0 , & x \not= 0 \\ ?, & x = 0 \end{cases}</script><h2 id="3-2-Logistic函数"><a href="#3-2-Logistic函数" class="headerlink" title="3.2    Logistic函数"></a>3.2    Logistic函数</h2><p>&emsp;&emsp;<strong><em>Logistic</em></strong> 函数也叫 <strong><em>Sigmoid</em></strong> 函数，用于隐层神经元输出，取值范围为(0,1)，它可以将一个实数映射到(0,1)的区间，因此 <strong><em>Sigmoid</em></strong> 函数作为输出层时可以用来做二分类。在特征相差比较复杂或是相差不是特别大时效果比较好。方程式如下：</p>
+<script type="math/tex; mode=display">
+f(x) = \frac{1}{1 + e^{-x}}</script><p>函数曲线如下：</p>
+<p><img src="https://img-blog.csdnimg.cn/fe7116031cc14dbcbc272b91c967f2c6.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_12,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>其导数方程式如下：</p>
+<script type="math/tex; mode=display">
+f'(x) = f(x)(1 - f(x))</script><p><strong><em>Logistic</em></strong> 函数平滑、易于求导，但是计算量大，反向传播求误差梯度时，求导涉及除法；反向传播时，很容易就会出现梯度消失的情况，从而无法完成深层网络的训练。</p>
+<h2 id="3-3-Tanh函数"><a href="#3-3-Tanh函数" class="headerlink" title="3.3    Tanh函数"></a>3.3    Tanh函数</h2><p>&emsp;&emsp;<strong><em>Tanh</em></strong> 函数能够将输入“压缩”到(−1,1)区间，方程式如下：</p>
+<script type="math/tex; mode=display">
+f(x) = Tanh(x) = \frac{(e^x - e^{-x})}{(e^x + e^{-x})}</script><p>函数曲线如下：<br><img src="https://img-blog.csdnimg.cn/05e7390b3cd84914a07d489c89847e27.png#pic_center" alt="在这里插入图片描述"><br>可以看到 <strong><em>tanh</em></strong> 激活函数可通过 <strong><em>Sigmoid</em></strong> 函数缩放平移后实现。其导数方程式如下：</p>
+<script type="math/tex; mode=display">
+f'(x) = 1 - f(x)^2</script><p>与 <strong><em>sigmoid</em></strong> 函数相比，它的输出均值为0，使其收敛速度要比 <strong><em>sigmoid</em></strong> 快，可以减少迭代次数。它的缺点是需要幂运算，计算成本高；同样存在梯度消失，因为在两边一样有趋近于0的情况。</p>
+<h2 id="3-4-ReLU函数"><a href="#3-4-ReLU函数" class="headerlink" title="3.4    ReLU函数"></a>3.4    ReLU函数</h2><p>&emsp;&emsp;整流线性单位函数(<strong><em>ReLU</em></strong> )又称修正线性单元, 是一种人工神经网络中常用的激励函数(<strong><em>activation function</em></strong>)，通常指代以斜坡函数及其变种为代表的非线性函数。<strong><em>ReLU</em></strong> 认为有一定的生物学原理，并且由于在实践中通常有着比其他常用激励函数(譬如 <strong><em>Sigmoid</em></strong> 函数)更好的效果，而被如今的深度神经网络广泛使用于诸如图像识别等计算机视觉人工智能领域。方程式如下：</p>
+<script type="math/tex; mode=display">
+f(x) = max(0, x)</script><p>而在神经网络中，<strong><em>ReLU</em></strong> 作为神经元的激活函数，定义了该神经元在线性变换 $\boldsymbol{w^T + b}$之后的非线性输出结果。换言之，对于进入神经元的来自上一层神经网络的输入向量 $\boldsymbol{x}$，使用 <strong><em>ReLU</em></strong> 的神经元会输出：</p>
+<script type="math/tex; mode=display">
+max(0, \boldsymbol{w^T + b})</script><p>函数曲线如下：<br><img src="https://img-blog.csdnimg.cn/600ebf00777349dda56b058e7e6d4a36.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_13,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>导数方程式如下：</p>
+<script type="math/tex; mode=display">
+f'(x) = \begin{cases} 0, & x < 0 \\ 1, &x\geq 0 \end{cases}</script><p>相对 <strong><em>sigmoid</em></strong> 和 <strong><em>tanh</em></strong>，极大地改善了梯度消失的问题，收敛速度块；不需要进行指数运算，因此运算速度快，复杂度低；<strong><em>ReLU</em></strong> 函数会使得一部分神经元的输出为0，这样就造成了网络的稀疏性，并且减少了参数的互相依存关系，缓解了过拟合问题的发生。它的缺点是对参数初始化和学习率非常敏感；存在神经元死亡；<strong><em>ReLU</em></strong> 函数的输出均值大于0，偏移现象和神经元死亡会共同影响网络的收敛性。</p>
+<h2 id="3-5-LeakyReLU函数"><a href="#3-5-LeakyReLU函数" class="headerlink" title="3.5    LeakyReLU函数"></a>3.5    LeakyReLU函数</h2><p>&emsp;&emsp;<strong><em>ReLU</em></strong> 函数在 $x &lt; 0$ 时导数值恒为 0，也可能会造成梯度弥散现象，为了克服这个问题，<strong><em>LeakyReLU</em></strong> 函数被提出，方程式如下：</p>
+<script type="math/tex; mode=display">
+f(x) = max(\alpha x,x)</script><p>其函数曲线如下：<br><img src="https://img-blog.csdnimg.cn/4e2f998d4f6241b098e583da08723e03.png#pic_center" alt="在这里插入图片描述"><br>导数方程式如下：</p>
+<script type="math/tex; mode=display">
+f'(x) = \begin{cases} 1 ,& x \geq 0 \\ \alpha, &x < 0 \end{cases}</script><p>其中 $\alpha$ 为用户自行设置的某较小数值的超参数，如 0.02 等。当 $\alpha = 0$ 时，LeayReLU 函数退化为 <strong><em>ReLU</em></strong> 函数；当 $\alpha \not = 0$ 时，$x &lt; 0$ 处能够获得较小的导数值 $\alpha$，从而避免出现梯度弥散现象。</p>
+<h2 id="3-6-Softmax函数"><a href="#3-6-Softmax函数" class="headerlink" title="3.6    Softmax函数"></a>3.6    Softmax函数</h2><p>&emsp;&emsp;<strong><em>Softmax</em></strong> 函数，或称归一化指数函数，有多个输入，是 <strong><em>Sigmoid</em></strong> 函数的一种推广。它能将一个含任意实数的 $K$ 维向量 $\boldsymbol{z}$ “压缩”到另一个 $K$ 维实向量 $\boldsymbol{\sigma(z)}$ 中，使得每一个元素的范围都在(0，1)之间，并且所有元素的和为1。那么我们就可以将它理解成概率，在最后选取输出结点的时候，我们就可以选取概率最大(也就是值对应最大的)结点，作为我们的预测目标。方程式如下：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{\sigma(z)_j = \frac{e^{z_j}}{\sum_{k = 1}^{K} e^{z_k}}\qquad for\ j = 1,\cdots, K}</script><p><strong><em>Softmax</em></strong> 的使用包括两个好处，第一个好处是好求导，第二个就是它使得好结果和坏结果之间的差异更加显著，更有利于学习了。关于 <strong><em>Softmax</em></strong> 与 <strong><em>Loss Function</em></strong> 之间的求导可参考这篇文章<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/25723112"><strong><em>https://zhuanlan.zhihu.com/p/25723112</em></strong></a></p>
+<h1 id="4-选择恰当的激活函数"><a href="#4-选择恰当的激活函数" class="headerlink" title="4    选择恰当的激活函数"></a>4    选择恰当的激活函数</h1><p>&emsp;&emsp;在搭建神经网络时，如果搭建的神经网络层数不 多，选择 <strong><em>Sigmoid</em></strong>、<strong><em>Tanh</em></strong>、<strong><em>ReLU</em></strong>，<strong><em>LeakyReLU</em></strong>，<strong><em>Softmax</em></strong> 都可以；而如果搭建的网络层次较 多，那就需要小心，选择不当就可导致梯度消失问题。此时一般不宜选择 <strong><em>Sigmoid</em></strong>、<strong><em>Tanh</em></strong> 激活函数，因它们的导数都小于1，尤其是 <strong><em>Sigmoid</em></strong> 的导数在 [0,1/4]之间，多层叠加后，根据微积分链式法则，随着层数增多，导数或偏导将指数级变小。所以层数较多的激活函数需要考虑其导数不宜小于1当然 也不能大于1，大于1将导致梯度爆炸，导数为1最好，而激活函数 <strong><em>ReLU</em></strong> 及其变种正好满足这个条件。所以，搭建比较深的神经网络时，一般使用 <strong><em>ReLU</em></strong> 激活函数， 当然一般神经网络也可使用。此外，激活函数 <strong><em>Softmax</em></strong> 由于$\boldsymbol{\sum_{j = 0}^{K}\sigma(z)_j} = 1$ 的性质，常用于多分类神经网络输出层。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 机器学习</a>
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E3%80%90Opencv%E3%80%91%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2%E2%80%94%E2%80%94%E5%8C%BA%E5%9F%9F%E7%94%9F%E9%95%BF/" rel="prev" title="【Opencv】图像分割——区域生长">
+      <i class="fa fa-chevron-left"></i> 【Opencv】图像分割——区域生长
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" rel="next" title="优化算法">
+      优化算法 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E5%AE%9A%E4%B9%89"><span class="nav-text">1    定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0%E7%9A%84%E5%BF%85%E8%A6%81%E6%80%A7"><span class="nav-text">2    激活函数的必要性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E5%B8%B8%E7%94%A8%E7%9A%84%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0"><span class="nav-text">3    常用的激活函数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-%E5%8D%95%E4%BD%8D%E9%98%B6%E8%B7%83%E5%87%BD%E6%95%B0"><span class="nav-text">3.1    单位阶跃函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-Logistic%E5%87%BD%E6%95%B0"><span class="nav-text">3.2    Logistic函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-Tanh%E5%87%BD%E6%95%B0"><span class="nav-text">3.3    Tanh函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-4-ReLU%E5%87%BD%E6%95%B0"><span class="nav-text">3.4    ReLU函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-5-LeakyReLU%E5%87%BD%E6%95%B0"><span class="nav-text">3.5    LeakyReLU函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-6-Softmax%E5%87%BD%E6%95%B0"><span class="nav-text">3.6    Softmax函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-%E9%80%89%E6%8B%A9%E6%81%B0%E5%BD%93%E7%9A%84%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0"><span class="nav-text">4    选择恰当的激活函数</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">53</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">126k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:29</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

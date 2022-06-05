@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="## 介绍 &amp;emsp;&amp;emsp;图是最有用的数据结构之一。它们可用于对几乎所有事物进行建模——对象关系和网络是最常见的。图像可以表示为网格状的像素图，句子可以表示为单词的图。图表被用于各个领域，从制图到社会心理学，当然它们在计算机科学中也被广泛使用。因此图搜索和遍历起着重要的计算作用。Dijkstra 算法旨在找到 图中节点 之间的最短路径。它是由荷兰计算机科学家 Edsger Wybe D">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python 中的图：Dijkstra 算法">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/Python-%E4%B8%AD%E7%9A%84%E5%9B%BE%EF%BC%9ADijkstra-%E7%AE%97%E6%B3%95/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="## 介绍 &amp;emsp;&amp;emsp;图是最有用的数据结构之一。它们可用于对几乎所有事物进行建模——对象关系和网络是最常见的。图像可以表示为网格状的像素图，句子可以表示为单词的图。图表被用于各个领域，从制图到社会心理学，当然它们在计算机科学中也被广泛使用。因此图搜索和遍历起着重要的计算作用。Dijkstra 算法旨在找到 图中节点 之间的最短路径。它是由荷兰计算机科学家 Edsger Wybe D">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/0670f8adaa494ae0a62bbc218e5bafa1.png#pic_cetner">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/ecb846e5938545198777d7137830f21a.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/f653e7a1ed1a4b91ab8a7716d21ef0b2.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/6d1b5a02f4e041d3ae1a1ed6124a69c3.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/4dd7bacdc27a45839b8a5259a6b67321.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/6c24efc717414f0bb741682569c7de4f.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/8bcf03600cbf4d59a77be2f84a810296.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/0fbb3e2d54044d60ba0bd8f97ab7839d.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/9281857989fa43dfb5e911440210f953.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/a9cb24833d954817a94429d41f2d9cc7.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/ca19bc820e6f4ad486526b00a9a786d2.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/0fda6dfb583c46e2aa0f88252c53c284.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/23cf0b1e85bd4f06bede62c74b7888fe.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/086b66e6eb914803ac1ab5f1cb37e800.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/1c447967a5af413f9dc5db571e381150.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/4c679ea59ef1485c8013433bb11f0466.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/d46ff607bfbe47e390de89d311598096.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/33165330f7db4a3480367a06c72ecd48.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/aa69455364b9476db7bd125011ae7ea9.gif">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/ddf8f813e6f144ea8ba79629faf258a1.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/83858695054f4fe28992aec28377d6da.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/7ec4381a769b49cfa4bea631c9a4a608.png">
+<meta property="article:published_time" content="2022-06-05T11:22:31.000Z">
+<meta property="article:modified_time" content="2022-06-05T11:23:34.196Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="图">
+<meta property="article:tag" content="Dijkstra">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/0670f8adaa494ae0a62bbc218e5bafa1.png#pic_cetner">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/Python-%E4%B8%AD%E7%9A%84%E5%9B%BE%EF%BC%9ADijkstra-%E7%AE%97%E6%B3%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Python 中的图：Dijkstra 算法 | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">53</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">57</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/Python-%E4%B8%AD%E7%9A%84%E5%9B%BE%EF%BC%9ADijkstra-%E7%AE%97%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Python 中的图：Dijkstra 算法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 19:22:31 / 修改时间：19:23:34" itemprop="dateCreated datePublished" datetime="2022-06-05T19:22:31+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">数据结构与算法</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/Python-%E4%B8%AD%E7%9A%84%E5%9B%BE%EF%BC%9ADijkstra-%E7%AE%97%E6%B3%95/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/Python-%E4%B8%AD%E7%9A%84%E5%9B%BE%EF%BC%9ADijkstra-%E7%AE%97%E6%B3%95/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>2.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>﻿## 介绍</p>
+<p>&emsp;&emsp;图是最有用的数据结构之一。它们可用于对几乎所有事物进行建模——对象关系和网络是最常见的。图像可以表示为网格状的像素图，句子可以表示为单词的图。图表被用于各个领域，从制图到社会心理学，当然它们在计算机科学中也被广泛使用。因此图搜索和遍历起着重要的计算作用。<strong>Dijkstra 算法</strong>旨在找到 <strong>图中节点</strong> 之间的最短路径。它是由荷兰计算机科学家 Edsger Wybe Dijkstra 于 1956 年在思考从鹿特丹到格罗宁根的最短路线时设计的。<strong>Dijkstra 算法</strong> 多年来一直在发生变化，并且存在各种版本和变体。最初用于计算两个节点之间的最短路径。由于它的工作方式 ，适用于计算起始节点和图中每个其他节点之间的最短路径。这种方式可用于生成 <strong>最短路径树</strong>，该树由两个节点以及所有其他节点之间的最短路径组成。然后你可以修剪掉你不感兴趣的树，得到两个节点之间的最短路径，但你不可避免地必须计算整个树，这是 <strong>Dijkstra 算法</strong> 的一个缺点，它不适合大型图。</p>
+<h2 id="Dijkstra-算法"><a href="#Dijkstra-算法" class="headerlink" title="Dijkstra 算法"></a>Dijkstra 算法</h2><p>&emsp;&emsp;<strong>Dijkstra 算法</strong> 适用于无向、连接、加权图，<strong>Dijkstra 算法</strong> 可以求出源节点到其他所有节点的最短路径。<br>&emsp;&emsp;一开始，我们要创建一组已访问顶点，以跟踪所有已分配正确最短路径的顶点。我们还需要设置图中所有顶点的“成本”（通向它的当前最短路径的长度）。开始时所有成本都将设置为 <strong>“无穷大(inf)”</strong> ，以确保我们可以与之比较的所有其他成本都小于起始成本。唯一的例外是第一个起始顶点的成本——这个顶点的成本为 0，因为它没有通往自身的路径——标记为 源节点 <code>s</code>。然后依据以下三个规则，直到遍历整个图：</p>
+<ul>
+<li>每次从未标记的节点中选择距离出发点最近的节点，标记，收录到最优路径集合中。</li>
+<li>对于当前节点 <code>n</code> 和其的邻居节点 <code>m</code> 如果 <code>cheapestPath(s, n)</code> + <code>cheapestPath(n, m)</code> &lt; <code>cheapestPath(s, m)</code>，则更新 <code>s</code> 到 <code>m</code> 的最短路径为 <code>cheapestPath(s, n)</code> + <code>cheapestPath(n, m)</code>。</li>
+<li>且每次更新最短路径时会保存该节点的前节点。</li>
+</ul>
+<p>下面用一个无向、加权、连通图来解释上述规则原理：<br><img src="https://img-blog.csdnimg.cn/0670f8adaa494ae0a62bbc218e5bafa1.png#pic_cetner" alt="在这里插入图片描述"><br>假设 Vertex 0 为起点(源节点)。我们将把图中顶点的初始成本设置为无穷大，除了起始顶点：</p>
+<p><img src="https://img-blog.csdnimg.cn/ecb846e5938545198777d7137830f21a.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>我们选择成本最低的顶点——即 Vertex 0。我们将其标记为已访问并将其添加到我们的已访问顶点集。起始节点将始终具有最低成本，因此它将始终是第一个添加的节点，同时标记 Vertex 0，之后不用再进行访问：</p>
+<p><img src="https://img-blog.csdnimg.cn/f653e7a1ed1a4b91ab8a7716d21ef0b2.png#pic_center" alt="在这里插入图片描述"><br>然后，我们将更新相邻顶点（1 和 6）的成本。由于 <code>0 + 4 &lt; infinity</code> 和 <code>0 + 7 &lt; infinity</code>，我们更新这些顶点的成本：<br><img src="https://img-blog.csdnimg.cn/6d1b5a02f4e041d3ae1a1ed6124a69c3.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"><br>现在我们访问未标记顶点中的最小成本顶点。<code>4 &lt; 7</code>，所以我们遍历到 Vertex 1：<br><img src="https://img-blog.csdnimg.cn/4dd7bacdc27a45839b8a5259a6b67321.png" alt="在这里插入图片描述"><br>在遍历时，我们将其标记为已访问，然后观察并更新相邻顶点：2、6 和 7：</p>
+<ul>
+<li>因为 <code>4 + 9 &lt; infinity</code>，Vertex 2 的新成本将是 13。</li>
+<li>因为 <code>4 + 11 &gt; 7</code>，Vertex 6 的成本将保持为 7。</li>
+<li>因为 <code>4 + 20 &lt; infinity</code>，Vertex 7 的新成本将是 24。</li>
+</ul>
+<p>则新成本如下：<br><img src="https://img-blog.csdnimg.cn/6c24efc717414f0bb741682569c7de4f.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"><br>此时在未标记的顶点中 Vertex 6的成本最小，因此将其作为出发点，将其标记为已访问并更新其相邻顶点的成本：<br><img src="https://img-blog.csdnimg.cn/8bcf03600cbf4d59a77be2f84a810296.png" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/0fbb3e2d54044d60ba0bd8f97ab7839d.png" alt="在这里插入图片描述"></p>
+<p>该过程继续到 Vertex 7：<br><img src="https://img-blog.csdnimg.cn/9281857989fa43dfb5e911440210f953.png" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/a9cb24833d954817a94429d41f2d9cc7.png" alt="在这里插入图片描述"><br>再一次，到 Vertex 4：<br><img src="https://img-blog.csdnimg.cn/ca19bc820e6f4ad486526b00a9a786d2.png" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/0fda6dfb583c46e2aa0f88252c53c284.png" alt="在这里插入图片描述"><br>再一次，到 Vertex 2：<br><img src="https://img-blog.csdnimg.cn/23cf0b1e85bd4f06bede62c74b7888fe.png" alt="在这里插入图片描述"><br>我们要考虑的唯一顶点是 Vertex 3。由于<code>11 + 6 &lt; 19</code>，Vertex 3 的成本被更新。然后继续到 Vertex 8。<br><img src="https://img-blog.csdnimg.cn/086b66e6eb914803ac1ab5f1cb37e800.png" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/1c447967a5af413f9dc5db571e381150.png" alt="在这里插入图片描述"></p>
+<p>然后更新 Vertex 3：<br><img src="https://img-blog.csdnimg.cn/4c679ea59ef1485c8013433bb11f0466.png" alt="在这里插入图片描述"><br>最后更新 Vertex 5：<br><img src="https://img-blog.csdnimg.cn/d46ff607bfbe47e390de89d311598096.png" alt="在这里插入图片描述"><br>没有更多未访问的顶点可能需要更新。我们的最终成本表示从节点 0 到图中每个其他节点的最短路径：<img src="https://img-blog.csdnimg.cn/33165330f7db4a3480367a06c72ecd48.png" alt="在这里插入图片描述"><br>动画演示如下：来自 <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=JLARzu7coEs"><strong><em>https://www.youtube.com/watch?v=JLARzu7coEs</em></strong></a><br><img src="https://img-blog.csdnimg.cn/aa69455364b9476db7bd125011ae7ea9.gif" alt="在这里插入图片描述"></p>
+<h2 id="Python-实现-Dijkstra-算法"><a href="#Python-实现-Dijkstra-算法" class="headerlink" title="Python 实现 Dijkstra 算法"></a>Python 实现 Dijkstra 算法</h2><p>为了对我们还没有访问过的顶点进行排序和跟踪——我们将使用 <strong>PriorityQueue(优先队列)</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> queue <span class="keyword">import</span> PriorityQueue</span><br></pre></td></tr></table></figure>
+<p>实现一个名为 <code>Graph</code> 的类的构造函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Graph</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, num_of_vertices</span>):</span><br><span class="line">        self.vertices = num_of_vertices</span><br><span class="line">        <span class="comment">#距离表</span></span><br><span class="line">        self.edges = [[-<span class="number">1</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(num_of_vertices)] <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(num_of_vertices)]</span><br><span class="line">        <span class="comment">#记录被访问过的节点</span></span><br><span class="line">        self.visited = []</span><br></pre></td></tr></table></figure>
+<p>在这个简单的参数化构造函数中，将图中顶点的数量作为参数，并初始化了三个字段：</p>
+<ul>
+<li><code>vertices</code>：表示图中的顶点数。</li>
+<li><code>edges</code>：以矩阵的形式表示边的列表。对于节点 <code>u</code> 和 <code>v</code>，<code>self.edges[u][v] = weight</code>。</li>
+<li><code>visited</code>：将包含访问的顶点的集合。</li>
+</ul>
+<p>定义一个将向图形添加边的方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">add_edge</span>(<span class="params">self, u, v, weight</span>):</span><br><span class="line">    <span class="comment">#记录u，v两节点之间的距离</span></span><br><span class="line">    <span class="comment">#要注意的是如果是有向图只需定义单向的权重</span></span><br><span class="line">    <span class="comment">#如果是无向图则需定义双向权重</span></span><br><span class="line">    self.edges[u][v] = weight</span><br><span class="line">    self.edges[v][u] = weight</span><br></pre></td></tr></table></figure>
+<p>定义 <strong>Dijkstra 算法</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">dijkstra</span>(<span class="params">self, start_vertex</span>):</span><br><span class="line">    <span class="comment">#开始时定义源节点到其他所有节点的距离为无穷大</span></span><br><span class="line">    D = &#123;v: <span class="built_in">float</span>(<span class="string">&#x27;inf&#x27;</span>) <span class="keyword">for</span> v <span class="keyword">in</span> <span class="built_in">range</span>(self.vertices)&#125;</span><br><span class="line">    <span class="comment">#源节点到自己的距离为0</span></span><br><span class="line">    D[start_vertex] = <span class="number">0</span></span><br><span class="line">    <span class="comment">#优先队列</span></span><br><span class="line">    pq = PriorityQueue()</span><br><span class="line">    pq.put((<span class="number">0</span>, start_vertex))</span><br><span class="line">    <span class="comment"># 记录每个节点的前节点，便于回溯</span></span><br><span class="line">    previousVertex = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">not</span> pq.empty():</span><br><span class="line">        <span class="comment">#得到优先级最高的节点，也就是前节点到其他节点距离最短的节点作为当前出发节点</span></span><br><span class="line">        (dist, current_vertex) = pq.get()</span><br><span class="line">        <span class="comment">#标记已访问过的节点(最有路径集合)</span></span><br><span class="line">        self.visited.append(current_vertex)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> neighbor <span class="keyword">in</span> <span class="built_in">range</span>(self.vertices):</span><br><span class="line">            <span class="comment">#邻居节点之间距离不能为-1</span></span><br><span class="line">            <span class="keyword">if</span> self.edges[current_vertex][neighbor] != -<span class="number">1</span>:</span><br><span class="line">                distance = self.edges[current_vertex][neighbor]</span><br><span class="line">                <span class="comment">#已经访问过的节点不能再次被访问</span></span><br><span class="line">                <span class="keyword">if</span> neighbor <span class="keyword">not</span> <span class="keyword">in</span> self.visited:</span><br><span class="line">                    <span class="comment">#更新源节点到其他节点的最短路径</span></span><br><span class="line">                    old_cost = D[neighbor]</span><br><span class="line">                    new_cost = D[current_vertex] + distance</span><br><span class="line">                    <span class="keyword">if</span> new_cost &lt; old_cost:</span><br><span class="line">                        <span class="comment">#加入优先队列</span></span><br><span class="line">                        pq.put((new_cost, neighbor))</span><br><span class="line">                        D[neighbor] = new_cost</span><br><span class="line">                        previousVertex[neighbor] = current_vertex</span><br><span class="line">    <span class="keyword">return</span> D, previousVertex</span><br></pre></td></tr></table></figure>
+<p>在这段代码中，首先创建了一个大小为 <code>num_of_vertices</code> 的字典 <code>D</code>，用于统计最短路径的成本。整个列表初始化为无穷大。这将是一个列表，我们在其中保留从 <code>start_vertex</code> 所有其他节点的最短路径。我们将起始顶点的值设置为 0，因为这是它与自身的距离。然后，我们初始化一个优先级队列，我们​​将使用它来快速将顶点从最远到最远排序。我们将起始顶点放入优先级队列中。再然后初始化<code>previousVertex</code> ，用于标记每个节点的前节点。现在，对于优先队列中的每个顶点，我们将首先将它们标记为已访问，然后我们将遍历它们的邻居。如果邻居没有被访问，我们将比较它的旧成本和新成本。旧代价是从起始顶点到邻居的最短路径的当前值，而新代价是从起始顶点到当前顶点的最短路径与当前顶点到相邻顶点的距离之和的值邻居。如果新成本低于旧成本，我们将邻居及其成本放入优先级队列，并相应地更新我们保留最短路径的列表，同时更新邻居节点的前节点。最后，在所有顶点都被访问并且优先级队列为空之后，我们返回字典 <code>D</code> 和 <code>previousVertex</code> 。</p>
+<p>实现之前的例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">Dijkstra</span>() :</span><br><span class="line">    g = Graph(<span class="number">9</span>)</span><br><span class="line">    g.add_edge(<span class="number">0</span>, <span class="number">1</span>, <span class="number">4</span>)</span><br><span class="line">    g.add_edge(<span class="number">0</span>, <span class="number">6</span>, <span class="number">7</span>)</span><br><span class="line">    g.add_edge(<span class="number">1</span>, <span class="number">6</span>, <span class="number">11</span>)</span><br><span class="line">    g.add_edge(<span class="number">1</span>, <span class="number">7</span>, <span class="number">20</span>)</span><br><span class="line">    g.add_edge(<span class="number">1</span>, <span class="number">2</span>, <span class="number">9</span>)</span><br><span class="line">    g.add_edge(<span class="number">2</span>, <span class="number">3</span>, <span class="number">6</span>)</span><br><span class="line">    g.add_edge(<span class="number">2</span>, <span class="number">4</span>, <span class="number">2</span>)</span><br><span class="line">    g.add_edge(<span class="number">3</span>, <span class="number">4</span>, <span class="number">10</span>)</span><br><span class="line">    g.add_edge(<span class="number">3</span>, <span class="number">5</span>, <span class="number">5</span>)</span><br><span class="line">    g.add_edge(<span class="number">4</span>, <span class="number">5</span>, <span class="number">15</span>)</span><br><span class="line">    g.add_edge(<span class="number">4</span>, <span class="number">7</span>, <span class="number">1</span>)</span><br><span class="line">    g.add_edge(<span class="number">4</span>, <span class="number">8</span>, <span class="number">5</span>)</span><br><span class="line">    g.add_edge(<span class="number">5</span>, <span class="number">8</span>, <span class="number">12</span>)</span><br><span class="line">    g.add_edge(<span class="number">6</span>, <span class="number">7</span>, <span class="number">1</span>)</span><br><span class="line">    g.add_edge(<span class="number">7</span>, <span class="number">8</span>, <span class="number">3</span>)</span><br><span class="line"></span><br><span class="line">    D, previousVertex = g.dijkstra(<span class="number">0</span>)</span><br><span class="line">    <span class="comment">#每个节点的前节点，可通过回溯得到最短路径</span></span><br><span class="line">    <span class="built_in">print</span>(previousVertex)</span><br><span class="line">    <span class="keyword">for</span> vertex <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(D)):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;distance from vertex <span class="subst">&#123;<span class="number">0</span>&#125;</span> to vertex <span class="subst">&#123;vertex&#125;</span> is <span class="subst">&#123;D[vertex]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>结果：<br><img src="https://img-blog.csdnimg.cn/ddf8f813e6f144ea8ba79629faf258a1.png" alt="在这里插入图片描述"></p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>得到节点s和t之间的最短路径。</p>
+<p><img src="https://img-blog.csdnimg.cn/83858695054f4fe28992aec28377d6da.png#pic_center" alt="在这里插入图片描述"><br>上图是一个有向图，而我们在第一个例子中定义的是无向图，因此要修改代码。在代码中与无向图的差异只是一行，即定义权重时只定义一边，只需注释掉 <code>self.edges[v][u] = weight</code> 即可。为了实现方便，图中节点的名称并未使用字符表示，而是使用数字进行表示，在搜索完之后根据字典再对应回去。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> queue <span class="keyword">import</span> PriorityQueue</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Graph</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, num_of_vertices</span>):</span><br><span class="line">        self.vertices = num_of_vertices</span><br><span class="line">        <span class="comment">#距离表</span></span><br><span class="line">        self.edges = [[-<span class="number">1</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(num_of_vertices)] <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(num_of_vertices)]</span><br><span class="line">        <span class="comment">#记录被访问过的节点</span></span><br><span class="line">        self.visited = []</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">add_edge</span>(<span class="params">self, u, v, weight</span>):</span><br><span class="line">        <span class="comment">#记录u，v两节点之间的距离</span></span><br><span class="line">        <span class="comment">#要注意的是如果是有向图只需定义单向的权重</span></span><br><span class="line">        <span class="comment">#如果是无向图则需定义双向权重</span></span><br><span class="line">        self.edges[u][v] = weight</span><br><span class="line">        <span class="comment"># self.edges[v][u] = weight</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">dijkstra</span>(<span class="params">self, start_vertex</span>):</span><br><span class="line">        <span class="comment">#开始时定义源节点到其他所有节点的距离为无穷大</span></span><br><span class="line">        D = &#123;v: <span class="built_in">float</span>(<span class="string">&#x27;inf&#x27;</span>) <span class="keyword">for</span> v <span class="keyword">in</span> <span class="built_in">range</span>(self.vertices)&#125;</span><br><span class="line">        <span class="comment">#源节点到自己的距离为0</span></span><br><span class="line">        D[start_vertex] = <span class="number">0</span></span><br><span class="line">        <span class="comment">#优先队列</span></span><br><span class="line">        pq = PriorityQueue()</span><br><span class="line">        pq.put((<span class="number">0</span>, start_vertex))</span><br><span class="line">        <span class="comment"># 记录每个节点的前节点，便于回溯</span></span><br><span class="line">        previousVertex = &#123;&#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">not</span> pq.empty():</span><br><span class="line">            <span class="comment">#得到优先级最高的节点，也就是前节点到其他节点距离最短的节点作为当前出发节点</span></span><br><span class="line">            (dist, current_vertex) = pq.get()</span><br><span class="line">            <span class="comment">#标记已访问过的节点(最有路径集合)</span></span><br><span class="line">            self.visited.append(current_vertex)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> neighbor <span class="keyword">in</span> <span class="built_in">range</span>(self.vertices):</span><br><span class="line">                <span class="comment">#邻居节点之间距离不能为-1</span></span><br><span class="line">                <span class="keyword">if</span> self.edges[current_vertex][neighbor] != -<span class="number">1</span>:</span><br><span class="line">                    distance = self.edges[current_vertex][neighbor]</span><br><span class="line">                    <span class="comment">#已经访问过的节点不能再次被访问</span></span><br><span class="line">                    <span class="keyword">if</span> neighbor <span class="keyword">not</span> <span class="keyword">in</span> self.visited:</span><br><span class="line">                        <span class="comment">#更新源节点到其他节点的最短路径</span></span><br><span class="line">                        old_cost = D[neighbor]</span><br><span class="line">                        new_cost = D[current_vertex] + distance</span><br><span class="line">                        <span class="keyword">if</span> new_cost &lt; old_cost:</span><br><span class="line">                            <span class="comment">#加入优先队列</span></span><br><span class="line">                            pq.put((new_cost, neighbor))</span><br><span class="line">                            D[neighbor] = new_cost</span><br><span class="line">                            previousVertex[neighbor] = current_vertex</span><br><span class="line">        <span class="keyword">return</span> D, previousVertex</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Dijkstra</span>():</span><br><span class="line">    g = Graph(<span class="number">6</span>)</span><br><span class="line">    g.add_edge(<span class="number">0</span>, <span class="number">1</span>, <span class="number">6</span>)</span><br><span class="line">    g.add_edge(<span class="number">0</span>, <span class="number">3</span>, <span class="number">3</span>)</span><br><span class="line">    g.add_edge(<span class="number">0</span>, <span class="number">2</span>, <span class="number">5</span>)</span><br><span class="line">    g.add_edge(<span class="number">1</span>, <span class="number">4</span>, <span class="number">3</span>)</span><br><span class="line">    g.add_edge(<span class="number">1</span>, <span class="number">3</span>, <span class="number">1</span>)</span><br><span class="line">    g.add_edge(<span class="number">2</span>, <span class="number">3</span>, <span class="number">1</span>)</span><br><span class="line">    g.add_edge(<span class="number">2</span>, <span class="number">5</span>, <span class="number">2</span>)</span><br><span class="line">    g.add_edge(<span class="number">3</span>, <span class="number">4</span>, <span class="number">7</span>)</span><br><span class="line">    g.add_edge(<span class="number">3</span>, <span class="number">5</span>, <span class="number">9</span>)</span><br><span class="line">    g.add_edge(<span class="number">5</span>, <span class="number">4</span>, <span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">    D, previousVertex = g.dijkstra(<span class="number">0</span>)</span><br><span class="line">    <span class="comment"># print(previousVertex)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#节点名字与数字的对应表</span></span><br><span class="line">    dic = &#123;<span class="number">0</span> : <span class="string">&#x27;s&#x27;</span>, <span class="number">1</span> : <span class="string">&#x27;v&#x27;</span>, <span class="number">2</span> : <span class="string">&#x27;u&#x27;</span>, <span class="number">3</span> : <span class="string">&#x27;w&#x27;</span>, <span class="number">4</span> : <span class="string">&#x27;t&#x27;</span>, <span class="number">5</span> : <span class="string">&#x27;z&#x27;</span>&#125;</span><br><span class="line">    path = []</span><br><span class="line">    cheapest_path = []</span><br><span class="line">    key = <span class="number">4</span></span><br><span class="line">    <span class="comment">#回溯，得到源节点到目标节点的最佳路径</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">if</span> key == <span class="number">0</span> :</span><br><span class="line">            path.append(<span class="number">0</span>)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">else</span> :</span><br><span class="line">            path.append(key)</span><br><span class="line">            key = previousVertex[key]</span><br><span class="line">    <span class="comment">#节点名字由数字转成字符</span></span><br><span class="line">    <span class="keyword">for</span> point <span class="keyword">in</span> path[ : : -<span class="number">1</span>] :</span><br><span class="line">        cheapest_path.append(dic[point])</span><br><span class="line">    cheapest_path = <span class="string">&quot;-&gt;&quot;</span>.join(cheapest_path)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;distance from vertex <span class="subst">&#123;dic[<span class="number">0</span>]&#125;</span> to vertex <span class="subst">&#123;dic[<span class="number">4</span>]&#125;</span> is <span class="subst">&#123;D[<span class="number">4</span>]&#125;</span>,&quot;</span></span><br><span class="line">            <span class="string">f&quot;the cheapest path is <span class="subst">&#123;cheapest_path&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    Dijkstra()</span><br></pre></td></tr></table></figure>
+<p>结果：<br><img src="https://img-blog.csdnimg.cn/7ec4381a769b49cfa4bea631c9a4a608.png" alt="在这里插入图片描述"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"># Python</a>
+              <a href="/tags/%E5%9B%BE/" rel="tag"># 图</a>
+              <a href="/tags/Dijkstra/" rel="tag"># Dijkstra</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E3%80%90Opencv%E3%80%91%E7%9B%AE%E6%A0%87%E8%BF%BD%E8%B8%AA%E2%80%94%E2%80%94%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E5%88%86%E7%A6%BB%E7%AE%97%E6%B3%95-MOG/" rel="prev" title="【Opencv】目标追踪——高斯混合模型分离算法(MOG)">
+      <i class="fa fa-chevron-left"></i> 【Opencv】目标追踪——高斯混合模型分离算法(MOG)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/05/LeetCode%E2%80%94%E2%80%94%E5%93%88%E5%B8%8C%E8%A1%A8%E7%BB%8F%E5%85%B8%E4%BE%8B%E9%A2%98/" rel="next" title="LeetCode——哈希表经典例题">
+      LeetCode——哈希表经典例题 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Dijkstra-%E7%AE%97%E6%B3%95"><span class="nav-text">Dijkstra 算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Python-%E5%AE%9E%E7%8E%B0-Dijkstra-%E7%AE%97%E6%B3%95"><span class="nav-text">Python 实现 Dijkstra 算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-text">测试</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">53</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">126k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:29</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

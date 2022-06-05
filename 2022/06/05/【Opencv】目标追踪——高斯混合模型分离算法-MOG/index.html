@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1    环境 Python 3.8.8 PyCharm 2021 opencv-python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【Opencv】目标追踪——高斯混合模型分离算法(MOG)">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/%E3%80%90Opencv%E3%80%91%E7%9B%AE%E6%A0%87%E8%BF%BD%E8%B8%AA%E2%80%94%E2%80%94%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E5%88%86%E7%A6%BB%E7%AE%97%E6%B3%95-MOG/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="1    环境 Python 3.8.8 PyCharm 2021 opencv-python">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/3c23354eb51a4c6ab84cb9762f6a1e98.gif#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/0935bdf21ac14d1dacbfc8269c17a066.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/79eeb342bf014220b913a8852779e659.gif">
+<meta property="article:published_time" content="2022-06-05T11:21:02.000Z">
+<meta property="article:modified_time" content="2022-06-05T11:21:48.677Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="opencv">
+<meta property="article:tag" content="目标追踪">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/3c23354eb51a4c6ab84cb9762f6a1e98.gif#pic_center">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/%E3%80%90Opencv%E3%80%91%E7%9B%AE%E6%A0%87%E8%BF%BD%E8%B8%AA%E2%80%94%E2%80%94%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E5%88%86%E7%A6%BB%E7%AE%97%E6%B3%95-MOG/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>【Opencv】目标追踪——高斯混合模型分离算法(MOG) | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">53</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">57</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E3%80%90Opencv%E3%80%91%E7%9B%AE%E6%A0%87%E8%BF%BD%E8%B8%AA%E2%80%94%E2%80%94%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E5%88%86%E7%A6%BB%E7%AE%97%E6%B3%95-MOG/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【Opencv】目标追踪——高斯混合模型分离算法(MOG)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 19:21:02 / 修改时间：19:21:48" itemprop="dateCreated datePublished" datetime="2022-06-05T19:21:02+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%9C%BA%E5%99%A8%E8%A7%86%E8%A7%89/" itemprop="url" rel="index"><span itemprop="name">机器视觉</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E3%80%90Opencv%E3%80%91%E7%9B%AE%E6%A0%87%E8%BF%BD%E8%B8%AA%E2%80%94%E2%80%94%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E5%88%86%E7%A6%BB%E7%AE%97%E6%B3%95-MOG/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E3%80%90Opencv%E3%80%91%E7%9B%AE%E6%A0%87%E8%BF%BD%E8%B8%AA%E2%80%94%E2%80%94%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E5%88%86%E7%A6%BB%E7%AE%97%E6%B3%95-MOG/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>2.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="1-环境"><a href="#1-环境" class="headerlink" title="1    环境"></a>1    环境</h1><ul>
+<li>Python 3.8.8</li>
+<li>PyCharm 2021</li>
+<li>opencv-python</li>
+</ul>
+<h1 id="2-效果"><a href="#2-效果" class="headerlink" title="2    效果"></a>2    效果</h1><p><img src="https://img-blog.csdnimg.cn/3c23354eb51a4c6ab84cb9762f6a1e98.gif#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="3-原理"><a href="#3-原理" class="headerlink" title="3    原理"></a>3    原理</h1><p>&emsp;&emsp;视频图像中的目标检测与跟踪，是计算机视觉的基础课题，同时具有广泛的应用价值。视觉目标(单目标)跟踪任务就是在给定某视频序列初始帧的目标大小与位置的情况下，预测后续帧中该目标的大小与位置。依照目标与摄像头之间的关系可分为两种场景的目标追踪：</p>
+<ul>
+<li>静态场景：目标检测相对简单，研究渐趋成熟。</li>
+<li>动态场景：相对复杂，当前研究领域的热点。</li>
+</ul>
+<p>本文只介绍静态场景的目标追踪，动态的在后序文章中会分享。</p>
+<p>&emsp;&emsp;在静态场景中，背景是静止的，则我们可以通过背景减除(Background Subtraction)来进行预处理。例如，考虑像访客柜台这样的情况，其中静态摄像机(监控)拍摄进入或离开房间的访客数量，或者交通摄像机提取有关车辆的信息等。在所有这些情况下，首先需要单独提取人员或车辆. 从技术上讲，需要从静态背景中提取移动的前景。那么我们可以通过帧差法来计算像素差从而获取到前景对象。</p>
+<p>&emsp;&emsp;如果只有背景图像，例如没有访客的房间图像，没有车辆的道路图像等，这很容易。只需从背景中减去新图像。就可以单独获得前景对象。但在大多数情况下，可能没有这样的图像，因此我们需要从我们拥有的任何图像中提取背景。当有车辆的影子时，情况变得更加复杂。由于阴影也在移动，简单的减法也会将其标记为前景。它使事情复杂化。</p>
+<p>&emsp;&emsp;高斯混合模型分离算法(MOG)算法在一定程度上可解决上述问题，2001年，由P.KadewTraKuPong和R.Bowden在论文 <strong><em>“An improved adaptive background mixture model for real-time tracking with shadow detection”</em></strong> 中提出。MOG2算法，也是高斯混合模型分离算法，是MOG的改进算法。基于2004年发布的 <strong><em>“Improved adaptive Gausian mixture model for background subtraction”</em></strong> 和2006年发布的 <strong><em>“Efficient Adaptive Density Estimation per Image Pixel for the Task of Background Subtraction”</em></strong> 两篇文章提出。该算法的一个重要特征是它为 <strong>每个</strong> 像素选择适当数量的高斯分布，它可以更好地适应不同场景的照明变化等。可以大家会有疑问，就是为什么一个像素也可以构成高斯分布呢，这里其实是因为我们的视频会持续一段时间，这样每个像素在每个时刻 $\boldsymbol{t}$ 都有对应的状态。因此上述的 <strong>每个</strong> 像素指的是一个像素在不同时刻 $\boldsymbol{t}$ 的状态。MOG算法的基本思路是基本思路：将图像分为3-5个高斯模型。如果一个像素点与任何一个高斯模型的均值 $\boldsymbol{\mu}$ 的之差大于其3倍的标准差 $\boldsymbol{\sigma}$，则为前景即运动物体，否则则是背景。算法流程如下：</p>
+<ul>
+<li>初始各种参数。</li>
+<li>使用过去 <strong>T</strong> 帧图像构造模型。</li>
+<li>对于一个新来的像素，如果该像素点的值与其模型均值 $\boldsymbol{\mu}$ 之差在 $\boldsymbol{3*\sigma}$ 内，则属于该分布，并对其进行参数更新。</li>
+<li>如果不满足该高斯模型，重新建立一个新的高斯模型。</li>
+</ul>
+<h1 id="4-代码"><a href="#4-代码" class="headerlink" title="4    代码"></a>4    代码</h1><p>使用 <code>cv2.createBackgroundSubtractorMOG2(history = 500, varThreshold = 16, detectShadows = true)</code> 初始化一个MOG2模型，该函数的参数如下：</p>
+<ul>
+<li>history：用于训练背景的帧数，默认为500帧。</li>
+<li>varThreshold：方差阈值，用于判断当前像素是前景还是背景。一般默认16，如果光照变化明显，如阳光下的水面，建议设为25，36。</li>
+<li>detectShadows：是否检测影子，设为True为检测，False为不检测，检测影子会增加程序时间复杂度，如无特殊要求，建议设为False。</li>
+</ul>
+<p>使用 <code>cv2.getStructuringElement(cv.MORPH_ELLIPSE, (3, 3))</code> 初始化形态学需要的卷积核 kernel，等效成 <code>np.ones((3, 3), np.uint8)</code> 。</p>
+<p>使用 <code>cv2.VideoCapture(video_path)</code> 创建一个视频读取对象capture，<code>capture.read()</code> 进行捕捉画面，返回值如下：</p>
+<ul>
+<li>ret：布尔值，表示是否正确捕捉到图像帧。</li>
+<li>frame：图像帧。</li>
+</ul>
+<p>使用 <code>cv2.morphologyEx(fgmask, cv.MORPH_OPEN, kernel)</code> 进行形态学处理，这是因为MOG2检测出的前景中有许多白点(如下图)，所以使用开操作对白点进行腐蚀。</p>
+<p><img src="https://img-blog.csdnimg.cn/0935bdf21ac14d1dacbfc8269c17a066.png#pic_center" alt="\[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-D8X2h5uB-1649644124426)(C:\Users\爱上层楼\AppData\Roaming\Typora\typora-user-images\image-20220411102139496.png)\]"></p>
+<p>使用 <code>cv2.imshow()</code> 展示图片，使用 <code>cv2.waitkey(10) &amp; 0xff == &#39;q&#39;</code> 来延长放映的时间。</p>
+<p>代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cv2 <span class="keyword">as</span> cv</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">tracking_by_bg_substract</span>() :</span><br><span class="line">    model = cv.createBackgroundSubtractorMOG2()</span><br><span class="line">    kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (<span class="number">3</span>, <span class="number">3</span>))</span><br><span class="line">    capture = cv.VideoCapture(<span class="string">&#x27;videos/static_bg_people.avi&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> capture.isOpened() :</span><br><span class="line">        ret, frame = capture.read()</span><br><span class="line">        <span class="keyword">if</span> ret :</span><br><span class="line">            <span class="comment">#对图像帧进行MOG2算法检测</span></span><br><span class="line">            fgmask = model.apply(frame)</span><br><span class="line">            fgmask = cv.morphologyEx(fgmask, cv.MORPH_OPEN, kernel)</span><br><span class="line">            cv.imshow(<span class="string">&#x27;frame&#x27;</span>, frame)</span><br><span class="line">            cv.imshow(<span class="string">&#x27;fgmask&#x27;</span>, fgmask)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> cv.waitKey(<span class="number">10</span>) &amp; <span class="number">0xff</span> == <span class="built_in">ord</span>(<span class="string">&#x27;q&#x27;</span>) :</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">else</span> :</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    capture.release()</span><br><span class="line">    cv.destroyAllWindows()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    tracking_by_bg_substract()</span><br></pre></td></tr></table></figure>
+<p>效果如下，效果还不错。<img src="https://img-blog.csdnimg.cn/79eeb342bf014220b913a8852779e659.gif" alt="在这里插入图片描述"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/opencv/" rel="tag"># opencv</a>
+              <a href="/tags/%E7%9B%AE%E6%A0%87%E8%BF%BD%E8%B8%AA/" rel="tag"># 目标追踪</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" rel="prev" title="优化算法">
+      <i class="fa fa-chevron-left"></i> 优化算法
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/05/Python-%E4%B8%AD%E7%9A%84%E5%9B%BE%EF%BC%9ADijkstra-%E7%AE%97%E6%B3%95/" rel="next" title="Python 中的图：Dijkstra 算法">
+      Python 中的图：Dijkstra 算法 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E7%8E%AF%E5%A2%83"><span class="nav-text">1    环境</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E6%95%88%E6%9E%9C"><span class="nav-text">2    效果</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E5%8E%9F%E7%90%86"><span class="nav-text">3    原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-%E4%BB%A3%E7%A0%81"><span class="nav-text">4    代码</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">53</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">126k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:29</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

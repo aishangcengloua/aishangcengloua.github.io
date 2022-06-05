@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1    网络结构&amp;emsp;&amp;emsp;MTCNN 是多任务级联 CNN 的人脸检测深度学习模型，该模型不仅考虑了人脸检测概率，还综合训练了人脸边框回归和面部关键点检测，多任务同时建立 loss function 并训练，因此为 MTCNN。级联 CNN 主要由三个子网络组成：P-Net、R-Net 和 O-Net。&amp;emsp;&amp;emsp;P-Net 的结构如下：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MTCNN 测试时的一些 tips">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/MTCNN-%E6%B5%8B%E8%AF%95%E6%97%B6%E7%9A%84%E4%B8%80%E4%BA%9B-tips/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="1    网络结构&amp;emsp;&amp;emsp;MTCNN 是多任务级联 CNN 的人脸检测深度学习模型，该模型不仅考虑了人脸检测概率，还综合训练了人脸边框回归和面部关键点检测，多任务同时建立 loss function 并训练，因此为 MTCNN。级联 CNN 主要由三个子网络组成：P-Net、R-Net 和 O-Net。&amp;emsp;&amp;emsp;P-Net 的结构如下：">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/52bf5bf680944505ad1a4f52c5a94644.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/aa3f543d4b314a8ba20c7abc68ddee07.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2131139030b344a4bae24798437e26f9.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/aec976c698d544e9afc28839fcd037d1.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/b3ac3293462a4dd9ad6ed7a5ac9e6076.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/ffc8e21ea6b6496dba70f8d5bebc5d02.jpeg">
+<meta property="article:published_time" content="2022-06-05T11:31:30.000Z">
+<meta property="article:modified_time" content="2022-06-05T11:39:53.542Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="PyTorch">
+<meta property="article:tag" content="人脸检测">
+<meta property="article:tag" content="MTCNN">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/52bf5bf680944505ad1a4f52c5a94644.png#pic_center">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/MTCNN-%E6%B5%8B%E8%AF%95%E6%97%B6%E7%9A%84%E4%B8%80%E4%BA%9B-tips/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MTCNN 测试时的一些 tips | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">53</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">57</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/MTCNN-%E6%B5%8B%E8%AF%95%E6%97%B6%E7%9A%84%E4%B8%80%E4%BA%9B-tips/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MTCNN 测试时的一些 tips
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 19:31:30 / 修改时间：19:39:53" itemprop="dateCreated datePublished" datetime="2022-06-05T19:31:30+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/MTCNN-%E6%B5%8B%E8%AF%95%E6%97%B6%E7%9A%84%E4%B8%80%E4%BA%9B-tips/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/MTCNN-%E6%B5%8B%E8%AF%95%E6%97%B6%E7%9A%84%E4%B8%80%E4%BA%9B-tips/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>3.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="1-网络结构"><a href="#1-网络结构" class="headerlink" title="1    网络结构"></a>1    网络结构</h1><p>&emsp;&emsp;MTCNN 是多任务级联 CNN 的人脸检测深度学习模型，该模型不仅考虑了人脸检测概率，还综合训练了人脸边框回归和面部关键点检测，多任务同时建立 loss function 并训练，因此为 MTCNN。级联 CNN 主要由三个子网络组成：P-Net、R-Net 和 O-Net。<br>&emsp;&emsp;P-Net 的结构如下：<br><img src="https://img-blog.csdnimg.cn/52bf5bf680944505ad1a4f52c5a94644.png#pic_center" alt="在这里插入图片描述\](https://img-blog.csdnimg.cn/a37a2812f2914fd48ae0c9f7ed16cb35.png"></p>
+<p>从网络结构上看，P-Net 接受大小为 (12，12，3) 的图片的输入，输出三种特征图，大小为 (1，1，C)，也就是说最终得到的特征图每一点都对应着一个大小为 12×12 的感受野。三种输出如下：</p>
+<ul>
+<li><strong>cls</strong>：图像是否包含人脸，输出向量大小为 (1，1，2)，也就是两个值，即图像不是人脸的概率和图像是人脸的概率。这两个值加起来严格等于 1，之所以使用两个值来表示，是为了方便定义交叉熵损失函数；</li>
+<li><strong>bounding_box</strong>：当前框位置相对完美的人脸框位置的偏移。这个偏移大小为 (1，1，4)，即表示框左上角和右下角的坐标的偏移量。网络结构中的输出叫做 <strong>bounding_boxes</strong>，如果按代码来说应该是 <strong>offsets</strong>；</li>
+<li><strong>landmark</strong>：5 个关键点相对于人脸框的偏移量。分别对应着左眼的位置、右眼的位置、鼻子的位置、左嘴巴的位置、右嘴巴的位置。每个关键点需要两维来表示，因此输出是向量大小为 (1，1，10)。</li>
+</ul>
+<p><strong>Tips：</strong></p>
+<ul>
+<li>(12，12，3) 的输入大小指的是人脸框的大小，并不是真正图片的大小。在测试的时候大家会发现我们会输入各种缩放比例的图片，为什么可以这样？这是因为 P-Net 的输出是 <strong>特征图</strong>，没有 <strong>全连接层</strong>，这意味着网络对输出图片大小没有限制；</li>
+<li>训练时是 (12，12，3) 的输入，(1，1，32) 的输出，但是这里的 (12，12) 输入只是一个示意，实际测试的时候由于 P-Net 的输出特征图的感受野是 (12, 12)，输入任意尺寸的图片矩阵经过 P-Net 后可以看做经历了一个完整的卷积(kernel = 12，stride = 2)，输出是 (H’，W’，32)。例如如果输入是 (48，48，3) 的图片矩阵，经过 P-Net 后输出为 (19，19，32) 了，并且 (19，19) 中每个二维点对应到原图中都是一个 (12，12) 的视野区域，可以理解为对原图进行了卷积的滑动并分别计算每个 (12，12) 窗口的人脸概率以及框回归；</li>
+<li>P-Net 实际上对输出特征图的 <strong>每一个像素格子</strong> 都进行人脸概率、边框、地标预测，因此开始时的预测框数量非常多，要根据人脸概率的阈值先进行初步筛选，在进行边界框的 <strong>非极大值抑制</strong>。那这里就有疑问了，为什么可以对每一个像素方格进行预测？这里可以在后面的 <strong>图像金字塔</strong> 中再做解释；</li>
+<li>在实际测试中，P-Net 的输出中不包括 <strong>landmark</strong>。</li>
+</ul>
+<p>&emsp;&emsp;R-Net 的网络结构如下：<br><img src="https://img-blog.csdnimg.cn/aa3f543d4b314a8ba20c7abc68ddee07.png#pic_center" alt="在这里插入图片描述"></p>
+<p>由于 P-Net 是对输出特征图的每一个像素进行预测，因此结果十分冗杂，所以接下来使用 R-Net 进一步优化。R-Net 和 P-Net 类似，不过这一步的输入是前面 P-Net 生成的边界框，不管实际边界框的大小，在输入 R-Net 之前，都需要缩放到 (24，24，3)。网络的输出和 P-Net 是一样的。这一步的目的主要是为了去除大量的非人脸框。<br>&emsp;&emsp;O-Net 的网络结构如下：<br><img src="https://img-blog.csdnimg.cn/2131139030b344a4bae24798437e26f9.png#pic_center" alt="在这里插入图片描述"></p>
+<p>进一步将 R-Net 的所得到的区域缩放到 (48，48，3)，输入到最后的 O-Net，O-Net 的结构与 P-Net 类似，只不过在测试输出的时候多了关键点位置的输出。输入大小为 (48，48，3) 的图像，输出包含 n 个人脸概率、边界框的偏移量和关键点的偏移量。三个字网络流程如下：</p>
+<p><img src="https://img-blog.csdnimg.cn/aec976c698d544e9afc28839fcd037d1.png#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="2-图像金字塔"><a href="#2-图像金字塔" class="headerlink" title="2    图像金字塔"></a>2    图像金字塔</h1><p>&emsp;&emsp;MTCNN基于卷积神经网络，通常只适用于检测一定尺寸范围内的人脸，比如其中的 P-Net，用于判断 12 × 12 大小范围内是否含有人脸，但是输入图像中人脸的尺寸未知，需要构建图像金字塔获得不同尺寸的图像，缩放图像是为了将图像中的人脸缩放到网络能检测的适宜尺寸，只要某个人脸被放缩到 12 × 12 左右，就可以被检测出来，下图为MTCNN人脸检测流程。</p>
+<p><img src="https://img-blog.csdnimg.cn/b3ac3293462a4dd9ad6ed7a5ac9e6076.png#pic_center" alt="在这里插入图片描述"></p>
+<p>&emsp;&emsp;在人脸检测中，通常要设置要原图中要检测的最小人脸尺寸，原图中小于这个尺寸的人脸不必关心，MTCNN 代码中为 <code>minsize = 20</code>，MTCNN P-Net 用于检测 12 × 12 大小的人脸，这需要我们将不同的人脸大小都要缩放到 12 × 12。在 P-Net 中我们为什么可以对输出特征图中的每一个像素方格进行预测，正是因为原图中的人脸都被缩放到 12 × 12，而且输出特征图的感受野正是 12 × 12。</p>
+<p><strong>Tips：</strong></p>
+<p>人脸检测中的图像金字塔构建，涉及如下数据：</p>
+<ul>
+<li>输入图像尺寸：<code>(h, w)</code>；</li>
+<li>最小人脸尺寸：<code>min_face_size</code>；</li>
+<li>最大人脸尺寸：<code>max_face_size</code>，如果不设置，为图像高宽中较短的那个；</li>
+<li>网络/方法能检测的人脸尺寸：<code>net_face_size</code>；</li>
+<li>金字塔层间缩放比率：<code>factor</code>；</li>
+</ul>
+<p>缩放图像是为了将图像中的人脸缩放到网络能检测的适宜尺寸，图像金字塔中：</p>
+<ul>
+<li>最大缩放尺度(最小缩小比例)：<code>max_scale = net_face_size / min_face_size</code>；</li>
+<li>最小缩放尺度(最大缩小比例)：<code>min_scale = net_face_size / max_face_size</code>；</li>
+<li>中间的尺度：<code>scale_n = max_scale * (factor ^ n)</code>；</li>
+<li>对应的图像尺寸为：<code>(h_n, w_n) = (h * scale_n, w_n * scale_n)</code>；</li>
+<li>保证 <code>min(h_n, w_n) &gt;net_face_size</code>。</li>
+</ul>
+<p><strong>注：</strong> 缩小比例为缩放尺寸的倒数。<br>&emsp;&emsp;在 MTCNN 的实际测试中，如果输入图像为 (100，120)，其中人脸最小为 (20，20)，最大为 (20，20)——对应图像较短边长，为了将人脸放缩到 (12，12)，同时保证相邻层间缩放比率 <code>factor = 0.709</code>，依据上述公式则最大缩放尺度为 12 / 20，最小缩放尺度为 12 / 20，金字塔中图像尺寸依次为 (60，72)、(52，61)、(36，43)、(26，31)、(18，22)、(13，16)，其中 (60，72) 对应把 (20，20) 的人脸缩放到 (12，12)，(13，16)对应把 (100，100) 的人脸缩放到 (12，12)，在保证缩放比率一致的情况下近似。<br>&emsp;&emsp;综上，构建图像金字塔有两个步骤：</p>
+<ul>
+<li>给定输入图像，根据设置的最小人脸尺寸以及网络能检测的人脸尺寸，确定最大缩放图像和最小缩放图像；</li>
+<li>根据设置的金字塔层间缩放比率，确定每层图像的尺寸。</li>
+</ul>
+<h1 id="3-其他"><a href="#3-其他" class="headerlink" title="3    其他"></a>3    其他</h1><p><strong>Tips：</strong></p>
+<ul>
+<li>测试时只使用 onet.eval()，这是因为只有 O-Net 中有 Dropout 层。如果模型中有 BN 层和 Dropout，在测试时添加 model.eval()。model.eval() 是保证 BN 层能够用全部训练数据的均值和方差，即测试过程中要保证 BN 层的均值和方差不变。对于 Dropout，model.eval() 是利用到了所有网络连接，即不进行随机舍弃神经元；</li>
+<li>将 255 的 RGB 图像归一化到了 [-1，1] 的区间，归一化操作，加快收敛速度。由于图片每个像素点上是 [0，255] 的数，都是非负数，对每个像素点做 (x – 127.5) / 128，可以把 [0，255] 映射为 (-1，1)。有正有负的输入，损失函数收敛速度更快。因为 MTCNN 的训练中有次操作，因此测试时也要做。</li>
+</ul>
+<h1 id="4-效果"><a href="#4-效果" class="headerlink" title="4    效果"></a>4    效果</h1><p>&emsp;本次代码实现了两种检测方式：静态图像检测和摄像头实时检测。<a target="_blank" rel="noopener" href="https://github.com/aishangcengloua/mtcnn-PyTorch"><strong>GitHub：https://github.com/aishangcengloua/mtcnn-PyTorch</strong></a></p>
+<ul>
+<li>静态图像检测</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> src <span class="keyword">import</span> FaceDetector</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line"><span class="comment"># 人脸检测对象。优先使用GPU进行计算</span></span><br><span class="line">detector = FaceDetector()</span><br><span class="line"></span><br><span class="line">image = Image.<span class="built_in">open</span>(<span class="string">&quot;./images/face_1.jpg&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检测人脸，返回人脸位置坐标</span></span><br><span class="line">bboxes, landmarks = detector.detect(image)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 绘制并保存标注图</span></span><br><span class="line">drawed_image = detector.draw_bboxes(image)</span><br><span class="line">drawed_image.save(<span class="string">&quot;./images/drawed_image.jpg&quot;</span>)</span><br><span class="line">drawed_image.show()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 裁剪人脸图片并保存</span></span><br><span class="line"><span class="comment"># face_img_list = detector.crop_faces(image, size=64)</span></span><br><span class="line"><span class="comment"># for i in range(len(face_img_list)):</span></span><br><span class="line"><span class="comment">#     face_img_list[i].save(&quot;./images/face_&quot; + str(i + 1) + &quot;.jpg&quot;)</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/ffc8e21ea6b6496dba70f8d5bebc5d02.jpeg" alt="在这里插入图片描述"></p>
+<ul>
+<li>摄像头实时检测</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">from</span> src <span class="keyword">import</span> FaceDetector</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">detector = FaceDetector()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">camera_detect</span>():</span><br><span class="line">    video = cv2.VideoCapture(<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        ret, frame = video.read()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 将 OpenCV 格式的图片转换为 PIL.Image，注意 PIL 图片是 (width, height)</span></span><br><span class="line">        pil_im = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))</span><br><span class="line">        <span class="comment"># 绘制带人脸框的标注图</span></span><br><span class="line">        drawed_pil_im = detector.draw_bboxes(pil_im)</span><br><span class="line">        <span class="comment"># 再转回 OpenCV 格式用于视频显示</span></span><br><span class="line">        frame = cv2.cvtColor(np.asarray(drawed_pil_im), cv2.COLOR_RGB2BGR)</span><br><span class="line"></span><br><span class="line">        cv2.imshow(<span class="string">&quot;Face Detection&quot;</span>, frame)</span><br><span class="line">        <span class="keyword">if</span> cv2.waitKey(<span class="number">1</span>) &amp; <span class="number">0xFF</span> == <span class="built_in">ord</span>(<span class="string">&quot;q&quot;</span>):</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    video.release()</span><br><span class="line">    cv2.destroyAllWindows()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    camera_detect()</span><br></pre></td></tr></table></figure>
+<h1 id="5-参考"><a href="#5-参考" class="headerlink" title="5    参考"></a>5    参考</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://its301.com/article/weixin_41721222/88084549"><strong>https://its301.com/article/weixin_41721222/88084549</strong></a></li>
+<li><a target="_blank" rel="noopener" href="https://www.i4k.xyz/article/yanxueotft/99696057"><strong>https://www.i4k.xyz/article/yanxueotft/99696057</strong></a></li>
+<li><a target="_blank" rel="noopener" href="https://www.twblogs.net/a/5eef9bb51f92b2f1a17d09ef/?lang=zh-cn"><strong>https://www.twblogs.net/a/5eef9bb51f92b2f1a17d09ef/?lang=zh-cn</strong></a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/inkuang/MTCNN-PyTorch"><strong>https://github.com/inkuang/MTCNN-PyTorch</strong></a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/TropComplique/mtcnn-pytorch"><strong>https://github.com/TropComplique/mtcnn-pytorch</strong></a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/kpzhang93/MTCNN_face_detection_alignment"><strong>https://github.com/kpzhang93/MTCNN_face_detection_alignment</strong></a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1604.02878"><strong>Joint Face Detection and Alignment using Multi-task Cascaded Convolutional Networks</strong></a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
+              <a href="/tags/PyTorch/" rel="tag"># PyTorch</a>
+              <a href="/tags/%E4%BA%BA%E8%84%B8%E6%A3%80%E6%B5%8B/" rel="tag"># 人脸检测</a>
+              <a href="/tags/MTCNN/" rel="tag"># MTCNN</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/Python-%E4%B8%AD%E7%9A%84%E5%9B%BE%EF%BC%9AA-%E7%AE%97%E6%B3%95/" rel="prev" title="Python 中的图：A* 算法">
+      <i class="fa fa-chevron-left"></i> Python 中的图：A* 算法
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%9APseudo-Label-The-Simple-and-Efficient-Semi-Supervised-Learning-Method-for-Deep-Neural-Network/" rel="next" title="论文阅读：Pseudo-Label : The Simple and Efficient Semi-Supervised Learning Method for Deep Neural Network">
+      论文阅读：Pseudo-Label : The Simple and Efficient Semi-Supervised Learning Method for Deep Neural Network <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="nav-text">1    网络结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E5%9B%BE%E5%83%8F%E9%87%91%E5%AD%97%E5%A1%94"><span class="nav-text">2    图像金字塔</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E5%85%B6%E4%BB%96"><span class="nav-text">3    其他</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-%E6%95%88%E6%9E%9C"><span class="nav-text">4    效果</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5-%E5%8F%82%E8%80%83"><span class="nav-text">5    参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">53</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">126k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:29</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

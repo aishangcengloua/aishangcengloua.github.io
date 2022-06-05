@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言 &amp;emsp;&amp;emsp; 最近写了一个python的图片分类任务的作业，本篇博客是将我所做的流程所进行的整理。数据链接：百度网盘 提取码：rkhw，HoG特征理论知识可参考这里，PCA降维可参考这里">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于 HoG 的图像特征提取及其分类研究">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/%E5%9F%BA%E4%BA%8E-HoG-%E7%9A%84%E5%9B%BE%E5%83%8F%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB%E7%A0%94%E7%A9%B6/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="前言 &amp;emsp;&amp;emsp; 最近写了一个python的图片分类任务的作业，本篇博客是将我所做的流程所进行的整理。数据链接：百度网盘 提取码：rkhw，HoG特征理论知识可参考这里，PCA降维可参考这里">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/5cdd3d64f5544f70a0261cb352950e2b.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/cb332fe044f4441cb2fe1bfdbb7ce7df.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2b9c29e3ffdd426ba35ebfee05158bfe.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/fa8f9e6cf0024f0186859339bef60a16.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/ea2f6a128c4f4e7fa7d14caf32696797.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/3fdd7de68ee04500b4a002d4846ff48b.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/52a7dd24db794a1eae12f1f8b7dd450e.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/ce11010f86144d85883ddef1b27aeabb.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYWlzaGFuZ2Nlbmdsb3Vh,size_20,color_FFFFFF,t_70,g_se,x_16">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/37adc3e7ea1e46b892ea19dfa1ff475e.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/5b7b1e4792e542ea8056cc01b12901ca.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/bba8bbca343248e5985fdf0680d49a62.png">
+<meta property="article:published_time" content="2022-06-05T09:50:44.000Z">
+<meta property="article:modified_time" content="2022-06-05T09:54:48.150Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="图像分类">
+<meta property="article:tag" content="HOG">
+<meta property="article:tag" content="特征提取">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/5cdd3d64f5544f70a0261cb352950e2b.png">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/%E5%9F%BA%E4%BA%8E-HoG-%E7%9A%84%E5%9B%BE%E5%83%8F%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB%E7%A0%94%E7%A9%B6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>基于 HoG 的图像特征提取及其分类研究 | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">53</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">57</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E5%9F%BA%E4%BA%8E-HoG-%E7%9A%84%E5%9B%BE%E5%83%8F%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB%E7%A0%94%E7%A9%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          基于 HoG 的图像特征提取及其分类研究
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 17:50:44 / 修改时间：17:54:48" itemprop="dateCreated datePublished" datetime="2022-06-05T17:50:44+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%9C%BA%E5%99%A8%E8%A7%86%E8%A7%89/" itemprop="url" rel="index"><span itemprop="name">机器视觉</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E5%9F%BA%E4%BA%8E-HoG-%E7%9A%84%E5%9B%BE%E5%83%8F%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB%E7%A0%94%E7%A9%B6/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E5%9F%BA%E4%BA%8E-HoG-%E7%9A%84%E5%9B%BE%E5%83%8F%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB%E7%A0%94%E7%A9%B6/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>3.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p> &emsp;&emsp; 最近写了一个python的图片分类任务的作业，本篇博客是将我所做的流程所进行的整理。数据链接：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1OhsEgLGZ_MYxESPPGM5g5g">百度网盘</a> 提取码：rkhw，HoG特征理论知识可参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/zouxy09/article/details/7929348">这里</a>，PCA降维可参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_38262266/article/details/100592330">这里</a></p>
+<h1 id="1-介绍"><a href="#1-介绍" class="headerlink" title="1    介绍"></a>1    介绍</h1><p> &emsp;&emsp; 特征提取是图像处理中的一大领域,著名的提取算法有HoG(Histogram of Oriented Gradient)[1]、LBP(Local Binary Pattern)[2]和Haar-like[3]等等。近些年来,随着GPU算力的急速发展,深度学习也得到了迅速发展,使得图像特征提取的效率大大提升,各种分类任务的正确率不断的刷新提升。而深度学习存在着较差的可解释性和海量数据需求的问题,这是对机器视觉任务来说是伪命题,与之相反的是,传统特征提取方法可视性非常强,且现有的卷积神经网络可能与这些特征提取方法有一定类似性,因为每个滤波权重实际上是一个线性的识别模式,与这些特征提取过程的边界与梯度检测类似。因此对我们的学习来说,传统特征提取方法的学习是不可少的,本次实验是基于HoG 的图像特征提取及其分类研究。<br>&emsp;&emsp;HOG特征是一种在计算机视觉和图像处理中用来进行物体检测的特征描述子。它通过计算和统计图像局部区域的梯度方向直方图来构成特征。最早出现在2005年CVPR上，法国的研究人员Navneet Dalal 和Bill Triggs利用HOG特征+SVM进行行人检测,在当时得到了较好的检测效果。主要流程如下:<br><img src="https://img-blog.csdnimg.cn/5cdd3d64f5544f70a0261cb352950e2b.png" alt="在这里插入图片描述"><br>&emsp;&emsp;本次的实验也是基于上述流程进行一步一步实现,最终实现分类。</p>
+<h1 id="2-方法"><a href="#2-方法" class="headerlink" title="2    方法"></a>2    方法</h1><h2 id="2-1-数据集准备"><a href="#2-1-数据集准备" class="headerlink" title="2.1    数据集准备"></a>2.1    数据集准备</h2><p>&emsp;&emsp;本次分类任务是对猫、狗、人脸、蛇四种类别的分类。收集每种类别各4000张图片,其中87.5%作为训练集,12.5%作为预测集,且每个类别的占比相同。灰度图的形式读取图片,将图片重塑大小至256×256,最后给数据集的车、狗、人脸、蛇分别打上1,2,3,4的标签,以便训练预测以及后续的性能评估。</p>
+<h2 id="2-2-特征提取"><a href="#2-2-特征提取" class="headerlink" title="2.2    特征提取"></a>2.2    特征提取</h2><p>&emsp;&emsp;1)采用不同的Gamma值(默认2.2)校正法对输入图像进行颜色空间的标准化(归一化),目的是调节图像的对比度,降低图像局部的阴影和光照变化所造成的影响,同时可以抑制噪音的干扰。2)计算图像每个像素的梯度(包括大小和方向),主要是为了捕获轮廓信息,同时进一步弱化光照的干扰。本实验使用Sobel算子进行计算。3)将图像划分成小cells,因考虑到设备的性能及维度过大问题,而本实验一个cell的大小为32×32个像素。3)统计每个cell的梯度直方图(不同梯度的个数),形成每个cell的描述子。4)对每个cell的梯度方向进行投票,本实验将cell的梯度方向180度分成9个方向块即9个bins,每个bin的范围为20,cell梯度的大小作为权值加到bins里面。5)本实验将每四个cell组成一个block(2×2cell/block),一个block内所有cell的特征描述子串联起来便得到该block的HOG特征描述子。6)将图像image内的所有block的bins串联起来就可以得到该图片的HoG特征向量。这一步中由于是串联求和过程,使得梯度强度的变化范围非常大。这就需要对block的梯度强度做归一化。归一化能够进一步地对光照、阴影和边缘进行压缩。</p>
+<h2 id="2-3-降维"><a href="#2-3-降维" class="headerlink" title="2.3    降维"></a>2.3    降维</h2><p>&emsp;&emsp;在提取特征的步骤中,我们可以算出每一张图片提取出的特征向量的维度是2×2×9×7×7等于1764维,这是较大的维数,里面包含了许多冗余信息,所以我们应考虑对特征向量进行降维。本实验实现的是PCA(主成分分析)算法的降维,其主要过程如下:1)对所有样本进行中心化:$x_i$←$x_i$-$\displaystyle\sum_{i=1}^{n} x_i$。2)计算样本的协方差矩阵$xx^T$。3)对协方差矩阵$xx^T$做特征值分解。4)取最大的m个特征值所对应的单位特征向量:$ω_1,ω_2,⋯,ω_m$。5)得到投影矩阵。</p>
+<h2 id="2-4-分类"><a href="#2-4-分类" class="headerlink" title="2.4    分类"></a>2.4    分类</h2><p>&emsp;&emsp;本实验的分类器利用了sklearn库中的svm模型,设置不同的惩罚参数(默认1.0)和核函数(默认’rbf’)的类型进行多次训练和测试。</p>
+<h1 id="3-实验结果及分析"><a href="#3-实验结果及分析" class="headerlink" title="3    实验结果及分析"></a>3    实验结果及分析</h1><p>&emsp;&emsp;本实验采用不同的惩罚程度、核函数、gamma校正值、特征维数的分类性能进行对比，采用了精确率、召回率和micro_F1分数对实验结果进行性能评估。</p>
+<h2 id="3-1-模型对分类性能的影响"><a href="#3-1-模型对分类性能的影响" class="headerlink" title="3.1    模型对分类性能的影响"></a>3.1    模型对分类性能的影响</h2><p>&emsp;&emsp;不同惩罚程度的模型性能对比如表1所示。随着惩罚程度的减少,也即松弛变量减小,训练集的正确率从0.866降低至0.753,这是因为对误分类的惩罚减小,允许容错。按照理论来讲此时模型的泛化能力应增强,但是测试集精确率、召回率和micro_F1分数均从0.557减小至0.539,原因未能找到。此外,本实验还统计了此特征提取方法对应的每一类的分类情况,从表1中我们可以看出在车和人脸两类上召回率分别达到0.730和0.830左右,而狗和蛇两类分类的效果很差,分别只有0.334和0.324左右。<br><img src="https://img-blog.csdnimg.cn/cb332fe044f4441cb2fe1bfdbb7ce7df.png" alt="在这里插入图片描述"></p>
+<p>&emsp;&emsp;不同和函数对模型性能的影响表2所示。在rbf、linear和poly三种核函数中,高斯核函数rbf的性能是最好的有0.557,这是因为训练的维度是14000×404,样本数n远远大于特征维数m,这也导致了linear性能最差;而多项式核函数poly的训练集的精确率有0.977,原因是多项式的阶数很高,网络变得更加复杂,但这也导致了过拟合。对于四种类别之间的分类召回率差异仍未得到很好的改善。<br><img src="https://img-blog.csdnimg.cn/2b9c29e3ffdd426ba35ebfee05158bfe.png" alt="在这里插入图片描述"></p>
+<h2 id="3-2-特征对分类性能的影响"><a href="#3-2-特征对分类性能的影响" class="headerlink" title="3.2    特征对分类性能的影响"></a>3.2    特征对分类性能的影响</h2><p>&emsp;&emsp;不同gamma值对分类性能的影响如表3所示。随着gamma值从2.2减小至0.5,模型性能由0.557减小至0.530,车、人脸两类分类的召回率由0.730、0.830减小至0.694、0.722,蛇的召回率由0.324升至0.460,狗的召回率先有小幅度上升后减小至0.242,而训练集的精确率由0.866升至0.880,说明模型存在较为明显的过拟合问题。此外,车和人脸的分类召回率依然大幅度超过狗和蛇的分类精确率。<br><img src="https://img-blog.csdnimg.cn/fa8f9e6cf0024f0186859339bef60a16.png" alt="在这里插入图片描述"></p>
+<p>&emsp;&emsp;不同特征维数对分类性能的影响如表4所示。特征维数由100增加至704,训练集精确率由0.779增加至0.879,性能由0.589减小至0.555,四个类别的分类召回率出了狗均减小。原因是随着特征维数的增大,保留了更多的冗余信息,导致模型过拟合。<br><img src="https://img-blog.csdnimg.cn/ea2f6a128c4f4e7fa7d14caf32696797.png" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/3fdd7de68ee04500b4a002d4846ff48b.png" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/52a7dd24db794a1eae12f1f8b7dd450e.png" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/ce11010f86144d85883ddef1b27aeabb.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAYWlzaGFuZ2Nlbmdsb3Vh,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/37adc3e7ea1e46b892ea19dfa1ff475e.png" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/5b7b1e4792e542ea8056cc01b12901ca.png" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/bba8bbca343248e5985fdf0680d49a62.png" alt="在这里插入图片描述"></p>
+<h1 id="4-结论"><a href="#4-结论" class="headerlink" title="4    结论"></a>4    结论</h1><p>&emsp;&emsp;本实验通过修改模型参数和特征提取参数来对比分类性能,从表1到表4,无论怎么修改参数,分类性能最高为0.589,始终未超过0.600。本次实验的测试集正确率很低,便考虑到可能是出现预测失衡的原因,因此在具体类别的分类情况上用召回率来衡量更合适。将四个类别的分类召回率进行统计,发现车和人脸的分类效果十分好,最高可以分别达到0.758和0.848,HoG特征与SVM的结合之所以对这两类数据分类有较好的结果是因为HoG特征有对光照的不敏感,即使存在部分遮挡也可检测出来、能够反映人体的轮廓，并且它对图像中的人体的亮度和颜色变化不敏感的优点,因此HoG特征适合行人检测和车俩检测等领域。而本次实验对狗和蛇的分类性能很差,最高分别只有0.354和0.467,原因可能是HoG无法从含有狗和蛇的图片中有效提取它们的梯度和梯度方向,是否可以通过对图片的预处理比如裁剪操作来提高精度,还需要后续的实验。</p>
+<p><center>参考文献</center></p>
+
+<p> [1] Dalal N ,  Triggs B . Histograms of Oriented Gradients for Human Detection[C]// IEEE Computer Society Conference on Computer Vision &amp; Pattern Recognition. IEEE, 2005.<br>[2] Ojala T ,  Pietikainen M ,  Maenpaa T . Multiresolution Gray-Scale and Rotation Invariant Texture Classification with Local Binary Patterns[C]// IEEE Transactions on Pattern Analysis and Machine Intelligence. IEEE, 2002:971-987.<br>[3] Papageorgiou C P ,  Oren M ,  Poggio T . General framework for object detection[C]// Computer Vision, 1998. Sixth International Conference on. IEEE, 1998.</p>
+<p><strong><em>代码</em></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cv2 <span class="keyword">as</span> cv </span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> math</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> svm</span><br><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler</span><br><span class="line"><span class="keyword">from</span> sklearn.neural_network <span class="keyword">import</span> MLPClassifier</span><br><span class="line">%matplotlib</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">HoG</span>(<span class="title class_ inherited__">object</span>) :</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, img, cell_w, bin_count</span>) :</span><br><span class="line">        rows, cols = img.shape</span><br><span class="line">        img = np.power(img / <span class="number">255.0</span>, <span class="number">2.2</span>) * <span class="number">255</span></span><br><span class="line">        self.img = img</span><br><span class="line">        self.cell_w = cell_w</span><br><span class="line">        self.bin_count = bin_count</span><br><span class="line">        self.angle_unit = <span class="number">180.0</span> / bin_count</span><br><span class="line">        self.cell_x = <span class="built_in">int</span>(rows / cell_w)</span><br><span class="line">        self.cell_y = <span class="built_in">int</span>(cols / cell_w)</span><br><span class="line"></span><br><span class="line">    <span class="comment">#求每个像素的x和y方向的梯度值和梯度方向</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">Pixel_gradient</span>(<span class="params">self</span>) :</span><br><span class="line">        gradient_values_x = cv.Sobel(self.img, cv.CV_64F, <span class="number">1</span>, <span class="number">0</span>, ksize = <span class="number">5</span>)<span class="comment">#x方向梯度</span></span><br><span class="line">        gradient_values_y = cv.Sobel(self.img, cv.CV_64F, <span class="number">0</span>, <span class="number">1</span>, ksize = <span class="number">5</span>)<span class="comment">#y方向梯度</span></span><br><span class="line">        gradient_magnitude = np.sqrt(np.power(gradient_values_x, <span class="number">2</span>) + np.power(gradient_values_y, <span class="number">2</span>))<span class="comment">#计算总梯度</span></span><br><span class="line"><span class="comment">#         gradient_angle = cv.phase(gradient_values_x, gradient_values_y, angleInDegrees=True)#计算梯度方向</span></span><br><span class="line">        gradient_angle = np.arctan2( gradient_values_x, gradient_values_y )</span><br><span class="line">        gradient_angle[ gradient_angle &gt; <span class="number">0</span> ] *= <span class="number">180</span> / <span class="number">3.14</span></span><br><span class="line">        gradient_angle[ gradient_angle &lt; <span class="number">0</span> ] = ( gradient_angle[ gradient_angle &lt; <span class="number">0</span> ] + <span class="number">3.14</span> ) * <span class="number">180</span> / <span class="number">3.14</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> gradient_magnitude, gradient_angle</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#求每个cell的x和y方向的梯度值和梯度方向</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">Cell_gradient</span>(<span class="params">self, gradient</span>) :</span><br><span class="line">        cell = np.zeros((self.cell_x, self.cell_y, self.cell_w, self.cell_w))</span><br><span class="line">        gradient_x = np.split(gradient, self.cell_x, axis = <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(self.cell_x) :</span><br><span class="line">            gradient_y = np.split(gradient_x[i], self.cell_y, axis = <span class="number">1</span>)</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(self.cell_y) :</span><br><span class="line">                cell[i][j] = gradient_y[j]</span><br><span class="line">        <span class="keyword">return</span> cell</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">    <span class="comment">#对每个梯度方向进行投票</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">Get_bins</span>(<span class="params">self, cell_gradient, cell_angle</span>) :</span><br><span class="line">        bins = np.zeros((cell_gradient.shape[<span class="number">0</span>], cell_gradient.shape[<span class="number">1</span>], self.bin_count))</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(bins.shape[<span class="number">0</span>]) :</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(bins.shape[<span class="number">1</span>]) :</span><br><span class="line">                tmp_unit = np.zeros(self.bin_count)</span><br><span class="line">                cell_gradient_list = np.int8(cell_gradient[i][j].flatten())</span><br><span class="line">                cell_angle_list = cell_angle[i][j].flatten()</span><br><span class="line">                cell_angle_list = np.int8( cell_angle_list / self.angle_unit )<span class="comment">#0-9</span></span><br><span class="line">                cell_angle_list[ cell_angle_list &gt;=<span class="number">9</span> ] = <span class="number">0</span></span><br><span class="line"><span class="comment">#                 cell_angle_list = cell_angle_list.flatten()</span></span><br><span class="line"><span class="comment">#                 cell_angle_list = np.int8(cell_angle_list / self.angle_unit) % self.bin_count</span></span><br><span class="line"></span><br><span class="line">                <span class="keyword">for</span> m <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(cell_angle_list)) :</span><br><span class="line">                    tmp_unit[cell_angle_list[m]] += <span class="built_in">int</span>(cell_gradient_list[m])<span class="comment">#将梯度值作为投影的权值</span></span><br><span class="line">        </span><br><span class="line">                bins[i][j] = tmp_unit</span><br><span class="line">        <span class="keyword">return</span> bins </span><br><span class="line">    </span><br><span class="line">    <span class="comment">#获取整幅图像的特征向量</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">Block_Vector</span>(<span class="params">self</span>) :</span><br><span class="line">        gradient_magnitude, gradient_angle = self.Pixel_gradient()</span><br><span class="line">        cell_gradient_values = self.Cell_gradient(gradient_magnitude)</span><br><span class="line">        cell_angle = self.Cell_gradient(gradient_angle)</span><br><span class="line">        bins = self.Get_bins(cell_gradient_values, cell_angle)</span><br><span class="line">        </span><br><span class="line">        block_vector = []</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(self.cell_x - <span class="number">1</span>) :</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(self.cell_y - <span class="number">1</span>) :</span><br><span class="line">                feature = []</span><br><span class="line">                feature.extend(bins[i][j])</span><br><span class="line">                feature.extend(bins[i + <span class="number">1</span>][j])</span><br><span class="line">                feature.extend(bins[i][j + <span class="number">1</span>])</span><br><span class="line">                feature.extend(bins[i + <span class="number">1</span>][j + <span class="number">1</span>])</span><br><span class="line">                </span><br><span class="line">                mag = <span class="keyword">lambda</span> vector : math.sqrt(<span class="built_in">sum</span>(i ** <span class="number">2</span> <span class="keyword">for</span> i <span class="keyword">in</span> vector))</span><br><span class="line">                magnitude = mag(feature)</span><br><span class="line">                <span class="keyword">if</span> magnitude != <span class="number">0</span> :</span><br><span class="line">                    normalize = <span class="keyword">lambda</span> vector, magnitude: [element / magnitude <span class="keyword">for</span> element <span class="keyword">in</span> vector]</span><br><span class="line">                    feature = normalize(feature, magnitude)</span><br><span class="line">                    </span><br><span class="line">                block_vector.extend(feature)</span><br><span class="line">        <span class="keyword">return</span> np.array(block_vector)    </span><br><span class="line">    </span><br><span class="line"><span class="keyword">class</span> <span class="title class_">PCA</span>() :</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, n_components</span>) :</span><br><span class="line">        self.n_components = n_components</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">fit</span>(<span class="params">self, X</span>) :</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">deMean</span>(<span class="params">X</span>) :</span><br><span class="line">            <span class="keyword">return</span> X - np.mean(X, axis = <span class="number">0</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">calcCov</span>(<span class="params">X</span>) :</span><br><span class="line">            <span class="keyword">return</span> np.cov(X, rowvar = <span class="literal">False</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">deEigenvalue</span>(<span class="params">cov</span>) :</span><br><span class="line">            <span class="keyword">return</span> np.linalg.eig(cov)</span><br><span class="line">        </span><br><span class="line">        n, self.d = X.shape</span><br><span class="line">        <span class="keyword">assert</span> self.n_components &lt;= self.d</span><br><span class="line">        <span class="keyword">assert</span> self.n_components &lt;= n</span><br><span class="line">        </span><br><span class="line">        X = deMean(X)</span><br><span class="line">        cov = calcCov(X) </span><br><span class="line">        eigenvalue, featurevector = deEigenvalue(cov)</span><br><span class="line">        index = np.argsort(eigenvalue)</span><br><span class="line">        n_index = index[-self.n_components : ]</span><br><span class="line">        self.w = featurevector[ : , n_index]</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> self</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">transform</span>(<span class="params">self, X</span>) :</span><br><span class="line">        n, d = X.shape</span><br><span class="line">        <span class="keyword">assert</span> d == self.d</span><br><span class="line">        <span class="keyword">return</span> np.dot(X, self.w)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DataSet</span>(<span class="title class_ inherited__">object</span>) :</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, root, division</span>) :</span><br><span class="line">        self.root = root</span><br><span class="line">        self.division = division</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">data_segmentation</span>(<span class="params">self, car, dog, face, snake</span>) :</span><br><span class="line">        <span class="comment">#将每一类图片分割成训练集和测试集，四种类分别设置标签是[1, 2, 3， 4]方便后续的性能评估</span></span><br><span class="line">        train_car, test_car = car[ : <span class="built_in">int</span>(car.shape[<span class="number">0</span>] * self.division)], car[<span class="built_in">int</span>(car.shape[<span class="number">0</span>] * self.division) : ]</span><br><span class="line">        train_car_target, test_car_target = np.full(<span class="built_in">len</span>(train_car) , <span class="number">1</span>, dtype = np.int64), np.full(<span class="built_in">len</span>(test_car) , <span class="number">1</span>, dtype = np.int64)</span><br><span class="line">        train_dog, test_dog = dog[ : <span class="built_in">int</span>(dog.shape[<span class="number">0</span>] * self.division)], dog[<span class="built_in">int</span>(dog.shape[<span class="number">0</span>] * self.division) : ]</span><br><span class="line">        train_dog_target, test_dog_target = np.full(<span class="built_in">len</span>(train_dog) , <span class="number">2</span>, dtype = np.int64), np.full(<span class="built_in">len</span>(test_dog) , <span class="number">2</span>, dtype = np.int64)</span><br><span class="line">        train_face, test_face = face[ : <span class="built_in">int</span>(face.shape[<span class="number">0</span>] * self.division)], face[<span class="built_in">int</span>(face.shape[<span class="number">0</span>] * self.division) : ]</span><br><span class="line">        train_face_target, test_face_target = np.full(<span class="built_in">len</span>(train_face) , <span class="number">3</span>, dtype = np.int64), np.full(<span class="built_in">len</span>(test_face) , <span class="number">3</span>, dtype = np.int64)</span><br><span class="line">        train_snake, test_snake = snake[ : <span class="built_in">int</span>(snake.shape[<span class="number">0</span>] * self.division)], snake[<span class="built_in">int</span>(snake.shape[<span class="number">0</span>] * self.division) : ]</span><br><span class="line">        train_snake_target, test_snake_target = np.full(<span class="built_in">len</span>(train_snake) , <span class="number">4</span>, dtype = np.int64), np.full(<span class="built_in">len</span>(test_snake) , <span class="number">4</span>, dtype = np.int64)</span><br><span class="line"></span><br><span class="line">        <span class="comment">#将四类图片拼接成一个大的矩阵</span></span><br><span class="line">        train_data = np.concatenate([train_car, train_dog, train_face, train_snake])</span><br><span class="line">        test_data = np.concatenate([test_car, test_dog, test_face, test_snake])</span><br><span class="line">        train_target = np.concatenate([train_car_target, train_dog_target, train_face_target, train_snake_target])</span><br><span class="line">        test_target = np.concatenate([test_car_target, test_dog_target, test_face_target, test_snake_target])</span><br><span class="line">        </span><br><span class="line">        <span class="comment">#以索引方式打乱训练集</span></span><br><span class="line">        index = [i <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(train_data))]</span><br><span class="line">        random.shuffle(index)</span><br><span class="line">        train_data = train_data[index]</span><br><span class="line">        train_target = train_target[index]</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> train_data, train_target, test_data, test_target</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">datasets</span>(<span class="params">self</span>) :</span><br><span class="line">        <span class="comment">#读取每类图片的名字</span></span><br><span class="line">        image_car = <span class="built_in">list</span>(<span class="built_in">sorted</span>(os.listdir(os.path.join(self.root, <span class="string">&#x27;car&#x27;</span>))))</span><br><span class="line">        image_dog = <span class="built_in">list</span>(<span class="built_in">sorted</span>(os.listdir(os.path.join(self.root, <span class="string">&#x27;dog&#x27;</span>))))</span><br><span class="line">        image_face = <span class="built_in">list</span>(<span class="built_in">sorted</span>(os.listdir(os.path.join(self.root, <span class="string">&#x27;face&#x27;</span>))))</span><br><span class="line">        image_snake = <span class="built_in">list</span>(<span class="built_in">sorted</span>(os.listdir(os.path.join(self.root, <span class="string">&#x27;snake&#x27;</span>))))</span><br><span class="line">        </span><br><span class="line">        <span class="comment">#储存图片</span></span><br><span class="line">        car = np.zeros((<span class="number">4000</span>, <span class="number">256</span>, <span class="number">256</span>), dtype = np.uint8)</span><br><span class="line">        dog = np.zeros((<span class="number">4000</span>, <span class="number">256</span>, <span class="number">256</span>), dtype = np.uint8)</span><br><span class="line">        face = np.zeros((<span class="number">4000</span>, <span class="number">256</span>, <span class="number">256</span>), dtype = np.uint8)</span><br><span class="line">        snake = np.zeros((<span class="number">4000</span>, <span class="number">256</span>, <span class="number">256</span>), dtype = np.uint8)</span><br><span class="line">        </span><br><span class="line">        <span class="comment">#读取车、狗、人脸、蛇的图片，进行resize至256 * 256</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4000</span>) :</span><br><span class="line">            img = cv.imread(os.path.join(self.root, <span class="string">&#x27;car&#x27;</span>, image_car[i]), cv.IMREAD_GRAYSCALE)</span><br><span class="line">            img = cv.resize(img, (<span class="number">256</span>, <span class="number">256</span>), cv.INTER_CUBIC)</span><br><span class="line">            car[i] = img</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4000</span>) :</span><br><span class="line">            img = cv.imread(os.path.join(self.root, <span class="string">&#x27;dog&#x27;</span>, image_dog[i]), cv.IMREAD_GRAYSCALE)</span><br><span class="line">            img = cv.resize(img, (<span class="number">256</span>, <span class="number">256</span>), cv.INTER_CUBIC)</span><br><span class="line">            dog[i] = img    </span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4000</span>) :</span><br><span class="line">            img = cv.imread(os.path.join(self.root, <span class="string">&#x27;face&#x27;</span>, image_face[i]), cv.IMREAD_GRAYSCALE)</span><br><span class="line">            img = cv.resize(img, (<span class="number">256</span>, <span class="number">256</span>), cv.INTER_CUBIC)</span><br><span class="line">            face[i] = img</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4000</span>) :</span><br><span class="line">            img = cv.imread(os.path.join(self.root, <span class="string">&#x27;snake&#x27;</span>, image_snake[i]), cv.IMREAD_GRAYSCALE)</span><br><span class="line">            img = cv.resize(img, (<span class="number">256</span>, <span class="number">256</span>), cv.INTER_CUBIC)</span><br><span class="line">            snake[i] = img</span><br><span class="line">        <span class="built_in">print</span>(car.shape, dog.shape, face.shape, snake.shape)</span><br><span class="line">        <span class="comment">#分割</span></span><br><span class="line">        train_data, train_target, test_data, test_target = self.data_segmentation(car, dog, face, snake)</span><br><span class="line">        <span class="keyword">return</span> train_data, train_target, test_data, test_target</span><br><span class="line">    </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">micro_f1</span>(<span class="params">pred, target</span>) :</span><br><span class="line">    <span class="comment">#第一类</span></span><br><span class="line">    target1 = target.copy()</span><br><span class="line">    pred1 = pred.copy()</span><br><span class="line">    target1 = target1 == <span class="number">1</span></span><br><span class="line">    pred1 = pred1 == <span class="number">1</span></span><br><span class="line">    TP1 = np.<span class="built_in">sum</span>(target1[pred1 == <span class="number">1</span>] == <span class="number">1</span>)</span><br><span class="line">    FN1 = np.<span class="built_in">sum</span>(target1[pred1 == <span class="number">0</span>] == <span class="number">1</span>)</span><br><span class="line">    FP1 = np.<span class="built_in">sum</span>(target1[pred1 == <span class="number">1</span>] == <span class="number">0</span>)</span><br><span class="line">    TN1 = np.<span class="built_in">sum</span>(target1[pred1 == <span class="number">0</span>] == <span class="number">0</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#第二类</span></span><br><span class="line">    target2 = target.copy()</span><br><span class="line">    pred2 = pred.copy()</span><br><span class="line">    target2 = target2 == <span class="number">2</span></span><br><span class="line">    pred2 = pred2 == <span class="number">2</span></span><br><span class="line">    TP2 = np.<span class="built_in">sum</span>(target2[pred2 == <span class="number">1</span>] == <span class="number">1</span>)</span><br><span class="line">    FN2 = np.<span class="built_in">sum</span>(target2[pred2 == <span class="number">0</span>] == <span class="number">1</span>)</span><br><span class="line">    FP2 = np.<span class="built_in">sum</span>(target2[pred2 == <span class="number">1</span>] == <span class="number">0</span>)</span><br><span class="line">    TN2 = np.<span class="built_in">sum</span>(target2[pred2 == <span class="number">0</span>] == <span class="number">0</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#第三类</span></span><br><span class="line">    target3 = target.copy()</span><br><span class="line">    pred3 = pred.copy()</span><br><span class="line">    target3 = target3 == <span class="number">3</span></span><br><span class="line">    pred3 = pred3 == <span class="number">3</span></span><br><span class="line">    TP3 = np.<span class="built_in">sum</span>(target3[pred3 == <span class="number">1</span>] == <span class="number">1</span>)</span><br><span class="line">    FN3 = np.<span class="built_in">sum</span>(target3[pred3 == <span class="number">0</span>] == <span class="number">1</span>)</span><br><span class="line">    FP3 = np.<span class="built_in">sum</span>(target3[pred3 == <span class="number">1</span>] == <span class="number">0</span>)</span><br><span class="line">    TN3 = np.<span class="built_in">sum</span>(target3[pred3 == <span class="number">0</span>] == <span class="number">0</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#第四类</span></span><br><span class="line">    target4 = target.copy()</span><br><span class="line">    pred4 = pred.copy()</span><br><span class="line">    target4 = target4 == <span class="number">4</span></span><br><span class="line">    pred4 = pred4 == <span class="number">4</span></span><br><span class="line">    TP4 = np.<span class="built_in">sum</span>(target4[pred4 == <span class="number">1</span>] == <span class="number">1</span>)</span><br><span class="line">    FN4 = np.<span class="built_in">sum</span>(target4[pred4 == <span class="number">0</span>] == <span class="number">1</span>)</span><br><span class="line">    FP4 = np.<span class="built_in">sum</span>(target4[pred4 == <span class="number">1</span>] == <span class="number">0</span>)</span><br><span class="line">    TN4 = np.<span class="built_in">sum</span>(target4[pred4 == <span class="number">0</span>] == <span class="number">0</span>)</span><br><span class="line">    </span><br><span class="line">    TP = TP1 + TP2 + TP3 + TP4</span><br><span class="line">    FN = FN1 + FN2 + FN3 + FN4</span><br><span class="line">    FP = FP1 + FP2 + FP3 + FP4</span><br><span class="line">    TN = TN1 + TN2 + TN3 + TN4</span><br><span class="line">    </span><br><span class="line">    precision = TP / (TP + FP)</span><br><span class="line">    recall = TP / (TP + FN)</span><br><span class="line">    f1 = <span class="number">2</span> * precision * recall / (precision + recall) </span><br><span class="line">    </span><br><span class="line">    confusion_matrix =np.array([[np.<span class="built_in">sum</span>(pred[target == <span class="number">1</span>] == <span class="number">1</span>), np.<span class="built_in">sum</span>(pred[target == <span class="number">1</span>] == <span class="number">2</span>), np.<span class="built_in">sum</span>(pred[target == <span class="number">1</span>] == <span class="number">3</span>), np.<span class="built_in">sum</span>(pred[target == <span class="number">1</span>] == <span class="number">4</span>)],</span><br><span class="line">                                [np.<span class="built_in">sum</span>(pred[target == <span class="number">2</span>] == <span class="number">1</span>), np.<span class="built_in">sum</span>(pred[target == <span class="number">2</span>] == <span class="number">2</span>), np.<span class="built_in">sum</span>(pred[target == <span class="number">2</span>] == <span class="number">3</span>), np.<span class="built_in">sum</span>(pred[target == <span class="number">2</span>] == <span class="number">4</span>)],</span><br><span class="line">                                [np.<span class="built_in">sum</span>(pred[target == <span class="number">3</span>] == <span class="number">1</span>), np.<span class="built_in">sum</span>(pred[target == <span class="number">3</span>] == <span class="number">2</span>), np.<span class="built_in">sum</span>(pred[target == <span class="number">3</span>] == <span class="number">3</span>), np.<span class="built_in">sum</span>(pred[target == <span class="number">3</span>] == <span class="number">4</span>)],</span><br><span class="line">                                [np.<span class="built_in">sum</span>(pred[target == <span class="number">4</span>] == <span class="number">1</span>), np.<span class="built_in">sum</span>(pred[target == <span class="number">4</span>] == <span class="number">2</span>), np.<span class="built_in">sum</span>(pred[target == <span class="number">4</span>] == <span class="number">3</span>), np.<span class="built_in">sum</span>(pred[target == <span class="number">4</span>] == <span class="number">4</span>)]])</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> precision, recall, f1, TP1, TP2, TP3, TP4, confusion_matrix</span><br><span class="line"></span><br><span class="line">dataset = DataSet(root = <span class="string">&#x27;data&#x27;</span>, division = <span class="number">0.875</span>)</span><br><span class="line">train_data, train_target, test_data, test_target = dataset.datasets()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 绘制混淆矩阵</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">plot_confusion_matrix</span>(<span class="params">cm, classes, title = <span class="string">&#x27;Confusion matrix&#x27;</span>, cmap = plt.cm.Blues</span>):</span><br><span class="line">    plt.imshow(cm, interpolation=<span class="string">&#x27;nearest&#x27;</span>, cmap = cmap)</span><br><span class="line">    plt.title(title)</span><br><span class="line">    plt.colorbar()</span><br><span class="line">    tick_marks = np.arange(<span class="built_in">len</span>(classes))</span><br><span class="line">    plt.xticks(tick_marks, classes)</span><br><span class="line">    plt.yticks(tick_marks, classes)</span><br><span class="line">    thresh = cm.<span class="built_in">max</span>() / <span class="number">2.</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(cm.shape[<span class="number">0</span>]) :</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(cm.shape[<span class="number">1</span>]) :</span><br><span class="line">            plt.text(j, i, <span class="string">f&#x27;<span class="subst">&#123;cm[i][j]&#125;</span>&#x27;</span>, horizontalalignment=<span class="string">&quot;center&quot;</span>, color=<span class="string">&quot;white&quot;</span> <span class="keyword">if</span> cm[i][j] &gt; thresh <span class="keyword">else</span> <span class="string">&quot;black&quot;</span>)</span><br><span class="line">    plt.tight_layout()</span><br><span class="line">    plt.ylabel(<span class="string">&#x27;True label&#x27;</span>)</span><br><span class="line">    plt.xlabel(<span class="string">&#x27;Predicted label&#x27;</span>)</span><br><span class="line">    plt.show()</span><br><span class="line">    </span><br><span class="line"><span class="comment"># print(train_data.shape, train_target.shape, test_data.shape, test_target.shape)</span></span><br><span class="line"><span class="comment"># print(test_target, train_target)</span></span><br><span class="line"><span class="comment">#HoG特征获取</span></span><br><span class="line">train_feature = []</span><br><span class="line">test_feature = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(train_data)) :</span><br><span class="line">    hog = HoG(train_data[i], <span class="number">32</span>, <span class="number">9</span>)</span><br><span class="line">    temp_feature = hog.Block_Vector()</span><br><span class="line">    train_feature.append(temp_feature)</span><br><span class="line">    </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(test_data)) :</span><br><span class="line">    hog = HoG(test_data[i], <span class="number">32</span>, <span class="number">9</span>)</span><br><span class="line">    temp_feature = hog.Block_Vector()</span><br><span class="line">    test_feature.append(temp_feature)</span><br><span class="line"></span><br><span class="line">train_feature = np.array(train_feature)</span><br><span class="line">test_feature = np.array(test_feature)</span><br><span class="line"><span class="comment"># print(train_feature.shape, test_feature.shape)</span></span><br><span class="line"><span class="comment">#PCA降维</span></span><br><span class="line">pca = PCA(n_components = <span class="number">704</span>)</span><br><span class="line">pca.fit(train_feature)</span><br><span class="line">train_reduction = pca.transform(train_feature)</span><br><span class="line">test_reduction = pca.transform(test_feature)</span><br><span class="line"><span class="built_in">print</span>(train_reduction.shape)</span><br><span class="line"><span class="built_in">print</span>(test_reduction.shape)</span><br><span class="line"><span class="comment">#模型训练和预测</span></span><br><span class="line">clf = svm.SVC()</span><br><span class="line">clf.fit(train_reduction, train_target)</span><br><span class="line"><span class="built_in">print</span>(clf.score(test_reduction, test_target))</span><br><span class="line"><span class="built_in">print</span>(clf.score(train_reduction, train_target))</span><br><span class="line">pred = clf.predict(test_reduction)</span><br><span class="line">precision, recall, f1, TP1, TP2, TP3, TP4, confusion_matrix = micro_f1(pred, test_target)</span><br><span class="line"><span class="built_in">print</span>( precision, recall, f1, TP1, TP2, TP3, TP4, confusion_matrix)</span><br><span class="line"><span class="comment">#绘制混淆矩阵</span></span><br><span class="line">plot_confusion_matrix(cm = confusion_matrix, classes = [<span class="string">&#x27;car&#x27;</span>, <span class="string">&#x27;dog&#x27;</span>, <span class="string">&#x27;face&#x27;</span>, <span class="string">&#x27;snake&#x27;</span>])</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB/" rel="tag"># 图像分类</a>
+              <a href="/tags/HOG/" rel="tag"># HOG</a>
+              <a href="/tags/%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96/" rel="tag"># 特征提取</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/Adult-%E6%95%B0%E6%8D%AE%E9%9B%86%E5%88%86%E6%9E%90%E5%8F%8A%E5%9B%9B%E7%A7%8D%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0/" rel="prev" title="Adult 数据集分析及四种模型实现">
+      <i class="fa fa-chevron-left"></i> Adult 数据集分析及四种模型实现
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E5%B7%A5%E4%B8%9A%E4%BA%A7%E5%93%81%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B-Opencv-Python/" rel="next" title="工业产品缺陷检测 Opencv+Python">
+      工业产品缺陷检测 Opencv+Python <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E4%BB%8B%E7%BB%8D"><span class="nav-text">1    介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E6%96%B9%E6%B3%95"><span class="nav-text">2    方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-%E6%95%B0%E6%8D%AE%E9%9B%86%E5%87%86%E5%A4%87"><span class="nav-text">2.1    数据集准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96"><span class="nav-text">2.2    特征提取</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-%E9%99%8D%E7%BB%B4"><span class="nav-text">2.3    降维</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-%E5%88%86%E7%B1%BB"><span class="nav-text">2.4    分类</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C%E5%8F%8A%E5%88%86%E6%9E%90"><span class="nav-text">3    实验结果及分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-%E6%A8%A1%E5%9E%8B%E5%AF%B9%E5%88%86%E7%B1%BB%E6%80%A7%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="nav-text">3.1    模型对分类性能的影响</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-%E7%89%B9%E5%BE%81%E5%AF%B9%E5%88%86%E7%B1%BB%E6%80%A7%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="nav-text">3.2    特征对分类性能的影响</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-%E7%BB%93%E8%AE%BA"><span class="nav-text">4    结论</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">53</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">126k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:29</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

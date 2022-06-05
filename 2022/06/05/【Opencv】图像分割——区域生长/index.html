@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1    环境 Python 3.8.8 PyCharm 2021 opencv-python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【Opencv】图像分割——区域生长">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/%E3%80%90Opencv%E3%80%91%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2%E2%80%94%E2%80%94%E5%8C%BA%E5%9F%9F%E7%94%9F%E9%95%BF/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="1    环境 Python 3.8.8 PyCharm 2021 opencv-python">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/25a660a9b01b458bb555118218f30342.gif#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/b8142811e30142519a2d4d2e2cd53f67.gif#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/3122cf0544c841c6bcde899af2ecf27c.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/1fcafbf84ec64432a631ae3a448353d8.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/488a9baf9bea44528c9a7e1528372991.png#pic_center">
+<meta property="article:published_time" content="2022-06-05T11:15:31.000Z">
+<meta property="article:modified_time" content="2022-06-05T11:16:20.894Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="opencv">
+<meta property="article:tag" content="图像分割">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/25a660a9b01b458bb555118218f30342.gif#pic_center">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/%E3%80%90Opencv%E3%80%91%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2%E2%80%94%E2%80%94%E5%8C%BA%E5%9F%9F%E7%94%9F%E9%95%BF/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>【Opencv】图像分割——区域生长 | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">53</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">57</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E3%80%90Opencv%E3%80%91%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2%E2%80%94%E2%80%94%E5%8C%BA%E5%9F%9F%E7%94%9F%E9%95%BF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【Opencv】图像分割——区域生长
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 19:15:31 / 修改时间：19:16:20" itemprop="dateCreated datePublished" datetime="2022-06-05T19:15:31+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%9C%BA%E5%99%A8%E8%A7%86%E8%A7%89/" itemprop="url" rel="index"><span itemprop="name">机器视觉</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E3%80%90Opencv%E3%80%91%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2%E2%80%94%E2%80%94%E5%8C%BA%E5%9F%9F%E7%94%9F%E9%95%BF/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E3%80%90Opencv%E3%80%91%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2%E2%80%94%E2%80%94%E5%8C%BA%E5%9F%9F%E7%94%9F%E9%95%BF/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>833</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="1-环境"><a href="#1-环境" class="headerlink" title="1    环境"></a>1    环境</h1><ul>
+<li>Python 3.8.8</li>
+<li>PyCharm 2021</li>
+<li>opencv-python</li>
+</ul>
+<h1 id="2-效果"><a href="#2-效果" class="headerlink" title="2    效果"></a>2    效果</h1><p><img src="https://img-blog.csdnimg.cn/25a660a9b01b458bb555118218f30342.gif#pic_center" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/b8142811e30142519a2d4d2e2cd53f67.gif#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="3-原理"><a href="#3-原理" class="headerlink" title="3    原理"></a>3    原理</h1><p>&emsp;&emsp;区域生长的基本思想是将具有相似性质的像素集合起来构成区域。具体先对每个需要分割的区域找一个种子像素作为生长的起点，然后将种子像素周围邻域中与种子像素具有相同或相似性质的像素（根据某种事先确定的生长或相似准则来判定）合并到种子像素所在的区域中。将这些新像素当做新的种子像素继续进行上面的过程，直到再没有满足条件的像素可被包括进来，这样，一个区域就长成了。<br>&emsp;&emsp;区域生长的算法实现：</p>
+<ul>
+<li>根据图像的不同应用选择一个或一组种子，它或者是最亮或最暗的点，或者是位于点簇中心的点，当然也可以手动选择种子点。</li>
+<li>选择一个描述符（条件），常见的有基于区域灰度差、基于区域灰度分布统计性质。</li>
+<li>从该种子开始向外扩张，首先把种子像素加入结果集合，然后不断将与集合中各个像素连通、且满足描述符的像素加入集合。</li>
+<li>上一过程进行到不再有满足条件的新结点加入集合为止。</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/3122cf0544c841c6bcde899af2ecf27c.png#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="4-案例"><a href="#4-案例" class="headerlink" title="4    案例"></a>4    案例</h1><p>&emsp;&emsp;本次案例采用了一张医学图像，为肺部 <strong>CT</strong> 图像，提取肺的轮廓以判断肺的健康性。</p>
+<p><img src="https://img-blog.csdnimg.cn/1fcafbf84ec64432a631ae3a448353d8.png#pic_center" alt="在这里插入图片描述"><br>实现的主要流程如下：</p>
+<ul>
+<li>读入CT图片，让图片和鼠标进行交互，在三个位置进行左击鼠标生成三个红点，保存每次点击时的 $(y,x)$ 到开始的 $seeds$ 中，完成 $seeds$ 初始化。完成此过程的为 $cv2.setMouseCallback()$。</li>
+<li>以上面步骤得到的 $seeds$ 进行区域生长，创建与原 $CT$ 图大小相同的空白图 $seedMark$，根据初始化的种子点的坐标在 $seedMark$ 标记为 $255$。在定义种子点的八领域坐标，当种子与其八邻域的像素差大于 $6$ 且之前在 $seedMark$ 没有被标记过时，则不合并，反之将其与种子进行合并，方式为令 $seedMark$ 的对应坐标的像素为 $255$，并将其存入种子队列作为下次生长时的种子，将当前种子点从种子队列中去除。</li>
+<li>输入 $q$ 回车结束交互，效果展示。</li>
+</ul>
+<p>代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cv2 <span class="keyword">as</span> cv</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> deque</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算种子点和其领域的像素值之差</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">getGrayDiff</span>(<span class="params">gray, current_seed, tmp_seed</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">abs</span>(<span class="built_in">int</span>(gray[current_seed[<span class="number">0</span>], current_seed[<span class="number">1</span>]]) - <span class="built_in">int</span>(gray[tmp_seed[<span class="number">0</span>], tmp_seed[<span class="number">1</span>]]))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 区域生长算法</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">regional_growth</span>(<span class="params">gray, seeds</span>):</span><br><span class="line">	<span class="comment">#八领域</span></span><br><span class="line">    connects = [(-<span class="number">1</span>, -<span class="number">1</span>), (<span class="number">0</span>, -<span class="number">1</span>), (<span class="number">1</span>, -<span class="number">1</span>), (<span class="number">1</span>, <span class="number">0</span>), \</span><br><span class="line">                (<span class="number">1</span>, <span class="number">1</span>), (<span class="number">0</span>, <span class="number">1</span>), (-<span class="number">1</span>, <span class="number">1</span>), (-<span class="number">1</span>, <span class="number">0</span>)]</span><br><span class="line">    seedMark = np.zeros((gray.shape))</span><br><span class="line">    height, width = gray.shape</span><br><span class="line">    threshold = <span class="number">6</span></span><br><span class="line">    seedque = deque()</span><br><span class="line">    label = <span class="number">255</span></span><br><span class="line">    seedque.extend(seeds)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> seedque :</span><br><span class="line">    	<span class="comment">#队列具有先进先出的性质。所以要左删</span></span><br><span class="line">        current_seed = seedque.popleft()</span><br><span class="line">        seedMark[current_seed[<span class="number">0</span>], current_seed[<span class="number">1</span>]] = label</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>) :</span><br><span class="line">            tmpX = current_seed[<span class="number">0</span>] + connects[i][<span class="number">0</span>]</span><br><span class="line">            tmpY = current_seed[<span class="number">1</span>] + connects[i][<span class="number">1</span>]</span><br><span class="line">            <span class="comment">#处理边界情况</span></span><br><span class="line">            <span class="keyword">if</span> tmpX &lt; <span class="number">0</span> <span class="keyword">or</span> tmpY &lt; <span class="number">0</span> <span class="keyword">or</span> tmpX &gt;= height <span class="keyword">or</span> tmpY &gt;= width :</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">            grayDiff = getGrayDiff(gray, current_seed, (tmpX, tmpY))</span><br><span class="line">            <span class="keyword">if</span> grayDiff &lt; threshold <span class="keyword">and</span> seedMark[tmpX, tmpY] != label :</span><br><span class="line">                seedque.append((tmpX, tmpY))</span><br><span class="line">                seedMark[tmpX, tmpY] = label</span><br><span class="line">    <span class="keyword">return</span> seedMark</span><br><span class="line"></span><br><span class="line"><span class="comment">#交互函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Event_Mouse</span>(<span class="params">event, x, y, flags, param</span>) :</span><br><span class="line">	<span class="comment">#左击鼠标</span></span><br><span class="line">    <span class="keyword">if</span> event == cv.EVENT_LBUTTONDOWN :</span><br><span class="line">    	<span class="comment">#添加种子</span></span><br><span class="line">        seeds.append((y, x))</span><br><span class="line">        <span class="comment">#画实心点</span></span><br><span class="line">        cv.circle(img, center = (x, y), radius = <span class="number">2</span>,</span><br><span class="line">                  color = (<span class="number">0</span>, <span class="number">0</span>, <span class="number">255</span>), thickness = -<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Region_Grow</span>(<span class="params">img</span>):</span><br><span class="line">    cv.namedWindow(<span class="string">&#x27;img&#x27;</span>)</span><br><span class="line">    cv.setMouseCallback(<span class="string">&#x27;img&#x27;</span>, Event_Mouse)</span><br><span class="line">    cv.imshow(<span class="string">&#x27;img&#x27;</span>, img)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span> :</span><br><span class="line">        cv.imshow(<span class="string">&#x27;img&#x27;</span>, img)</span><br><span class="line">        <span class="keyword">if</span> cv.waitKey(<span class="number">1</span>) &amp; <span class="number">0xFF</span> == <span class="built_in">ord</span>(<span class="string">&#x27;q&#x27;</span>) :</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    cv.destroyAllWindows()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    CT = cv.imread(<span class="string">&#x27;images/CT.png&#x27;</span>, <span class="number">1</span>)</span><br><span class="line">    seedMark = np.uint8(regional_growth(cv.cvtColor(CT, cv.COLOR_BGR2GRAY), seeds))</span><br><span class="line"></span><br><span class="line">    cv.imshow(<span class="string">&#x27;seedMark&#x27;</span>, seedMark)</span><br><span class="line">    cv.waitKey(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">    plt.figure(figsize=(<span class="number">12</span>, <span class="number">4</span>))</span><br><span class="line">    plt.subplot(<span class="number">131</span>), plt.imshow(cv.cvtColor(CT, cv.COLOR_BGR2RGB))</span><br><span class="line">    plt.axis(<span class="string">&#x27;off&#x27;</span>), plt.title(<span class="string">f&#x27;$input\_image$&#x27;</span>)</span><br><span class="line">    plt.subplot(<span class="number">132</span>), plt.imshow(cv.cvtColor(img, cv.COLOR_BGR2RGB))</span><br><span class="line">    plt.axis(<span class="string">&#x27;off&#x27;</span>), plt.title(<span class="string">f&#x27;$seeds\_image$&#x27;</span>)</span><br><span class="line">    plt.subplot(<span class="number">133</span>), plt.imshow(seedMark, cmap=<span class="string">&#x27;gray&#x27;</span>, vmin = <span class="number">0</span>, vmax = <span class="number">255</span>)</span><br><span class="line">    plt.axis(<span class="string">&#x27;off&#x27;</span>), plt.title(<span class="string">f&#x27;$segmented\_image$&#x27;</span>)</span><br><span class="line">    plt.tight_layout()</span><br><span class="line">    plt.show()</span><br><span class="line">    </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    img = cv.imread(<span class="string">&#x27;./images/CT.png&#x27;</span>)</span><br><span class="line">    seeds = []</span><br><span class="line">    Region_Grow(img)</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/488a9baf9bea44528c9a7e1528372991.png#pic_center" alt="在这里插入图片描述"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/opencv/" rel="tag"># opencv</a>
+              <a href="/tags/%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/" rel="tag"># 图像分割</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E3%80%90Opencv%E3%80%91%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2%E2%80%94%E2%80%94%E5%8C%BA%E5%9F%9F%E5%88%86%E8%A3%82%E5%90%88%E5%B9%B6/" rel="prev" title="【Opencv】图像分割——区域分裂合并">
+      <i class="fa fa-chevron-left"></i> 【Opencv】图像分割——区域分裂合并
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/" rel="next" title="激活函数">
+      激活函数 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E7%8E%AF%E5%A2%83"><span class="nav-text">1    环境</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E6%95%88%E6%9E%9C"><span class="nav-text">2    效果</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E5%8E%9F%E7%90%86"><span class="nav-text">3    原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-%E6%A1%88%E4%BE%8B"><span class="nav-text">4    案例</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">53</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">126k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:29</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1    什么是图&amp;emsp;&amp;emsp;图是一种数据结构，可用于对对象之间的层次结构和关系进行建模。它由一组节点和一组边组成。节点表示单个对象，而边表示这些对象之间的关系。注意：可能在不同的文献中节点也被称作顶点，它们指同一个意思。&amp;emsp;&amp;emsp;如果图中的边可以通过双向遍历，则是无向图(undirected)，如果只能通过一个方向进行遍历，则是有向图(undirected)。并非图的所">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python 中的图：图的存储结构">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/Python-%E4%B8%AD%E7%9A%84%E5%9B%BE%EF%BC%9A%E5%9B%BE%E7%9A%84%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="1    什么是图&amp;emsp;&amp;emsp;图是一种数据结构，可用于对对象之间的层次结构和关系进行建模。它由一组节点和一组边组成。节点表示单个对象，而边表示这些对象之间的关系。注意：可能在不同的文献中节点也被称作顶点，它们指同一个意思。&amp;emsp;&amp;emsp;如果图中的边可以通过双向遍历，则是无向图(undirected)，如果只能通过一个方向进行遍历，则是有向图(undirected)。并非图的所">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2b04ebe1cbfb4c40b1634dde5bbcbb67.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/1924b974e53047c992477123b99185a0.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/15925167fb9c48648c311f39b2eebc80.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/de223cb8122a4d11a8d7d57818a9e96a.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/557d6137624f447cb89c53b66f75f746.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/83ae74de1db041538e3b09cfde3da2fc.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/64c18f2e5114438180bf233fd7119fd0.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/d2e1867db35e409ea4c516e99b2d0d99.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/6defea9fc5ec46d1b6e0301ce1bc1671.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/88f9d95bf2f94e448017db2d024319a5.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/84b84235bdef40e785a54061f3255ba5.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/d81218dd751242b2a0993574290418fd.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/9d0573742ea44431866bd61d6a723813.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/4b01e0bd88f94695a351ca604bd25fb4.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/64fb5caa454346f9b19d40f06e514a04.png">
+<meta property="article:published_time" content="2022-06-05T11:25:53.000Z">
+<meta property="article:modified_time" content="2022-06-05T11:26:48.596Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="图">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/2b04ebe1cbfb4c40b1634dde5bbcbb67.png">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/Python-%E4%B8%AD%E7%9A%84%E5%9B%BE%EF%BC%9A%E5%9B%BE%E7%9A%84%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Python 中的图：图的存储结构 | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">53</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">57</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/Python-%E4%B8%AD%E7%9A%84%E5%9B%BE%EF%BC%9A%E5%9B%BE%E7%9A%84%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Python 中的图：图的存储结构
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 19:25:53 / 修改时间：19:26:48" itemprop="dateCreated datePublished" datetime="2022-06-05T19:25:53+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">数据结构与算法</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/Python-%E4%B8%AD%E7%9A%84%E5%9B%BE%EF%BC%9A%E5%9B%BE%E7%9A%84%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/Python-%E4%B8%AD%E7%9A%84%E5%9B%BE%EF%BC%9A%E5%9B%BE%E7%9A%84%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>3.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="1-什么是图"><a href="#1-什么是图" class="headerlink" title="1    什么是图"></a>1    什么是图</h1><p>&emsp;&emsp;图是一种数据结构，可用于对对象之间的层次结构和关系进行建模。它由<strong>一组节点</strong>和<strong>一组边</strong>组成。节点表示单个对象，而边表示这些对象之间的关系。<strong>注意</strong>：可能在不同的文献中节点也被称作<strong>顶点</strong>，它们指同一个意思。<br>&emsp;&emsp;如果图中的边可以通过双向遍历，则是<strong>无向图(undirected)</strong>，如果只能通过一个方向进行遍历，则是<strong>有向图(undirected)</strong>。<br><img src="https://img-blog.csdnimg.cn/2b04ebe1cbfb4c40b1634dde5bbcbb67.png" alt="在这里插入图片描述"><br>并非图的所有节点都需要与其他节点连接。如果可以从图中的每个节点 访问其他任何的节点，我们称该图为<strong>连接图(connected)</strong>，但有时你通过一些几点无法访问其他节点，那这个图就是<strong>未连接图(disconnected)</strong>。常见的误解是图的节点之间都必须连接，事实上，图可以不包含边，只有节点：<br><img src="https://img-blog.csdnimg.cn/1924b974e53047c992477123b99185a0.png" alt="在这里插入图片描述"><br>从实现的角度来看，在定义好节点之后，我们需要定义是<strong>边缘的权重(weights)</strong>。它是分配给边缘的数值，描述了遍历该边缘的成本。边的权重越小，遍历它的成本就越低。基于此，将权重分配给边缘的图称为<strong>加权图</strong>：<br><img src="https://img-blog.csdnimg.cn/15925167fb9c48648c311f39b2eebc80.png" alt="在这里插入图片描述"></p>
+<h1 id="2-图的三种存储方式"><a href="#2-图的三种存储方式" class="headerlink" title="2    图的三种存储方式"></a>2    图的三种存储方式</h1><p>&emsp;&emsp;一般来说，为了更简单的实现，任何给定图的节点都用数字(从零开始)标记，如果需要字符的方式进行定义节点名称，可用字典的方式进行转换。我将使用以下加权有向图作为后面部分中的示例：</p>
+<p><img src="https://img-blog.csdnimg.cn/de223cb8122a4d11a8d7d57818a9e96a.png" alt="在这里插入图片描述"><br>之所以选择加权有向图作为示例，因为它说明了大多数实现的细微差别。一般来说，加权图和未加权图之间的切换非常简单。在有向图和无向图之间切换也是一件非常容易的事情。如果需要，我们将在以下部分中介绍这些主题中的每一个。</p>
+<h2 id="2-1-边列表-List-of-Edges"><a href="#2-1-边列表-List-of-Edges" class="headerlink" title="2.1    边列表(List of Edges)"></a>2.1    边列表(List of Edges)</h2><h3 id="2-1-1-原理"><a href="#2-1-1-原理" class="headerlink" title="2.1.1    原理"></a>2.1.1    原理</h3><p>&emsp;&emsp;边列表是表示图的最简单方法，但由于它缺乏适当的结构，因此通常仅用于说明目的。我们将使用它来解释一些图算法，因为它几乎没有开销，并且允许我们专注于算法实现，而不是图本身的实现。每条边连接两个节点，并且可能分配给它一个权重。因此，每条边都由一个列表以下列方式表示：<code>[node1, node2, weight]</code>，其中 <code>weight</code> 是一个可选属性(如果是未加权的图，则不需要)。顾名思义，边列表将图形存储为以所述方式表示的边列表。<img src="https://img-blog.csdnimg.cn/557d6137624f447cb89c53b66f75f746.png" alt="在这里插入图片描述"><br>边列表实际上是一张表格。该表的每一行代表一个边，它的两个节点和该边的权重。由于这是一个加权图，边表示中的节点顺序说明了边的方向，即只能从 <code>node1</code> 到 <code>node2</code> 遍历边。在使用边列表处理无向图时，与有向图不同的地方就是权重的定义，有向图定义一个方向，无向图定义两个方向。在下面实现时会详细注释。<br><strong>优点：</strong></p>
+<ul>
+<li>便于实现和理解</li>
+<li>非常适合说明目的</li>
+<li>按定义表示图(一组节点和一组边)</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>不适合在实际程序中应用</li>
+<li>没有使用任何的数据结构进行构造</li>
+<li>效率低</li>
+<li>不够通用，不能互换地表示有向图和无向图</li>
+</ul>
+<h3 id="2-1-2-Python-实现"><a href="#2-1-2-Python-实现" class="headerlink" title="2.1.2    Python 实现"></a>2.1.2    Python 实现</h3><p>首先根据边列表的定义编写一个 <code>Graph</code> 类：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Graph</span>() :</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, num_of_nodes, directed = <span class="literal">True</span></span>):</span><br><span class="line">        self.num_of_nodes = num_of_nodes</span><br><span class="line">        self.directed = directed</span><br><span class="line">        self.list_of_edges = []</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">add_edge</span>(<span class="params">self, node1, node2, weight</span>):</span><br><span class="line">        <span class="comment">#从 node1 到 node2 添加权重</span></span><br><span class="line">        self.list_of_edges.append([node1, node2, weight])</span><br><span class="line"></span><br><span class="line">        <span class="comment">#如果是无向图，则需要定义 node2 到 node1 的权重</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> self.directed :</span><br><span class="line">            self.list_of_edges.append([node2, node1, weight])</span><br><span class="line"></span><br><span class="line">    <span class="comment">#打印边和节点</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">print_edge_list</span>(<span class="params">self</span>):</span><br><span class="line">        num_of_edges = <span class="built_in">len</span>(self.list_of_edges)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(num_of_edges) :</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&#x27;Edges : <span class="subst">&#123;i + <span class="number">1</span>&#125;</span> : <span class="subst">&#123;self.list_of_edges[i]&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>此实现非常简单，一个图被表示为一个边列表，其中每条边都由一个列表以下列方式表示：<code>[node1, node2, weight]</code>。因此，图实际上是一个矩阵，其中每一行代表一条边。测试：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    graph = Graph(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">    graph.add_edge(<span class="number">0</span>, <span class="number">0</span>, <span class="number">25</span>)</span><br><span class="line">    graph.add_edge(<span class="number">0</span>, <span class="number">1</span>, <span class="number">5</span>)</span><br><span class="line">    graph.add_edge(<span class="number">0</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">    graph.add_edge(<span class="number">1</span>, <span class="number">3</span>, <span class="number">1</span>)</span><br><span class="line">    graph.add_edge(<span class="number">1</span>, <span class="number">4</span>, <span class="number">15</span>)</span><br><span class="line">    graph.add_edge(<span class="number">4</span>, <span class="number">2</span>, <span class="number">7</span>)</span><br><span class="line">    graph.add_edge(<span class="number">4</span>, <span class="number">3</span>, <span class="number">11</span>)</span><br><span class="line"></span><br><span class="line">    graph.print_edge_list()</span><br></pre></td></tr></table></figure>
+<p>首先，示例图有 <code>5</code> 个节点，因此可以使用构造函数创建一个包含 <code>5</code> 个节点的图。然后将所有边添加到创建的图形并打印图形。这将输出以下内容：<br><img src="https://img-blog.csdnimg.cn/83ae74de1db041538e3b09cfde3da2fc.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"><br>此输出与我们在前几节中显示的边示例列表一致：<br><img src="https://img-blog.csdnimg.cn/64c18f2e5114438180bf233fd7119fd0.png" alt="在这里插入图片描述"><br>如果想定义无向图，使用 <code>graph = Graph(5, directed = False)</code> 即可。</p>
+<h2 id="2-2-邻接矩阵-Adjacency-Matrix"><a href="#2-2-邻接矩阵-Adjacency-Matrix" class="headerlink" title="2.2    邻接矩阵(Adjacency Matrix)"></a>2.2    邻接矩阵(Adjacency Matrix)</h2><h3 id="2-2-1-原理"><a href="#2-2-1-原理" class="headerlink" title="2.2.1    原理"></a>2.2.1    原理</h3><p>&emsp;&emsp;邻接矩阵是表示图的最流行的方法之一，因为它是最容易理解和实现的方法，并且适用于许多应用程序。它使用 <code>nxn</code> 矩阵来表示图( <code>n</code> 是图中的节点数)。换句话说，行数和列数等于图中的节点数。最初，矩阵的每个字段都设置为特殊值 <code>- inf</code>、<code>0</code>、<code>-1</code>、<code>False</code> 等，这表明图中不存在节点。在初始阶段之后，您可以通过填充适当的字段 <code>1</code>(对于未加权图)或边权重(对于加权图)来添加图的每条边。<br>&emsp;&emsp;提到的矩阵本质上是一个表格，每一行和每一列都代表图形的一个节点。例如，下标为 <code>3</code> 的行指的是节点 <code>3</code>，因此可以使用邻接矩阵来仅表示带有编号标记节点的图。第 <code>i</code> 行和第 <code>j</code> 列的值不是初始值则说明节点 <code>i</code> 和 <code>j</code> 之间的边或者权重的存在。邻接图展示如下：<br><img src="https://img-blog.csdnimg.cn/d2e1867db35e409ea4c516e99b2d0d99.png" alt="在这里插入图片描述"><br>此图中有 <code>n</code> 节点。因此，我们创建了一个包含 <code>n</code> 行和列的表，并将所有单元格初始化为 <code>0</code>，表示任何两个节点之间没有边的特殊值。由于示例图是加权和定向的，因此需要：</p>
+<ul>
+<li>遍历图中的每条边</li>
+<li>确定该边的开始和结束节点</li>
+<li>确定该边的权重</li>
+<li>用权重值填充矩阵的适当字段</li>
+</ul>
+<p>以边<code>3-4</code>为例。起始节点是 <code>3</code>，结束节点是 <code>4</code>，所以需要填写下标为 <code>[3, 4]</code> 的值。从图像中，可以读取边缘的权重为 <code>11</code>，因此使用填充 <code>11</code>。现在已经标记了边缘的存在 <code>3-4</code>。重复该过程，直到标记了图中的每条边。<br><strong>优点：</strong></p>
+<ul>
+<li>低查找时间，可以在 <code>O(1)</code> 的时间内确定是否存在边</li>
+<li>添加/删除边需要 <code>O(1)</code> 时间</li>
+<li>便于实现和理解</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>花费更多的空间 <code>O(num_of_nodes²)</code></li>
+<li>添加节点需要 <code>O(num_of_nodes²)</code> 时间</li>
+<li>查找所选节点的相邻节点的成本很高 <code>O(num_of_nodes)</code></li>
+<li>遍历图的成本很高 <code>O(num_of_nodes²)</code></li>
+<li>标记/枚举边的成本很高 <code>O(num_of_nodes²)</code></li>
+</ul>
+<h3 id="2-2-2-Python-实现"><a href="#2-2-2-Python-实现" class="headerlink" title="2.2.2    Python 实现"></a>2.2.2    Python 实现</h3><p>&emsp;&emsp;邻接矩阵本质上是一个简单的 <code>nxn</code> 矩阵，其中 <code>n</code> 是图中的节点数。因此，我们将其实现为具有 <code>num_of_nodes</code> 行和列的矩阵。我们将使用列表推导来构造它并将所有字段初始化为 <code>0</code>。在这种情况下，<code>0</code> 是一个特殊值，指的是图中最初没有边，添加边非常简单：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Graph</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, num_of_nodes, directed = <span class="literal">True</span></span>):</span><br><span class="line">        self.num_of_nodes = num_of_nodes</span><br><span class="line">        self.directed = directed</span><br><span class="line">        self.edge_matrix = [[<span class="number">0</span> <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(num_of_nodes)] <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(num_of_nodes)]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">add_edge</span>(<span class="params">self, node1, node2, weight</span>):</span><br><span class="line">        self.edge_matrix[node1][node2] = weight</span><br><span class="line"></span><br><span class="line">        <span class="comment">#无向图</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> self.directed :</span><br><span class="line">            self.edge_matrix[node2][node1] = weight</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">print_edge_matrix</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(self.num_of_nodes) :</span><br><span class="line">            <span class="built_in">print</span>(self.edge_matrix[i])</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>测试：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    graph = Graph(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">    graph.add_edge(<span class="number">0</span>, <span class="number">0</span>, <span class="number">25</span>)</span><br><span class="line">    graph.add_edge(<span class="number">0</span>, <span class="number">1</span>, <span class="number">5</span>)</span><br><span class="line">    graph.add_edge(<span class="number">0</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">    graph.add_edge(<span class="number">1</span>, <span class="number">3</span>, <span class="number">1</span>)</span><br><span class="line">    graph.add_edge(<span class="number">1</span>, <span class="number">4</span>, <span class="number">15</span>)</span><br><span class="line">    graph.add_edge(<span class="number">4</span>, <span class="number">2</span>, <span class="number">7</span>)</span><br><span class="line">    graph.add_edge(<span class="number">4</span>, <span class="number">3</span>, <span class="number">11</span>)</span><br><span class="line"></span><br><span class="line">    graph.print_edge_matrix()</span><br></pre></td></tr></table></figure>
+<p>输出：<br><img src="https://img-blog.csdnimg.cn/6defea9fc5ec46d1b6e0301ce1bc1671.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"><br>正如预期的那样，输出与我们在前面展示的矩阵相同：<br><img src="https://img-blog.csdnimg.cn/88f9d95bf2f94e448017db2d024319a5.png" alt="在这里插入图片描述"><br>如果想构造无向图，使用以下方式构造函数：<code>graph = Graph(5, directed = False)</code>。</p>
+<h2 id="2-3-邻接表-Adjacency-List"><a href="#2-3-邻接表-Adjacency-List" class="headerlink" title="2.3    邻接表(Adjacency List)"></a>2.3    邻接表(Adjacency List)</h2><h3 id="2-3-1-原理"><a href="#2-3-1-原理" class="headerlink" title="2.3.1    原理"></a>2.3.1    原理</h3><p>&emsp;&emsp;邻接表是存储图的最有效方式。它仅存储图中存在的边，这与邻接矩阵相反，邻接矩阵显式存储所有可能的边，包括存在的和不存在的。邻接矩阵最初被开发为仅表示未加权的图，但以最有效的方式是仅使用一个数组来存储一个图。<br>&emsp;&emsp;我们可以仅使用 12 个整数值的数组来表示示例图。将其与邻接矩阵进行比较，邻接矩阵由 <code>n²</code> 元素组成(<code>n</code> 是图中的节点数)，其中邻接列表仅包含 <code>n+e</code> 个元素，其中 <code>n</code> 表示节点数，<code>e</code> 表示图的边的数量。<br><img src="https://img-blog.csdnimg.cn/84b84235bdef40e785a54061f3255ba5.png" alt="在这里插入图片描述"><br>构建邻接表首先需要知道的是图中节点的数量，在示例图中，有 <code>5</code> 个节点，因此列表中的前 <code>5</code> 个位置代表这些节点，比如下标 <code>1</code> 代表第 <code>1</code> 个节点。索引 <code>i</code> 上的值是指列表中的索引，可以在其中找到节点 <code>i</code> 的相邻节点的索引。例如，索引 <code>0</code> 上的值是 <code>5</code>，这意味着应该查看邻接列表中的索引 <code>5</code> 以查找哪些节点连接到节点 <code>0</code>，即节点 <code>0</code>、<code>1</code> 和 <code>2</code>，索引 <code>5</code> 表示邻接节点的开始索引，但是我们怎么知道什么时候应该停止寻找相邻节点？这很简单，查看列表中 <code>0</code> 节点旁边的索引上的值。下一个索引是 <code>1</code>，它代表节点 <code>1</code>，它的值是 <code>8</code>，意思是你可以在邻接表中从索引 <code>8</code> 开始找到与节点 <code>1</code> 相邻的节点。因此，与节点 <code>0</code> 相邻的节点作为索引 <code>5</code> 和 <code>8</code> 之间列表的值。<br>&emsp;&emsp;为了更容易理解这种结构，可以以更结构化的方式重新排列邻接列表的元素。如果这样做，就会看到生成的结构看起来很像一个链表：</p>
+<p><img src="https://img-blog.csdnimg.cn/d81218dd751242b2a0993574290418fd.png#pic_center" alt="在这里插入图片描述"><br>此外，链表的结构与字典非常相似。它有一组键(<strong>节点</strong>)，以及每个键的一组值(<strong>一组与键节点相邻的节点</strong>)。如果要表示加权图，则必须找到一种在相邻节点之外存储权重的方法（如下图所示）。下图显示了示例图的邻接列表包括有和没有权重：<br><img src="https://img-blog.csdnimg.cn/9d0573742ea44431866bd61d6a723813.png" alt="在这里插入图片描述"><br>当查看加权相邻列表时，可以轻松构建示例图的边集。节点 <code>0</code> 具有三个相邻节点：<code>0</code>、<code>1</code>、<code>2</code>，这意味着图具有边 <code>0-0</code>、<code>0-1</code> 和 <code>0-2</code>。这些边的权重也可以从邻接表中读取，边 <code>0-0</code> 的权重为 <code>25</code>，边 <code>0-1</code> 的权重为 5，依此类推。<br><strong>优点：</strong></p>
+<ul>
+<li>快速地找到所选节点的相邻节点 <code>O(1)</code></li>
+<li>对密度较低的图有效(与节点数相比，边数较少)</li>
+<li>可以将它用于字母和数字标记的节点</li>
+<li>遍历图的成本低 <code>O(length_of_list)</code>，<code>length_of_list</code> 长度等于图中节点数和边数之和</li>
+<li>标记/枚举边的成本低 <code>O(length_of_list)</code></li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>查找花费时间多 <code>O(length_of_list)</code></li>
+<li>移除边的成本高 <code>O(length_of_list)</code></li>
+</ul>
+<h3 id="2-3-2-Python-实现"><a href="#2-3-2-Python-实现" class="headerlink" title="2.3.2    Python 实现"></a>2.3.2    Python 实现</h3><p>&emsp;&emsp;正如我们在前面所解释的，在 Python 中表示邻接列表的最佳方式是使用<strong>字典</strong>——它具有一组键和对应的值。我们将为每个节点创建一个键，并为每个键创建一组相邻节点。这样，我们将有效地为图中的每个节点创建一组相邻节点。本质上，相邻节点代表关键节点和相邻节点之间的边，因此我们需要为每条边分配权重。因此要将每个相邻节点表示为一个元组：一对相邻节点的名称和该边的权重：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Graph</span>() :</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, num_of_nodes, directed = <span class="literal">True</span></span>):</span><br><span class="line">        self.num_of_nodes = num_of_nodes</span><br><span class="line">        self.directed = directed</span><br><span class="line">        self.adjacency_list = &#123;node : <span class="built_in">set</span>() <span class="keyword">for</span> node <span class="keyword">in</span> <span class="built_in">range</span>(num_of_nodes)&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">add_edge</span>(<span class="params">self, node1, node2, weight</span>):</span><br><span class="line">        self.adjacency_list[node1].add((node2, weight))</span><br><span class="line"></span><br><span class="line">        <span class="comment">#无向图</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> self.directed :</span><br><span class="line">            self.adjacency_list[node2].add((node1, weight))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">print_adj_list</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">for</span> key <span class="keyword">in</span> self.adjacency_list.keys() :</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&#x27;node <span class="subst">&#123;key&#125;</span> : <span class="subst">&#123;self.adjacency_list[key]&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>测试：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    graph = Graph(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">    graph.add_edge(<span class="number">0</span>, <span class="number">0</span>, <span class="number">25</span>)</span><br><span class="line">    graph.add_edge(<span class="number">0</span>, <span class="number">1</span>, <span class="number">5</span>)</span><br><span class="line">    graph.add_edge(<span class="number">0</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">    graph.add_edge(<span class="number">1</span>, <span class="number">3</span>, <span class="number">1</span>)</span><br><span class="line">    graph.add_edge(<span class="number">1</span>, <span class="number">4</span>, <span class="number">15</span>)</span><br><span class="line">    graph.add_edge(<span class="number">4</span>, <span class="number">2</span>, <span class="number">7</span>)</span><br><span class="line">    graph.add_edge(<span class="number">4</span>, <span class="number">3</span>, <span class="number">11</span>)</span><br><span class="line"></span><br><span class="line">    graph.print_adj_list()</span><br></pre></td></tr></table></figure>
+<p>输出：<img src="https://img-blog.csdnimg.cn/4b01e0bd88f94695a351ca604bd25fb4.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"><br>输出与前面描述的链表和字典相同：<br><img src="https://img-blog.csdnimg.cn/64fb5caa454346f9b19d40f06e514a04.png" alt="在这里插入图片描述"><br>如果想构造无向图，使用以下方式构造函数：<code>graph = Graph(5, directed = False)</code>。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"># Python</a>
+              <a href="/tags/%E5%9B%BE/" rel="tag"># 图</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/LeetCode%E2%80%94%E2%80%94%E5%93%88%E5%B8%8C%E8%A1%A8%E7%BB%8F%E5%85%B8%E4%BE%8B%E9%A2%98/" rel="prev" title="LeetCode——哈希表经典例题">
+      <i class="fa fa-chevron-left"></i> LeetCode——哈希表经典例题
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/05/LeetCode%E5%88%B7%E9%A2%98%E2%80%94%E2%80%94%E5%AD%97%E7%AC%A6%E4%B8%B2/" rel="next" title="LeetCode刷题——字符串">
+      LeetCode刷题——字符串 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF%E5%9B%BE"><span class="nav-text">1    什么是图</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E5%9B%BE%E7%9A%84%E4%B8%89%E7%A7%8D%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F"><span class="nav-text">2    图的三种存储方式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-%E8%BE%B9%E5%88%97%E8%A1%A8-List-of-Edges"><span class="nav-text">2.1    边列表(List of Edges)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-1-%E5%8E%9F%E7%90%86"><span class="nav-text">2.1.1    原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-2-Python-%E5%AE%9E%E7%8E%B0"><span class="nav-text">2.1.2    Python 实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-%E9%82%BB%E6%8E%A5%E7%9F%A9%E9%98%B5-Adjacency-Matrix"><span class="nav-text">2.2    邻接矩阵(Adjacency Matrix)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-1-%E5%8E%9F%E7%90%86"><span class="nav-text">2.2.1    原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-2-Python-%E5%AE%9E%E7%8E%B0"><span class="nav-text">2.2.2    Python 实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-%E9%82%BB%E6%8E%A5%E8%A1%A8-Adjacency-List"><span class="nav-text">2.3    邻接表(Adjacency List)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-1-%E5%8E%9F%E7%90%86"><span class="nav-text">2.3.1    原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-2-Python-%E5%AE%9E%E7%8E%B0"><span class="nav-text">2.3.2    Python 实现</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">53</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">126k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:29</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
