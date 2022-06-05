@@ -110,11 +110,11 @@
     
     <category term="Python" scheme="https://aishangcengloua.github.io/tags/Python/"/>
     
+    <category term="图" scheme="https://aishangcengloua.github.io/tags/%E5%9B%BE/"/>
+    
     <category term="A*" scheme="https://aishangcengloua.github.io/tags/A/"/>
     
     <category term="启发式函数" scheme="https://aishangcengloua.github.io/tags/%E5%90%AF%E5%8F%91%E5%BC%8F%E5%87%BD%E6%95%B0/"/>
-    
-    <category term="图" scheme="https://aishangcengloua.github.io/tags/%E5%9B%BE/"/>
     
   </entry>
   
@@ -207,9 +207,9 @@
     
     <category term="Python" scheme="https://aishangcengloua.github.io/tags/Python/"/>
     
-    <category term="图" scheme="https://aishangcengloua.github.io/tags/%E5%9B%BE/"/>
-    
     <category term="Dijkstra" scheme="https://aishangcengloua.github.io/tags/Dijkstra/"/>
+    
+    <category term="图" scheme="https://aishangcengloua.github.io/tags/%E5%9B%BE/"/>
     
   </entry>
   
@@ -257,9 +257,9 @@
     <category term="深度学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
     
     
-    <category term="机器学习" scheme="https://aishangcengloua.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
-    
     <category term="深度学习" scheme="https://aishangcengloua.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
     
   </entry>
   
@@ -280,9 +280,9 @@
     <category term="深度学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
     
     
-    <category term="机器学习" scheme="https://aishangcengloua.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
-    
     <category term="深度学习" scheme="https://aishangcengloua.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
     
   </entry>
   
