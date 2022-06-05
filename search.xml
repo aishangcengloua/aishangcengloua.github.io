@@ -37,6 +37,12 @@
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.Size([<span class="number">32</span>, <span class="number">20</span>, <span class="number">20</span>])</span><br></pre></td></tr></table></figure>
 <p>参考：<br><a href="https://blog.csdn.net/beilizhang/article/details/115282604"><strong><em>https://blog.csdn.net/beilizhang/article/details/115282604</em></strong></a></p>
 ]]></content>
+      <categories>
+        <category>机器学习</category>
+      </categories>
+      <tags>
+        <tag>主成分分析</tag>
+      </tags>
   </entry>
   <entry>
     <title>Hello World</title>
