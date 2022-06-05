@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>爱上层楼的博客</title>
+  <icon>https://aishangcengloua.github.io/icon.png</icon>
+  
+  <link href="https://aishangcengloua.github.io/atom.xml" rel="self"/>
+  
+  <link href="https://aishangcengloua.github.io/"/>
+  <updated>2022-06-04T13:36:14.290Z</updated>
+  <id>https://aishangcengloua.github.io/</id>
+  
+  <author>
+    <name>Z.H.Chen</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>PCA</title>
+    <link href="https://aishangcengloua.github.io/2022/06/03/PCA/"/>
+    <id>https://aishangcengloua.github.io/2022/06/03/PCA/</id>
+    <published>2022-06-03T13:44:16.000Z</published>
+    <updated>2022-06-04T13:36:14.290Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h1 id=&quot;1-原理简述&quot;&gt;&lt;a href=&quot;#1-原理简述&quot; class=&quot;headerlink&quot; title=&quot;1    原理简述&quot;&gt;&lt;/a&gt;1    原理简述&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;Self-Attention Layer</summary>
+        
+      
+    
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="https://aishangcengloua.github.io/2022/06/03/hello-world/"/>
+    <id>https://aishangcengloua.github.io/2022/06/03/hello-world/</id>
+    <published>2022-06-03T04:21:06.559Z</published>
+    <updated>2022-06-03T15:17:49.023Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.io/docs/&quot;&gt;documentation&lt;/a&gt;</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+</feed>
