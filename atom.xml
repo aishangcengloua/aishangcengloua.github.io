@@ -6,7 +6,7 @@
   <link href="https://aishangcengloua.github.io/atom.xml" rel="self"/>
   
   <link href="https://aishangcengloua.github.io/"/>
-  <updated>2022-06-05T11:46:14.292Z</updated>
+  <updated>2022-06-05T14:53:39.628Z</updated>
   <id>https://aishangcengloua.github.io/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>基于 PCA 的人脸识别系统和姿态分析</title>
+    <link href="https://aishangcengloua.github.io/2022/06/05/%E5%9F%BA%E4%BA%8E-PCA-%E7%9A%84%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB%E7%B3%BB%E7%BB%9F%E5%92%8C%E5%A7%BF%E6%80%81%E5%88%86%E6%9E%90/"/>
+    <id>https://aishangcengloua.github.io/2022/06/05/%E5%9F%BA%E4%BA%8E-PCA-%E7%9A%84%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB%E7%B3%BB%E7%BB%9F%E5%92%8C%E5%A7%BF%E6%80%81%E5%88%86%E6%9E%90/</id>
+    <published>2022-06-05T14:50:23.000Z</published>
+    <updated>2022-06-05T14:53:39.628Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;1-PCA&quot;&gt;&lt;a href=&quot;#1-PCA&quot; class=&quot;headerlink&quot; title=&quot;1    PCA&quot;&gt;&lt;/a&gt;1    PCA&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;在解决实际问题的时候，多变量问题是经常会遇到的，变量太多，无疑会增加分析问题的难度与复杂性。同时，在许多实际问题中，多个变量之间是具有一定的相关关系的。因此，能否在各个变量之间相关关系研究的基础上， 用较少的新变量代替原来较多的变量，而且使这些较少的新变量尽可能多地保留原来较多的变量所反映的信息？事实上，这种想法是可以实现的。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="传统算法" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/"/>
+    
+    
+    <category term="主成分分析" scheme="https://aishangcengloua.github.io/tags/%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90/"/>
+    
+    <category term="人脸识别" scheme="https://aishangcengloua.github.io/tags/%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB/"/>
+    
+    <category term="姿态分析" scheme="https://aishangcengloua.github.io/tags/%E5%A7%BF%E6%80%81%E5%88%86%E6%9E%90/"/>
+    
+  </entry>
   
   <entry>
     <title>PyTorch——实现自注意力机制（self-attention）</title>
@@ -110,11 +135,11 @@
     
     <category term="Python" scheme="https://aishangcengloua.github.io/tags/Python/"/>
     
-    <category term="图" scheme="https://aishangcengloua.github.io/tags/%E5%9B%BE/"/>
-    
     <category term="A*" scheme="https://aishangcengloua.github.io/tags/A/"/>
     
     <category term="启发式函数" scheme="https://aishangcengloua.github.io/tags/%E5%90%AF%E5%8F%91%E5%BC%8F%E5%87%BD%E6%95%B0/"/>
+    
+    <category term="图" scheme="https://aishangcengloua.github.io/tags/%E5%9B%BE/"/>
     
   </entry>
   
@@ -207,9 +232,9 @@
     
     <category term="Python" scheme="https://aishangcengloua.github.io/tags/Python/"/>
     
-    <category term="Dijkstra" scheme="https://aishangcengloua.github.io/tags/Dijkstra/"/>
-    
     <category term="图" scheme="https://aishangcengloua.github.io/tags/%E5%9B%BE/"/>
+    
+    <category term="Dijkstra" scheme="https://aishangcengloua.github.io/tags/Dijkstra/"/>
     
   </entry>
   
@@ -257,9 +282,9 @@
     <category term="深度学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
     
     
-    <category term="深度学习" scheme="https://aishangcengloua.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
-    
     <category term="机器学习" scheme="https://aishangcengloua.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="深度学习" scheme="https://aishangcengloua.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
     
   </entry>
   
@@ -280,9 +305,9 @@
     <category term="深度学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
     
     
-    <category term="深度学习" scheme="https://aishangcengloua.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
-    
     <category term="机器学习" scheme="https://aishangcengloua.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="深度学习" scheme="https://aishangcengloua.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
     
   </entry>
   
@@ -483,29 +508,6 @@
     <category term="深度学习" scheme="https://aishangcengloua.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
     
     <category term="对抗攻击" scheme="https://aishangcengloua.github.io/tags/%E5%AF%B9%E6%8A%97%E6%94%BB%E5%87%BB/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【OpenCv】图像的轮廓查找</title>
-    <link href="https://aishangcengloua.github.io/2022/06/05/%E3%80%90OpenCv%E3%80%91%E5%9B%BE%E5%83%8F%E7%9A%84%E8%BD%AE%E5%BB%93%E6%9F%A5%E6%89%BE/"/>
-    <id>https://aishangcengloua.github.io/2022/06/05/%E3%80%90OpenCv%E3%80%91%E5%9B%BE%E5%83%8F%E7%9A%84%E8%BD%AE%E5%BB%93%E6%9F%A5%E6%89%BE/</id>
-    <published>2022-06-05T10:59:33.000Z</published>
-    <updated>2022-06-05T11:02:26.287Z</updated>
-    
-    
-    <summary type="html">&lt;h1 id=&quot;1-原理&quot;&gt;&lt;a href=&quot;#1-原理&quot; class=&quot;headerlink&quot; title=&quot;1    原理&quot;&gt;&lt;/a&gt;1    原理&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;边界或者轮廓可以简单认为成将连续的点（连着边界）连在一起的曲线，具有相同的颜色或者灰度。轮廓在形状分析和物体的检测和识别中很有用。&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/b693a0ef9e12450f992dd8a7008c4d38.png#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;br&gt;在机器视觉领域最常用的轮廓查找的算法之一是 &lt;strong&gt;&lt;em&gt;Moore-Neighbor&lt;/em&gt;&lt;/strong&gt; 算法，像素的摩尔邻域 $P$ 是与该像素共享顶点或边的 $8$ 个像素的集合。这些像素即 如下图所示的像素$P1$、$P2$、$P3$、$P4$、$P5$、$P6$、$P7$和$P8$。 摩尔邻域（也称为8 邻域或 间接邻域）是文献中经常出现的一个重要概念。&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/7b438ebe573b4ad2940239b55e6eb119.png#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="机器学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
-    
-    <category term="机器视觉" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%9C%BA%E5%99%A8%E8%A7%86%E8%A7%89/"/>
-    
-    
-    <category term="opencv" scheme="https://aishangcengloua.github.io/tags/opencv/"/>
-    
-    <category term="轮廓检测" scheme="https://aishangcengloua.github.io/tags/%E8%BD%AE%E5%BB%93%E6%A3%80%E6%B5%8B/"/>
     
   </entry>
   

@@ -124,7 +124,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">53</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">56</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -134,7 +134,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">57</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">58</span></a>
 
   </li>
         <li class="menu-item menu-item-rss">
@@ -193,6 +193,111 @@
 
           <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E3%80%90OpenCv%E3%80%91%E5%9B%BE%E5%83%8F%E7%9A%84%E8%BD%AE%E5%BB%93%E6%9F%A5%E6%89%BE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/06/05/%E3%80%90OpenCv%E3%80%91%E5%9B%BE%E5%83%8F%E7%9A%84%E8%BD%AE%E5%BB%93%E6%9F%A5%E6%89%BE/" class="post-title-link" itemprop="url">【OpenCv】图像的轮廓查找</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 18:59:33 / 修改时间：19:02:26" itemprop="dateCreated datePublished" datetime="2022-06-05T18:59:33+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%9C%BA%E5%99%A8%E8%A7%86%E8%A7%89/" itemprop="url" rel="index"><span itemprop="name">机器视觉</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E3%80%90OpenCv%E3%80%91%E5%9B%BE%E5%83%8F%E7%9A%84%E8%BD%AE%E5%BB%93%E6%9F%A5%E6%89%BE/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E3%80%90OpenCv%E3%80%91%E5%9B%BE%E5%83%8F%E7%9A%84%E8%BD%AE%E5%BB%93%E6%9F%A5%E6%89%BE/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>1.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="1-原理"><a href="#1-原理" class="headerlink" title="1    原理"></a>1    原理</h1><p>&emsp;&emsp;边界或者轮廓可以简单认为成将连续的点（连着边界）连在一起的曲线，具有相同的颜色或者灰度。轮廓在形状分析和物体的检测和识别中很有用。<br><img src="https://img-blog.csdnimg.cn/b693a0ef9e12450f992dd8a7008c4d38.png#pic_center" alt="在这里插入图片描述"><br>在机器视觉领域最常用的轮廓查找的算法之一是 <strong><em>Moore-Neighbor</em></strong> 算法，像素的摩尔邻域 $P$ 是与该像素共享顶点或边的 $8$ 个像素的集合。这些像素即 如下图所示的像素$P1$、$P2$、$P3$、$P4$、$P5$、$P6$、$P7$和$P8$。 摩尔邻域（也称为8 邻域或 间接邻域）是文献中经常出现的一个重要概念。<br><img src="https://img-blog.csdnimg.cn/7b438ebe573b4ad2940239b55e6eb119.png#pic_center" alt="在这里插入图片描述"></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/06/05/%E3%80%90OpenCv%E3%80%91%E5%9B%BE%E5%83%8F%E7%9A%84%E8%BD%AE%E5%BB%93%E6%9F%A5%E6%89%BE/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -1147,111 +1252,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/Python-Pandas-%E5%BA%93%E6%95%99%E7%A8%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
-      <meta itemprop="name" content="Z.H.Chen">
-      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Z.H.Chen's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/06/05/Python-Pandas-%E5%BA%93%E6%95%99%E7%A8%8B/" class="post-title-link" itemprop="url">Python Pandas 库教程</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-06-05 18:21:33 / 修改时间：18:29:48" itemprop="dateCreated datePublished" datetime="2022-06-05T18:21:33+08:00">2022-06-05</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">基础知识</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/06/05/Python-Pandas-%E5%BA%93%E6%95%99%E7%A8%8B/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/Python-Pandas-%E5%BA%93%E6%95%99%E7%A8%8B/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>2.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;&emsp;Python有了NumPy的Pandas，用Python处理数据就像使用Exel或SQL一样简单方便。Pandas是基于NumPy的Python 库，它被广泛用于快速分析数据，以及数据清洗和准备等工作。可以把 Pandas 看作是 Python版的Excel或Table。Pandas 有两种数据结构：Series和DataFrame，Pandas经过几个版本的更新，目前已经成为数据清洗、处理和分析的不二选择。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/06/05/Python-Pandas-%E5%BA%93%E6%95%99%E7%A8%8B/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1323,7 +1323,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-count">58</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1336,7 +1336,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">53</span>
+        <span class="site-state-item-count">56</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1390,13 +1390,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">126k</span>
+    <span title="站点总字数">138k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">3:29</span>
+    <span title="站点阅读时长">3:49</span>
 </div>
 <!--
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动

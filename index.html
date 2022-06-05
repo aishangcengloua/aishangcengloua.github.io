@@ -124,7 +124,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">53</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">56</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -134,7 +134,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">57</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">58</span></a>
 
   </li>
         <li class="menu-item menu-item-rss">
@@ -193,6 +193,111 @@
 
           <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E5%9F%BA%E4%BA%8E-PCA-%E7%9A%84%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB%E7%B3%BB%E7%BB%9F%E5%92%8C%E5%A7%BF%E6%80%81%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/06/05/%E5%9F%BA%E4%BA%8E-PCA-%E7%9A%84%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB%E7%B3%BB%E7%BB%9F%E5%92%8C%E5%A7%BF%E6%80%81%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">基于 PCA 的人脸识别系统和姿态分析</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 22:50:23 / 修改时间：22:53:39" itemprop="dateCreated datePublished" datetime="2022-06-05T22:50:23+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">传统算法</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E5%9F%BA%E4%BA%8E-PCA-%E7%9A%84%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB%E7%B3%BB%E7%BB%9F%E5%92%8C%E5%A7%BF%E6%80%81%E5%88%86%E6%9E%90/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E5%9F%BA%E4%BA%8E-PCA-%E7%9A%84%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB%E7%B3%BB%E7%BB%9F%E5%92%8C%E5%A7%BF%E6%80%81%E5%88%86%E6%9E%90/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>12k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>20 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="1-PCA"><a href="#1-PCA" class="headerlink" title="1    PCA"></a>1    PCA</h1><p>&emsp;&emsp;在解决实际问题的时候，多变量问题是经常会遇到的，变量太多，无疑会增加分析问题的难度与复杂性。同时，在许多实际问题中，多个变量之间是具有一定的相关关系的。因此，能否在各个变量之间相关关系研究的基础上， 用较少的新变量代替原来较多的变量，而且使这些较少的新变量尽可能多地保留原来较多的变量所反映的信息？事实上，这种想法是可以实现的。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/06/05/%E5%9F%BA%E4%BA%8E-PCA-%E7%9A%84%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB%E7%B3%BB%E7%BB%9F%E5%92%8C%E5%A7%BF%E6%80%81%E5%88%86%E6%9E%90/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -1145,111 +1250,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
-      <meta itemprop="name" content="Z.H.Chen">
-      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Z.H.Chen's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/06/05/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" class="post-title-link" itemprop="url">优化算法</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-06-05 19:19:17 / 修改时间：19:20:02" itemprop="dateCreated datePublished" datetime="2022-06-05T19:19:17+08:00">2022-06-05</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/06/05/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>7 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;&emsp;在机器学习模型中，我们会使用损失函数对模型的输出和标注信息计算他们之间的差异，然后使用损失进行反向传播，在反向传播中，我们的目的是不断地更新参数使得模型损失越来越小直至达到最小，这过程是优化参数的过程，基础的优化算法是使用梯度下降法(如下图)，梯度下降法利用了梯度的反方向是函数下降最快的方向的特性，该过程可以理解成寻找山谷。随后为了提高效率和准确率许多的改进的优化算法被提出，下面我们将介绍几种常用的优化算法。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/06/05/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1321,7 +1321,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-count">58</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1334,7 +1334,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">53</span>
+        <span class="site-state-item-count">56</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1388,13 +1388,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">126k</span>
+    <span title="站点总字数">138k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">3:29</span>
+    <span title="站点阅读时长">3:49</span>
 </div>
 <!--
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
