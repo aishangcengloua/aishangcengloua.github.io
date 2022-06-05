@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="一、什么是TensorboardTensorboard原本是Google TensorFlow的可视化工具，可以用于记录训练数据、评估数据、网络结构、图像等，并且可以在web上展示，对于观察神经网络的过程非常有帮助。PyTorch也推出了自己的可视化工具，一个是tensorboardX包，一个是torch.utils.tensorboard，二者的使用相差不大，这里介绍后者">
+<meta property="og:type" content="article">
+<meta property="og:title" content="详解 Tensorboard 及使用教程">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/%E8%AF%A6%E8%A7%A3-Tensorboard-%E5%8F%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="一、什么是TensorboardTensorboard原本是Google TensorFlow的可视化工具，可以用于记录训练数据、评估数据、网络结构、图像等，并且可以在web上展示，对于观察神经网络的过程非常有帮助。PyTorch也推出了自己的可视化工具，一个是tensorboardX包，一个是torch.utils.tensorboard，二者的使用相差不大，这里介绍后者">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/84389ad9f39d42b8acdb3d56afa737e3.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/0557d6357ab240f7abc4705bbc088b44.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/b7ac08406f24467b94161e9348432b45.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2fe87fea05814845867ee262fb405ded.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/8c9769e21dce47efbe45e082ba787f6c.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/8d4d7286049d4f67a2fd3e306817bf2e.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/f9b11c2ca66a4cdba573c6b1b9e1c4f4.png">
+<meta property="article:published_time" content="2022-06-05T09:24:28.000Z">
+<meta property="article:modified_time" content="2022-06-05T09:25:11.564Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="PyTorch">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/84389ad9f39d42b8acdb3d56afa737e3.png">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/%E8%AF%A6%E8%A7%A3-Tensorboard-%E5%8F%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>详解 Tensorboard 及使用教程 | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">19</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">24</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E8%AF%A6%E8%A7%A3-Tensorboard-%E5%8F%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          详解 Tensorboard 及使用教程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 17:24:28 / 修改时间：17:25:11" itemprop="dateCreated datePublished" datetime="2022-06-05T17:24:28+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E8%AF%A6%E8%A7%A3-Tensorboard-%E5%8F%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E8%AF%A6%E8%A7%A3-Tensorboard-%E5%8F%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="一、什么是Tensorboard"><a href="#一、什么是Tensorboard" class="headerlink" title="一、什么是Tensorboard"></a>一、什么是Tensorboard</h1><p>Tensorboard原本是Google TensorFlow的可视化工具，可以用于记录训练数据、评估数据、网络结构、图像等，并且可以在web上展示，对于观察神经网络的过程非常有帮助。PyTorch也推出了自己的可视化工具，一个是<strong>tensorboardX</strong>包，一个是<strong>torch.utils.tensorboard</strong>，二者的使用相差不大，这里介绍后者</p>
+<h2 id="二、配置Tensorboard"><a href="#二、配置Tensorboard" class="headerlink" title="二、配置Tensorboard"></a>二、配置Tensorboard</h2><h3 id="环境要求"><a href="#环境要求" class="headerlink" title="环境要求"></a>环境要求</h3><ul>
+<li>操作系统：Windows</li>
+<li>Python3</li>
+<li>PyTorch &gt;= 1.0.0 &amp;&amp; torchvision &gt;= 0.2.1 &amp;&amp; tensorboard &gt;= 1.12.0 1</li>
+</ul>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p><strong>注：</strong> 虽说PyTorch中直接有tensorboard的包，但是有时用的时候还是会报错，所以安装TensorFlow之后torch.utils.tensorboard就可以直接使用且稳定，所以这里介绍安装TensorFlow的方法。</p>
+<ul>
+<li>pip环境(相对麻烦需要下载依赖项)</li>
+</ul>
+<blockquote>
+<p>pip install tensorflow_gpu=2.5.0 -i <a target="_blank" rel="noopener" href="https://pypi.mirrors.ustc.edu.cn/simple/">https://pypi.mirrors.ustc.edu.cn/simple/</a><br>pip install six numpy wheel<br>pip install keras_applications=1.0.6 —no-deps<br>pip install keras_preprocessing=1.0.5 —no-deps</p>
+</blockquote>
+<ul>
+<li>conda环境安装</li>
+</ul>
+<blockquote>
+<p>conda install —channel <a target="_blank" rel="noopener" href="https://conda.anaconda.org/anaconda">https://conda.anaconda.org/anaconda</a> tensorflow=2.5.0</p>
+</blockquote>
+<h1 id="三、Tensorboard的使用"><a href="#三、Tensorboard的使用" class="headerlink" title="三、Tensorboard的使用"></a>三、Tensorboard的使用</h1><p>首先展示该包的使用的大致流程</p>
+<blockquote>
+<p><strong><em>1)导入tensorboard，实例化SummaryWriter类，指明记录日记路径等信息</em></strong><br>from torch.utils.tensorboard import SummaryWriter</p>
+<h1 id="实例化SummaryWriter，并指明日志存放路径。在当前目录如果每月logs目录将自动创建"><a href="#实例化SummaryWriter，并指明日志存放路径。在当前目录如果每月logs目录将自动创建" class="headerlink" title="实例化SummaryWriter，并指明日志存放路径。在当前目录如果每月logs目录将自动创建"></a>实例化SummaryWriter，并指明日志存放路径。在当前目录如果每月logs目录将自动创建</h1><h1 id="如果不写log-dir，系统将会创建runs目录"><a href="#如果不写log-dir，系统将会创建runs目录" class="headerlink" title="如果不写log_dir，系统将会创建runs目录"></a>如果不写log_dir，系统将会创建runs目录</h1><p>writer = SummaryWriter(log_dir = ‘logs’)</p>
+<h1 id="调用实例"><a href="#调用实例" class="headerlink" title="调用实例"></a>调用实例</h1><p>writer.add_xxx()</p>
+<h1 id="关闭writer"><a href="#关闭writer" class="headerlink" title="关闭writer"></a>关闭writer</h1><p>writer.close()<br><strong><em>2）调用相应的API，接口一般格式为：</em></strong><br>add_xxx(tag_name, object, iteration-number)<br><strong><em>3)启动tensorboard，在命令行中输入</em></strong><br>tensorboard —logdir=r’加logs所在路径’<br><strong><em>4)复制网址在浏览器中打开</em></strong></p>
+</blockquote>
+<h2 id="使用各种add方法记录数据"><a href="#使用各种add方法记录数据" class="headerlink" title="使用各种add方法记录数据"></a>使用各种add方法记录数据</h2><h3 id="单条曲线-scalar"><a href="#单条曲线-scalar" class="headerlink" title="单条曲线(scalar)"></a>单条曲线(scalar)</h3><blockquote>
+<p>add_scalar(tag, scalar_value, global_step=None, walltime=None)</p>
+</blockquote>
+<p><strong>参数：</strong></p>
+<ul>
+<li>tag ( string ) – 数据标识符</li>
+<li>scalar_value ( float或string/blobname ) – 要保存的值</li>
+<li>global_step ( int ) – 要记录的全局步长值</li>
+<li>walltime ( float ) – 记录训练的时间，默认 walltime (time.time()) 秒</li>
+<li>new_style ( boolean ) – 是使用新样式（张量字段）还是旧样式（simple_value 字段）。新样式可能会导致更快的数据加载。<br>例子：</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> torch.utils.tensorboard <span class="keyword">import</span> SummaryWriter</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">writer = SummaryWriter()</span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, <span class="number">101</span>) :</span><br><span class="line">    writer.add_scalar(<span class="string">&#x27;y = 2x&#x27;</span>, x, <span class="number">2</span> * x)</span><br><span class="line">writer.close()</span><br></pre></td></tr></table></figure>
+<p>效果<br><img src="https://img-blog.csdnimg.cn/84389ad9f39d42b8acdb3d56afa737e3.png" alt="在这里插入图片描述"></p>
+<h3 id="多条曲线-scalars"><a href="#多条曲线-scalars" class="headerlink" title="多条曲线(scalars)"></a>多条曲线(scalars)</h3><blockquote>
+<p>add_scalars( main_tag , tag_scalar_dict , global_step = None , walltime = None)</p>
+</blockquote>
+<p><strong>参数</strong></p>
+<ul>
+<li>main_tag ( string ) – 标签的父名称</li>
+<li>tag_scalar_dict ( dict ) – 存储标签和对应值的键值对</li>
+<li>global_step ( int ) – 要记录的全局步长值</li>
+<li>walltime ( float ) – 记录训练的时间，默认 walltime (time.time()) 秒<br>例子：</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> torch.utils.tensorboard <span class="keyword">import</span> SummaryWriter</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">writer = SummaryWriter()</span><br><span class="line">r = <span class="number">5</span></span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, <span class="number">101</span>) :</span><br><span class="line">    writer.add_scalars(<span class="string">&#x27;run_14h&#x27;</span>, &#123;<span class="string">&#x27;xsinx&#x27;</span> : x * np.sin(x / r), </span><br><span class="line">                                  <span class="string">&#x27;xcosx&#x27;</span> : x * np.cos(x / r), </span><br><span class="line">                                  <span class="string">&#x27;xtanx&#x27;</span> : x * np.tan(x / r)&#125;, x)</span><br><span class="line">writer.close()</span><br></pre></td></tr></table></figure>
+<p>效果：<br><img src="https://img-blog.csdnimg.cn/0557d6357ab240f7abc4705bbc088b44.png" alt="在这里插入图片描述"></p>
+<h3 id="直方图-histogram"><a href="#直方图-histogram" class="headerlink" title="直方图(histogram)"></a>直方图(histogram)</h3><blockquote>
+<p>add_histogram( tag , values , global_step = None , bins = ‘tensorflow’ , walltime = None , max_bins = None )</p>
+</blockquote>
+<p><strong>参数：</strong></p>
+<ul>
+<li>tag ( string ) – 数据标识符</li>
+<li>值（torch.Tensor、numpy.array或string/blobname）– 构建直方图的值</li>
+<li>global_step ( int ) – 要记录的全局步长值</li>
+<li>bins ( string ) – {‘tensorflow’,’auto’, ‘fd’, …} 之一。这决定了柱的制作方式。</li>
+<li>walltime ( float ) – 记录训练的时间，默认 walltime (time.time()) 秒<br>例子：</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> torch.utils.tensorboard <span class="keyword">import</span> SummaryWriter</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">writer = SummaryWriter()</span><br><span class="line"><span class="keyword">for</span> step <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>) :</span><br><span class="line">    x = np.random.randn(<span class="number">1000</span>)</span><br><span class="line">    writer.add_histogram(<span class="string">&#x27;distribution of gaussion&#x27;</span>, x, step)</span><br><span class="line">writer.close()</span><br></pre></td></tr></table></figure>
+<p>效果：<br><img src="https://img-blog.csdnimg.cn/b7ac08406f24467b94161e9348432b45.png" alt="在这里插入图片描述"></p>
+<h3 id="图片-image"><a href="#图片-image" class="headerlink" title="图片(image)"></a>图片(image)</h3><blockquote>
+<p>add_image(tag, img_tensor, global_step=None, walltime=None, dataformats = ‘CHW’)</p>
+</blockquote>
+<p><strong>参数：</strong></p>
+<ul>
+<li>tag ( string ) – 数据标识符</li>
+<li>img_tensor ( torch.Tensor , numpy.array , or string/blobname ) – 图像数据</li>
+<li>global_step ( int ) – 要记录的全局步长值</li>
+<li>walltime ( float ) – 记录训练的时间，默认 walltime (time.time()) 秒<br>例子：</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> torch.utils.tensorboard <span class="keyword">import</span> SummaryWriter</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> cv2 <span class="keyword">as</span> cv</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">img = cv.imread(<span class="string">&#x27;zhou.jpg&#x27;</span>, cv.IMREAD_COLOR)<span class="comment">#输入图像要是3通道的，所以读取彩色图像</span></span><br><span class="line">img = cv.cvtColor(img, cv.COLOR_BGR2RGB)</span><br><span class="line">img = torch.tensor(img.transpose(<span class="number">2</span>, <span class="number">0</span>, <span class="number">1</span>))<span class="comment">#cv读取为numpy图像为(H * W * C)，所以要进行轴转换</span></span><br><span class="line">writer.add_image(<span class="string">&#x27;zhou_ge&#x27;</span>, img, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">writer.close()</span><br></pre></td></tr></table></figure>
+<p>效果：<br><img src="https://img-blog.csdnimg.cn/2fe87fea05814845867ee262fb405ded.png" alt="在这里插入图片描述"></p>
+<h3 id="渲染-figure"><a href="#渲染-figure" class="headerlink" title="渲染(figure)"></a>渲染(figure)</h3><blockquote>
+<p>add_figure( tag , figure , global_step = None , close = True , walltime = None )</p>
+</blockquote>
+<p><strong>参数：</strong></p>
+<ul>
+<li>tag ( string ) – 数据标识符</li>
+<li>image( matplotlib.pyplot.figure ) – 图或图列表</li>
+<li>global_step ( int ) – 要记录的全局步长值</li>
+<li>close ( bool ) – 自动关闭图形的标志</li>
+<li><p>walltime ( float ) – 记录训练的时间，默认 walltime (time.time()) 秒</p>
+<p>例子：</p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> torch.utils.tensorboard <span class="keyword">import</span> SummaryWriter</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">%matplotlib</span><br><span class="line"></span><br><span class="line">writer = SummaryWriter()</span><br><span class="line"></span><br><span class="line">x = np.linspace(<span class="number">0</span>, <span class="number">10</span>, <span class="number">1000</span>)</span><br><span class="line">y = np.sin(x)</span><br><span class="line"></span><br><span class="line">figure1 = plt.figure()</span><br><span class="line">plt.plot(x, y, <span class="string">&#x27;r-&#x27;</span>)</span><br><span class="line">writer.add_figure(<span class="string">&#x27;my_figure&#x27;</span>, figure1, <span class="number">0</span>)</span><br><span class="line">writer.close()</span><br></pre></td></tr></table></figure>
+<p>效果:<br><img src="https://img-blog.csdnimg.cn/8c9769e21dce47efbe45e082ba787f6c.png" alt="在这里插入图片描述"></p>
+<h3 id="网络-graph"><a href="#网络-graph" class="headerlink" title="网络(graph)"></a>网络(graph)</h3><blockquote>
+<p>add_graph(model, input_to_model=None, verbose=False, use_strict_trace = True)</p>
+</blockquote>
+<p><strong>参数：</strong></p>
+<ul>
+<li>model( torch.nn.Module ) – 要绘制的模型。</li>
+<li>input_to_model ( torch.Tensor or list of torch.Tensor ) – 要输入的变量或变量元组</li>
+<li>verbose(bool）– 是否在控制台中打印图形结构。</li>
+<li>use_strict_trace ( bool ) – 是否将关键字参数严格传递给 torch.jit.trace。当您希望跟踪器记录您的可变容器类型（列表、字典）时传递 False.</li>
+</ul>
+<p>例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> torch.utils.tensorboard <span class="keyword">import</span> SummaryWriter</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line">writer = SummaryWriter()</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MLP</span>(nn.Module) :</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(MLP, self).__init__()</span><br><span class="line">        self.Net = nn.Sequential(</span><br><span class="line">            nn.Linear(<span class="number">784</span>, <span class="number">512</span>),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line"></span><br><span class="line">            nn.Linear(<span class="number">512</span>, <span class="number">128</span>),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line"></span><br><span class="line">            nn.Linear(<span class="number">128</span>, <span class="number">10</span>)</span><br><span class="line">        )</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, <span class="built_in">input</span></span>):</span><br><span class="line">        <span class="built_in">input</span> = <span class="built_in">input</span>.view(-<span class="number">1</span>, <span class="number">28</span> * <span class="number">28</span>)</span><br><span class="line">        <span class="keyword">return</span> self.Net(<span class="built_in">input</span>)</span><br><span class="line">model = MLP()</span><br><span class="line"><span class="built_in">input</span> = torch.FloatTensor(np.random.rand(<span class="number">32</span>, <span class="number">1</span>, <span class="number">28</span>, <span class="number">28</span>))</span><br><span class="line">writer.add_graph(model, <span class="built_in">input</span>)</span><br><span class="line"></span><br><span class="line">writer.close()</span><br></pre></td></tr></table></figure>
+<p>效果：<br><img src="https://img-blog.csdnimg.cn/8d4d7286049d4f67a2fd3e306817bf2e.png" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/f9b11c2ca66a4cdba573c6b1b9e1c4f4.png" alt="在这里插入图片描述"></p>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p><strong>嵌入：</strong></p>
+<blockquote>
+<p>add_embedding(mat, metadata=None, label_img=None, global_step = None, tag=’default’, metadata_header=None)</p>
+</blockquote>
+<p><strong>参数：</strong></p>
+<ul>
+<li>mat ( torch.Tensor or numpy.array ) – 一个矩阵，每一行都是数据点的特征向量</li>
+<li>metadata ( list ) – 标签列表，每个元素都将转换为字符串</li>
+<li>label_img ( torch.Tensor ) – 图像对应每个数据点</li>
+<li>global_step ( int ) – 要记录的全局步长值</li>
+<li>tag ( string ) – 嵌入的名称</li>
+</ul>
+<h1 id="三、结语"><a href="#三、结语" class="headerlink" title="三、结语"></a>三、结语</h1><p>以上是关于一些tensorboard可视化的操作，如果您有收获的话，就给👨一个三连。就此谢过！</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/PyTorch/" rel="tag"># PyTorch</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E5%9C%A8%E4%BD%BF%E7%94%A8-tensorboard-%E6%97%B6%E6%8A%A5%E9%94%99/" rel="prev" title="在使用 tensorboard 时报错">
+      <i class="fa fa-chevron-left"></i> 在使用 tensorboard 时报错
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/05/LSTM-%E9%A2%84%E6%B5%8B%E8%82%A1%E7%A5%A8/" rel="next" title="LSTM 预测股票">
+      LSTM 预测股票 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AFTensorboard"><span class="nav-text">一、什么是Tensorboard</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E9%85%8D%E7%BD%AETensorboard"><span class="nav-text">二、配置Tensorboard</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E8%A6%81%E6%B1%82"><span class="nav-text">环境要求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-text">安装</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81Tensorboard%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-text">三、Tensorboard的使用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B%E5%8C%96SummaryWriter%EF%BC%8C%E5%B9%B6%E6%8C%87%E6%98%8E%E6%97%A5%E5%BF%97%E5%AD%98%E6%94%BE%E8%B7%AF%E5%BE%84%E3%80%82%E5%9C%A8%E5%BD%93%E5%89%8D%E7%9B%AE%E5%BD%95%E5%A6%82%E6%9E%9C%E6%AF%8F%E6%9C%88logs%E7%9B%AE%E5%BD%95%E5%B0%86%E8%87%AA%E5%8A%A8%E5%88%9B%E5%BB%BA"><span class="nav-text">实例化SummaryWriter，并指明日志存放路径。在当前目录如果每月logs目录将自动创建</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A6%82%E6%9E%9C%E4%B8%8D%E5%86%99log-dir%EF%BC%8C%E7%B3%BB%E7%BB%9F%E5%B0%86%E4%BC%9A%E5%88%9B%E5%BB%BAruns%E7%9B%AE%E5%BD%95"><span class="nav-text">如果不写log_dir，系统将会创建runs目录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E5%AE%9E%E4%BE%8B"><span class="nav-text">调用实例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E9%97%ADwriter"><span class="nav-text">关闭writer</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%90%84%E7%A7%8Dadd%E6%96%B9%E6%B3%95%E8%AE%B0%E5%BD%95%E6%95%B0%E6%8D%AE"><span class="nav-text">使用各种add方法记录数据</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E6%9D%A1%E6%9B%B2%E7%BA%BF-scalar"><span class="nav-text">单条曲线(scalar)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E6%9D%A1%E6%9B%B2%E7%BA%BF-scalars"><span class="nav-text">多条曲线(scalars)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B4%E6%96%B9%E5%9B%BE-histogram"><span class="nav-text">直方图(histogram)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E7%89%87-image"><span class="nav-text">图片(image)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%B2%E6%9F%93-figure"><span class="nav-text">渲染(figure)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C-graph"><span class="nav-text">网络(graph)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-text">其他</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E7%BB%93%E8%AF%AD"><span class="nav-text">三、结语</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">61k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:41</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1    池化层&amp;emsp;&amp;emsp;在上篇博客中，有跟大家分析过，在卷积层中没有 padding 的情况下，可以通过调节步长参数 $\boldsymbol{s}$ 实现特征图的高宽成倍缩小，从而降低了网络的参数量。但是在实际上我们通常使用 Same卷积，即输入和输出特征图的维度一样，这样一来将面临巨大的计算量挑战，而且容易产生过拟合的现象，因此我们需要一种专门的网络层可以实现尺寸缩减功能，它就">
+<meta property="og:type" content="article">
+<meta property="og:title" content="卷积神经网络（二）">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%BA%8C%EF%BC%89/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="1    池化层&amp;emsp;&amp;emsp;在上篇博客中，有跟大家分析过，在卷积层中没有 padding 的情况下，可以通过调节步长参数 $\boldsymbol{s}$ 实现特征图的高宽成倍缩小，从而降低了网络的参数量。但是在实际上我们通常使用 Same卷积，即输入和输出特征图的维度一样，这样一来将面临巨大的计算量挑战，而且容易产生过拟合的现象，因此我们需要一种专门的网络层可以实现尺寸缩减功能，它就">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/380e2764641f4fd3a00e461b67f04906.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/4a74011efe814fa7935270648d7da830.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/a9a0ebacdf0e4afe9c5e0c74ea8ae18a.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/1214352efa374c48b5a3b7ee041a02db.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/e28168ec964a4af7a4aa4a31946ef60e.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/1796eb7358864e6da9e533da5651bdd2.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/9bb131337fc14d57966a05c710434b2d.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/cacb8e53f8234918ae1ea7de8ce5de9c.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/6142e3ec2c9041cba9075a4de2319ef7.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/266261b51886466fb14fe20d4ff3d80c.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/13b202795d7344d28cc5aed5c684c38a.png#pic_center">
+<meta property="article:published_time" content="2022-06-05T08:26:33.000Z">
+<meta property="article:modified_time" content="2022-06-05T08:33:35.828Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="卷积神经网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/380e2764641f4fd3a00e461b67f04906.png#pic_center">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%BA%8C%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>卷积神经网络（二） | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">19</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">24</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%BA%8C%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          卷积神经网络（二）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 16:26:33 / 修改时间：16:33:35" itemprop="dateCreated datePublished" datetime="2022-06-05T16:26:33+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%BA%8C%EF%BC%89/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%BA%8C%EF%BC%89/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>5.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="1-池化层"><a href="#1-池化层" class="headerlink" title="1    池化层"></a>1    池化层</h1><p>&emsp;&emsp;在上篇博客中，有跟大家分析过，在卷积层中没有 <strong>padding</strong> 的情况下，可以通过调节步长参数 $\boldsymbol{s}$ 实现特征图的高宽成倍缩小，从而降低了网络的参数量。但是在实际上我们通常使用 <strong>Same卷积</strong>，即输入和输出特征图的维度一样，这样一来将面临巨大的计算量挑战，而且容易产生过拟合的现象，因此我们需要一种专门的网络层可以实现尺寸缩减功能，它就是这里要介绍的 <strong>池化层</strong>(pooling layer)，通常，池化操作也被称作 <strong>下采样</strong>。<br>&emsp;&emsp;池化层同样基于局部相关性的思想，通过从局部相关的一组元素中进行采样或信息聚合，从而得到新的元素值。下面介绍两种池化方式：</p>
+<ul>
+<li>最大池化（Max Pooling）：选择 <strong>pooling</strong> 窗口中的最大值作为采样值；</li>
+<li>均值池化（Mean Pooling）：将 <strong>pooling</strong> 窗口中的所有值相加取平均， 以平均值作为采样值。</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/380e2764641f4fd3a00e461b67f04906.png#pic_center" alt="在这里插入图片描述"></p>
+<p>不管采用什么样的池化函数，当输入作出少量平移时，池化能够帮助输入的表示近似 <strong>不变（invariant）</strong>，对于平移的不变性是指当我们对输入进行少量平移时，经过池化函数后的大多数输出并不会发生改变。池化操作就是图像的 <strong>resize</strong>，平时一张狗的图像被缩小了一倍我们还能认出这是一张狗的照片，这说明这张图像中仍保留着狗最重要的特征，我们一看就能判断图像中画的是一只狗，图像压缩时去掉的信息只是一些无关紧要的信息，而留下的信息则是具有尺度不变性的特征，是最能表达图像的特征。说明池化能够提升模型的尺度不变性、旋转不变性。<br>&emsp;&emsp;以 $\boldsymbol{5 × 5}$ 输入 $\boldsymbol{X}$ 的最大池化层为例，考虑池化窗口大小 $\boldsymbol{ k =2}$ ，步长 $\boldsymbol{s = 2}$ 的情况。</p>
+<p><img src="https://img-blog.csdnimg.cn/4a74011efe814fa7935270648d7da830.png#pic_center" alt="在这里插入图片描述"></p>
+<p>绿色虚线方框代表第一次池化窗口的位置，感受野元素集合为：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{\{ 1, -1, -1,-2\}}</script><p>在最大池化采样的方法下，通过:</p>
+<script type="math/tex; mode=display">\boldsymbol{x' = }
+\boldsymbol{\ max(\{ 1, -1, -1,-2\}) = 1}</script><p>计算出当前位置的输出值为 1，并写入对应位置。若采用的是平均池化操作，则此时的输出值应为:</p>
+<script type="math/tex; mode=display">\boldsymbol{x' = }
+\boldsymbol{\ avg(\{ 1, -1, -1,-2\}) = -0.75}</script><p>计算完当前位置的池化窗口后，与卷积层的计算步骤类似，将池化窗口按着步长向右移动若干单位，到达上图中就是实现绿色窗口所在位置此时的输出为：</p>
+<script type="math/tex; mode=display">\boldsymbol{x' = }
+\boldsymbol{\ max(\{ -1, 0, -2,2\}) = 2}</script><p>同样的方法，逐渐移动感受野窗口至最右边，计算出输出 $\boldsymbol{x’ = }<br>\boldsymbol{\ max(\{ 2,0, 3,1\}) = 3}$ 此时窗口已经到达输入边缘，按照卷积层同样的方式，感受野窗口向下移动一个步长，并回到行首。</p>
+<p><img src="https://img-blog.csdnimg.cn/a9a0ebacdf0e4afe9c5e0c74ea8ae18a.png#pic_center" alt="在这里插入图片描述"></p>
+<p>循环往复，直至最下方、最右边，获得最大池化层的输出，长宽为 $\boldsymbol{4 × 4}$，小于输入 $\boldsymbol{X}$ 的高宽。</p>
+<p><img src="https://img-blog.csdnimg.cn/1214352efa374c48b5a3b7ee041a02db.png#pic_center" alt="在这里插入图片描述"></p>
+<p>&emsp;&emsp;池化层没有需要学习的参数，计算简单，在 <strong>CNN</strong> 中可用来减小尺寸，提高运算速度及减小噪声影响，让各特征更具有健壮性。池化层比卷积层更简单，它没有卷积运算，只是在滤 波器算子滑动区域内取最大值或平均值。而池化的作用则体现在降采样：保留显著特征、降低特征维度，增大感受野。深度网络越往后面越能捕捉到物体的语义信息，这种语义信息是建立在较大的感受野基础上。<br>&emsp;&emsp;通过设计池化层感受野的高宽𝑘和步长 $\boldsymbol{s}$ 参数，可以实现各种降维运算。比如，一种常用的池化层设定是池化窗口大小 $\boldsymbol{k = 2}$，步长 $\boldsymbol{s = 2}$，这样可以实现输出只有输入高宽一半的目的。如下图中，池化窗口 $\boldsymbol{k = 3}$，步长 $\boldsymbol{s = 2}$，输入 $\boldsymbol{X}$ 高宽为 $\boldsymbol{5×5}$，输出 $\boldsymbol{O}$ 高宽只有 $\boldsymbol{2×2}$。</p>
+<p><img src="https://img-blog.csdnimg.cn/e28168ec964a4af7a4aa4a31946ef60e.png#pic_center" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/1796eb7358864e6da9e533da5651bdd2.png#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="2-BatchNorm层"><a href="#2-BatchNorm层" class="headerlink" title="2    BatchNorm层"></a>2    BatchNorm层</h1><p>&emsp;&emsp;卷积神经网络的出现，网络参数量大大减低，使得几十层的深层网络成为可能。然而，在残差网络出现之前，网络的加深使得网络训练变得非常不稳定，甚至出现网络长时间不更新甚至不收敛的现象，同时网络对超参数比较敏感，超参数的微量扰动也会导致网络的训练轨迹完全改变。<br>&emsp;&emsp;2015 年，Google 研究人员 Sergey Ioffe 等提出了一种参数标准化(Normalize)的手段，并基于参数标准化设计了 <strong>Batch Nomalization</strong>（简写为 BatchNorm，或 BN）层 。BN 层的提出，使得网络的超参数的设定更加自由，比如更大的学习率、更随意的网络初始化等，同时网络的收敛速度更快，性能也更好。BN 层提出后便广泛地应用在各种深度网络模型上，卷积层、BN 层、ReLU 层、池化层一度成为网络模型的标配单元块，通过堆叠 <strong>Conv-BN-ReLU-Pooling</strong> 方式往往可以获得不错的模型性能。总结 <strong>BN</strong> 层的作用如下三点，在后面过程中会具体怎么实现中这些作用的。</p>
+<ul>
+<li>加快网络的训练和收敛的速度；</li>
+<li>控制梯度爆炸防止梯度消失；</li>
+<li>防止过拟合。</li>
+<li>&emsp;&emsp;为什么需要对网络中的数据进行标准化操作？我们可以先来看看虑 <strong>Sigmoid</strong> 激活函数和它的梯度分布。</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/9bb131337fc14d57966a05c710434b2d.png#pic_center" alt="在这里插入图片描述"><br>由上图知，<strong>Sigmoid</strong> 函数在 $\boldsymbol{𝑥 ∈ [−2 ,2]}$ 区间的导数值在 $\boldsymbol{[0.1,0.25]}$ 区间分布；$\boldsymbol{𝑥 &gt; 2}$ 或 $\boldsymbol{𝑥 &lt;-2}$ 时，<strong>Sigmoid</strong> 函数的导数变得很小，逼近于 0，在反向传播中从而容易出现梯度弥散现象。为了避免因为输入较大或者较小而导致 <strong>Sigmoid</strong> 函数出现梯度弥散现象。如假设网络中每层的学习梯度都小于最大值 $\boldsymbol{0.25}$，网络中有 $\boldsymbol{n}$ 层，因为链式求导的原因，第一层的梯度将会小于 $\boldsymbol{0.25}$ 的 $\boldsymbol{n}$ 次方，所以学习速率相对来说会变的很慢，而对于网络的最后一层只需要对自身求导一次，梯度就大，学习速率就会比较快，这就会造成在一个很深的网络中，浅层基本不学习，权值变化小，而后面几层网络一直学习，后面的网络基本可以表征整个网络，这样失去了深度的意义。因此将函数输入 $\boldsymbol{𝑥 }$ 标准化映射到 0 附近的一段较小区间将变得非常重要，上图中，通过标准化重映射后，值被映射在 0 附近，此处的导数值不至于过小，从而不容易出现梯度弥散现象。同时，假如激活层斜率均为最大值 $\boldsymbol{0.25}$，所有层的权值为 100，这样梯度就会指数增加，但是如果进行了归一化之后，权值就不会很大，梯度爆炸的情况就会减少。<br>&emsp;&emsp;再来分析以下只有 2 个输入节点的线性模型：$\boldsymbol{L = a= x_1w_1 + x_2w_2+b}$：</p>
+<p><img src="https://img-blog.csdnimg.cn/cacb8e53f8234918ae1ea7de8ce5de9c.png#pic_center" alt="在这里插入图片描述"></p>
+<p> 由于模型相对简单，可以绘制出 2 种 $\boldsymbol{x_1,x_2}$ 下的函数的损失等高线图：</p>
+<p> <img src="https://img-blog.csdnimg.cn/6142e3ec2c9041cba9075a4de2319ef7.png#pic_center" alt="在这里插入图片描述"></p>
+<p>其中，左边的损失等高线图是 $\boldsymbol{x_1∈[1,10],x_2∈[100,1000]}$ 时的某条优化轨迹线示意图，右边的损失等高线图是 $\boldsymbol{x_1∈[1,10],x_2∈[1,10]}$ 时的某条优化轨迹线示意图，图中的圆环中心即为全局极值点。当 $\boldsymbol{x_1,x_2}$ 输入分布相近时， $\boldsymbol{\frac{\partial L}{w_1},\frac{\partial L}{w_2}}$ 偏导数值相当，收敛更加快速，优化轨迹更理想如上图中的右图；当 $\boldsymbol{x_1,x_2}$ 输入分布差距较大时，比如 $\boldsymbol{x_1≪x_2}$，则$\boldsymbol{\frac{\partial L}{w_1}≪\frac{\partial L}{w_2}}$，损失函数等势线在$\boldsymbol{x_2}$ 轴更加陡峭，某条可能的优化轨迹如上图中的左图。<br>&emsp;&emsp;通过上述的 2 个例子，能够知道网络层输入 $\boldsymbol{x}$ 分布相近，并且分布在较小范围内时(如 0 附近)，更有利于函数的优化。我们可以通过数据标准化操作达到这个目的，通过数据标准化操作可以将数据 $\boldsymbol{x}$ 映射到 $\boldsymbol{\hat{x}}$：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{\hat{x}}= \boldsymbol{\frac{x - \mu_r}{\sqrt{\sigma_r^2+\epsilon}}}</script><p>其中 $\boldsymbol{\mu_r、\sigma_r^2}$ 来自统计的所有数据的均值和方差， $\boldsymbol{\epsilon}$ 是为防止出现除 0 错误而设置的较小数，如 <strong>1e − 8</strong>。在基于 <strong>Batch</strong> 的训练阶段，考虑 <strong>Batch</strong> 内部的均值 $\boldsymbol{\mu_B}$ 和方差 $\boldsymbol{\sigma_B^2}$：</p>
+<script type="math/tex; mode=display">
+ \boldsymbol{\mu_B}  =  \boldsymbol{\frac{1}{m}\sum_{i = 1}^{m}x_i} \\
+\boldsymbol{\sigma_B^2} = \boldsymbol{\frac{1}{m}\sum_{i = 1}^{m}(x_i - \mu_B)^2}</script><p>其中 <strong>m</strong> 为 <strong>Batch</strong> 样本数，而且因为每次网络都是随机取 <strong>Batch</strong>，这样就会使得整个网络不会朝这一个方向使劲学习。一定程度上避免了过拟合。。因此，在训练阶段，通过：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{\hat{x}_{train}}= \boldsymbol{\frac{x_{train} - \mu_B}{\sqrt{\sigma_B^2+\epsilon}}}</script><p>标准化输入，并记录每个 <strong>Batch</strong> 的统计数据 $\boldsymbol{\mu_B、\sigma_B^2}$，用于统计真实的全局 $\boldsymbol{\mu_r、\sigma_r^2}$。在测试阶段，根据记录的每个 <strong>Batch</strong> 的 $\boldsymbol{\mu_B、\sigma_B^2}$ 估计出的所有训练数据的 $\boldsymbol{\mu_r、\sigma_r^2}$，依据：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{\hat{x}_{test}}= \boldsymbol{\frac{x_{test} - \mu_r}{\sqrt{\sigma_r^2+\epsilon}}}</script><p>将每层的输入标准化。上述的标准化运算并没有引入额外的待优化变量，各个均值和方差均由统计得到，不需要参与梯度更新。但实际上，为了提高 <strong>BN</strong> 层的表达能力，<strong>BN</strong> 层作者引入了 <strong>“scale and shift”</strong> 技巧，将 $\boldsymbol{\hat{x}}$ 变量再次映射变换：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{\tilde{x} = \hat{x} \cdot\gamma + \beta}</script><p>其中 $\boldsymbol{\gamma}$ 参数实现对标准化后的 $\boldsymbol{\hat{x}}$ 再次进行缩放，$\boldsymbol{\beta}$ 参数实现对标准化的 $\boldsymbol{\hat{x}}$ 进行平移，不同的是，$\boldsymbol{\gamma、\beta}$ 参数均由反向传播算法自动优化即学习参数，实现网络层“按需”缩放平移数据的分布的目的。综上，<strong>BN</strong> 层的流程如下：</p>
+<p><img src="https://img-blog.csdnimg.cn/266261b51886466fb14fe20d4ff3d80c.png#pic_center" alt="在这里插入图片描述"></p>
+<p>原文的算法流程如下：</p>
+<p><img src="https://img-blog.csdnimg.cn/13b202795d7344d28cc5aed5c684c38a.png#pic_center" alt="在这里插入图片描述"></p>
+<p>&emsp;&emsp;最后来分析一下 <strong>BN</strong> 层中的参数共享问题，我在上一篇博客中跟大家分享过，特征图的数量取决于卷积层中的卷积核个数。1 个卷积核产生 1 个 <strong>feature map</strong>，1 个 <strong>feature map</strong> 有 1 对 $\boldsymbol{\gamma}$ 和 $\boldsymbol{\beta}$ 参数，同一 <strong>Batch</strong> 同 <strong>channel</strong> 的 <strong>feature map</strong> 共享同一对 $\boldsymbol{\gamma}$ 和 $\boldsymbol{\beta}$ 参数，若卷积层有 $\boldsymbol{n}$ 个卷积核，则有 $\boldsymbol{n}$ 对 $\boldsymbol{\gamma}$ 和 $\boldsymbol{\beta}$ 参数。<br>&emsp;&emsp;至此，我跟大家介绍完了卷积神经网络的基础网络结构，分了两篇博客，分别讲了卷积层、池化层和 BN 层，在下一篇博客中我会跟大家介绍几种经典的 CNN 模型。期待您的访问！感恩！</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 机器学习</a>
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
+              <a href="/tags/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"># 卷积神经网络</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%B8%80%EF%BC%89/" rel="prev" title="卷积神经网络（一）">
+      <i class="fa fa-chevron-left"></i> 卷积神经网络（一）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%B8%89%EF%BC%89/" rel="next" title="卷积神经网络（三）">
+      卷积神经网络（三） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E6%B1%A0%E5%8C%96%E5%B1%82"><span class="nav-text">1    池化层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-BatchNorm%E5%B1%82"><span class="nav-text">2    BatchNorm层</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">61k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:41</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

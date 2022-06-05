@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言&amp;emsp;&amp;emsp;卷积神经网络发展非常迅速，应用非常广阔，所以近几年的卷积神经网络得到了长足的发展，下图为卷积神经网络近几年发展的大致轨迹。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="卷积神经网络（三）">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%B8%89%EF%BC%89/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="前言&amp;emsp;&amp;emsp;卷积神经网络发展非常迅速，应用非常广阔，所以近几年的卷积神经网络得到了长足的发展，下图为卷积神经网络近几年发展的大致轨迹。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/ef0e1297e2104ce699fb786232ec8928.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/cdf688521db043d18d72e0a6f063ecb8.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/d372e7fcd6ce40adbcee7ada2e3251e7.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/db67045e9c10452f914803ee8f9d4e3a.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/de86dbe37b284a799a91dcc191f422b3.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/30942835ff1d4171ad52a34c2f3c6f0b.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/fd59378f38094452b40210e44f6090fb.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/123e773fcfc34da79386e563a60b6175.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/d1021c4e19ea455185e943b1d157feaf.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/4e8d066c01e14eff8dad7b5d83fed171.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/ae2a26c169914e2db0b84dfdf01b84f5.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/6fffa970f5cb4bc397eab122728c3184.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/903767be083a4ecf9e2f7118040059ed.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/982bee45930b4c818752a0fb98eb368d.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/88f8963b05a14dc19eb03bf1e6b1a517.png#pic_center">
+<meta property="article:published_time" content="2022-06-05T08:34:46.000Z">
+<meta property="article:modified_time" content="2022-06-05T08:37:02.778Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="卷积神经网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/ef0e1297e2104ce699fb786232ec8928.png#pic_center">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%B8%89%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>卷积神经网络（三） | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">19</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">24</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%B8%89%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          卷积神经网络（三）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 16:34:46 / 修改时间：16:37:02" itemprop="dateCreated datePublished" datetime="2022-06-05T16:34:46+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%B8%89%EF%BC%89/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%B8%89%EF%BC%89/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>5.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;&emsp;卷积神经网络发展非常迅速，应用非常广阔，所以近几年的卷积神经网络得到了长足的发展，下图为卷积神经网络近几年发展的大致轨迹。</p>
+<p><img src="https://img-blog.csdnimg.cn/ef0e1297e2104ce699fb786232ec8928.png#pic_center" alt="在这里插入图片描述"></p>
+<p>&emsp;&emsp;1998年LeCun提出了 <strong>LeNet</strong>，可谓是开山鼻祖，系统地提出了卷积层、 池化层、全连接层等概念。2012年Alex等提出 <strong>AlexNet</strong>，提出 一些训练深度网络的重要方法或技巧，如 Dropout、ReLu、GPU、数据增强方法等，随后各种各样的深度卷积神经网络模型相继被提出，其中比较有代表性的有 <strong>VGG</strong> 系列，<strong>GoogLeNet</strong> 系列，<strong>ResNet</strong> 系列，<strong>DenseNet</strong> 系列等，他们的网络层数整体趋势逐渐增多。以网络模型在 ILSVRC 挑战赛 ImageNet数据集上面的分类性能表现为例，如下图，在 AlexNet 出现之前的网络模型都是浅层的神经网络，<strong>Top-5</strong>（表示神经网络返回的前5个最大概率值代表的内容中有一个是正确的）错误率均在 25%以上，AlexNet 8 层的深层神经网络将 Top-5 错误率降低至 16.4%，性能提升巨大，后续的 VGG、GoogleNet 模型继续将错误率降低至 6.7%；ResNet 的出现首次将网络层数提升至 152 层，错误率也降低至 3.57%。<br><img src="https://img-blog.csdnimg.cn/cdf688521db043d18d72e0a6f063ecb8.png#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="LeNet-5"><a href="#LeNet-5" class="headerlink" title="LeNet-5"></a>LeNet-5</h1><p>&emsp;&emsp;LeNet 是Yann LeCun等人提出的卷积神经网络结构，用于解决手写数字识别的机器视觉任务。1989年。一般来说，LeNet 是指 LeNet-5，是一个简单的卷积神经网络。卷积神经网络是一种前馈神经网络，其人工神经元可以对覆盖范围内的一部分周围细胞做出反应，在大规模图像处理中表现良好。LeNet 作为早期卷积神经网络的代表，拥有卷积神经网络的基本单元，如卷积层、池化层和全连接层，为卷积神经网络的未来发展奠定了基础。<br>&emsp;&emsp;模型架构：LeNet-5 模型结构为 <strong>输入层-卷积层-池化层-卷积层-池化层-全连接层-全 连接层-输出</strong>，为串联模式。</p>
+<p><img src="https://img-blog.csdnimg.cn/d372e7fcd6ce40adbcee7ada2e3251e7.png#pic_center" alt="在这里插入图片描述"></p>
+<p>&emsp;&emsp;模型特点：</p>
+<ul>
+<li>每个卷积层包括三个部分：卷积、池化和非线性激活函数；</li>
+<li>使用卷积提取空间特征；</li>
+<li>采用降采样的平均池化层；</li>
+<li>使用 <strong>tanh</strong> 激活函数；</li>
+<li>使用 <strong>MLP</strong> 作为最后一个分类器；</li>
+<li>层间稀疏连接，降低计算复杂度。</li>
+</ul>
+<h1 id="AlexNet"><a href="#AlexNet" class="headerlink" title="AlexNet"></a>AlexNet</h1><p>&emsp;&emsp;2012 年，ILSVRC12 挑战赛 ImageNet 数据集分类任务的冠军 Alex Krizhevsky 提出了 8<br>层的深度神经网络模型 AlexNet。AlexNet 在 ImageNet 取得了 15.3% 的 Top-5 错误率，比第二名在错误率上降低了 10.9%。原始论文的主要结果是模型的深度对其高性能至关重要，这在计算上是昂贵的，但由于在训练过程中使用了图形处理单元(GPU) 而变得可行。<br>&emsp;&emsp;模型架构：接收输入为 <strong>224 × 224</strong> 大小的彩色图片数据，经过五个卷积层和三个全连接层后得到样本属于 <strong>1000</strong> 个类别的概率分布。为了降低特征图的维度，AlexNet 在第 1、2、5 个卷积层后添加了 <strong>Max Pooling</strong> 层，网络的参数量达到了 6000 万个。为了能够在当时的显卡设备 NVIDIA GTX 580(3GB 显存)上训练模型，Alex Krizhevsky 将卷积层、前 2 个全连接层等拆开在两块显卡上面分别训练，最后一层合并到一张显卡上面，进行反向传播更新。</p>
+<p><img src="https://img-blog.csdnimg.cn/db67045e9c10452f914803ee8f9d4e3a.png#pic_center" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/de86dbe37b284a799a91dcc191f422b3.png#pic_center" alt="在这里插入图片描述"></p>
+<p>&emsp;&emsp;模型特点：</p>
+<ul>
+<li>由 5 层卷积和 3 层全连接组成，输入图像为 3 通道 224×224 大小，网络规 模远大于 LeNet；</li>
+<li>采用了 <strong>ReLU</strong> 激活函数，过去的神经网络大多采用 <strong>Sigmoid</strong> 激活函数，计算相对复杂，容易出现梯度弥散现象。</li>
+<li>引入 <strong>Dropout</strong> 层。<strong>Dropout</strong> 提高了模型的泛化能力，防止过拟合，提升模型的鲁棒性。</li>
+<li>具备一些很好的训练技巧，包括数据增广、学习率策略、<strong>Weight Decay</strong> 等。</li>
+</ul>
+<h1 id="VGG"><a href="#VGG" class="headerlink" title="VGG"></a>VGG</h1><p>&emsp;&emsp;AlexNet 模型的优越性能启发了业界朝着更深层的网络模型方向研究。2014 年，ILSVRC14 挑战赛 ImageNet 分类任务的亚军牛津大学 VGG 实验室提出了 VGG11、VGG13、VGG16、VGG19 等一系列的网络模型，如下图。VGG可以看成是加深版本的AlexNet，都是 <strong>Conv Layer + FC layer</strong>，VGG16 在 ImageNet 取得了 7.4%的 Top-5 错误率，比 AlexNet 在错误率上降低了 7.9%。</p>
+<p><img src="https://img-blog.csdnimg.cn/30942835ff1d4171ad52a34c2f3c6f0b.png#pic_center" alt="在这里插入图片描述"></p>
+<p>&emsp;&emsp;模型架构：以 VGG16 为例，它接受 <strong>224 × 224</strong> 大小的彩色图片数据，经过 2 个 <strong>Conv-Conv-Pooling</strong> 单元，和 3 个 <strong>Conv-Conv-Conv-Pooling</strong> 单元的堆叠，最后通过 3 层全连接层输出当前图片分别属于 1000 类别的概率分布。</p>
+<p><img src="https://img-blog.csdnimg.cn/fd59378f38094452b40210e44f6090fb.png#pic_center" alt="在这里插入图片描述"></p>
+<p>&emsp;&emsp;模型特点：</p>
+<ul>
+<li>更深的网络结构：网络层数由 AlexNet 的 8 层增至 16 和 19 层，更深的网络意味着更强大的网络能力，也意味着需要更强大的计算力，不过后来硬件发展也很快，显卡运算力也在快速增长，以此助推深度学习的快速发展。</li>
+<li>全部采用更小的 <strong>3 × 3</strong> 卷积核，相对于 AlexNet 中 <strong>7 × 7</strong> 的卷积核，参数量更少，计算代价更低。</li>
+<li>采用更小的池化层 <strong>2 × 2</strong> 窗口和步长 $\boldsymbol{s = 2}$，而 AlexNet 中是步长 $\boldsymbol{𝑠 = 2、3 × 3}$ 的池化窗口。</li>
+</ul>
+<h1 id="GoogleNet"><a href="#GoogleNet" class="headerlink" title="GoogleNet"></a>GoogleNet</h1><p>&emsp;&emsp;在介绍 GoogleNet 之前，我们需要对卷积核进行讨论。再前面说过 VGG 模型使用的卷积核大小均是 <strong>3 × 3</strong>，参数量更少，计算代价更低，同时因为两个 <strong>3 × 3</strong> 卷积核的感受野相当于一个 <strong>5 × 5</strong> 卷积核，能捕获图像更多的细节信息，因此 <strong>3 × 3</strong> 卷积核在性能表现上更优越。因此业界开始探索卷积核最小的情况：<strong>1 × 1</strong> 卷积核。</p>
+<p><img src="https://img-blog.csdnimg.cn/123e773fcfc34da79386e563a60b6175.png#pic_center" alt="在这里插入图片描述"></p>
+<p>上图中，输入为 3 通道的 <strong>5 × 5</strong> 图片，与单个 <strong>1 × 1</strong> 的卷积核进行卷积运算，每个通道的数据与对应通道的卷积核运算，得到 3 个通道的中间矩阵，对应位置相加得到最终的输出张量。对于输入 <strong>shape</strong> 为 $\boldsymbol{[b, h,w,c_{in}]}$，<strong>1 × 1</strong> 卷积层的输出为 $\boldsymbol{[b, h,w,c_{out}]}$，其中 $\boldsymbol{c_{in}}$ 为输入数据的通道数，$\boldsymbol{c_{out}}$ 为输出数据的通道数，也是 <strong>1 × 1</strong> 卷积核的数量。 <strong>1 × 1</strong> 卷积核的一个特别之处在于，它可以不改变特征图的宽高，而只对通道数 $\boldsymbol{c}$ 进行变换。这起到了降维的作用，因此 <strong>1 × 1</strong> 卷积核可以帮助我们降低参数数量。<br>&emsp;&emsp;2014 年，ILSVRC14 挑战赛的冠军 Google 提出了大量采用 <strong>3 × 3</strong> 和<strong>1 × 1</strong> 卷积核的网络模型：GoogLeNet，网络层数达到了 22 层。虽然 GoogLeNet 的层数远大于 AlexNet，但是它的参数量却只有 AlexNet 的 $\boldsymbol{\frac{1}{12}}$，同时性能也远好于 AlexNet。在 ImageNet 数据集分类任务上，GoogLeNet 取得了 6.7%的 Top-5 错误率，比 VGG16 在错误率上降低了 0.7%。<br>&emsp;&emsp;模型架构：VGG 是增加网络的深度，但深度达到一个程度时，可能就成为瓶颈。 GoogLeNet 则从另一个维度来增加网络能力，每单元有许多层并行计算，让网络更宽了。GoogLeNet 网络通过大量堆叠 <strong>Inception</strong> 模块，形成了复杂的网络结构，如下图。</p>
+<p><img src="https://img-blog.csdnimg.cn/d1021c4e19ea455185e943b1d157feaf.png#pic_center" alt="在这里插入图片描述"></p>
+<p>上图中，<strong>Inception</strong> 模块的输入为 $\boldsymbol{X}$，通过 4 个子网络得到 4 个网络输出，在通道轴上面进行拼接合并，形成 <strong>Inception</strong> 模块的输出。这 4 个子网络为：</p>
+<ul>
+<li><strong>1 × 1</strong> 卷积层；</li>
+<li><strong>1 × 1</strong> 卷积层，再通过一个 <strong>3 × 3</strong> 卷积层；</li>
+<li><strong>1 × 1</strong> 卷积层，再通过一个 <strong>5 × 5</strong> 卷积层；</li>
+<li><strong>3 × 3</strong> 最大池化层，再通过 <strong>1 × 1</strong> 卷积层。</li>
+</ul>
+<p>GoogLeNet 的网络结构如下图所示，其中红色框中的网络结构即为 <strong>Inception</strong> 模块的网络结构。</p>
+<p><img src="https://img-blog.csdnimg.cn/4e8d066c01e14eff8dad7b5d83fed171.png#pic_center" alt="在这里插入图片描述"></p>
+<p>&emsp;&emsp;模型特点：</p>
+<ul>
+<li>引入 <strong>Inception</strong> 结构，这是一种网中网(Network In Network)的结构。通过网络的水平排布，可以用较浅的网络得到较好的模型能力，并进行多特征融合，同时更容易训练。使用了 <strong>1 × 1</strong> 卷积来先对特征通道进行降维，减少计算量。GoogLeNet 就是一个精心设计的性能良好的 <strong>Inception</strong> 网络(Inception v1)的 实例，即 GoogLeNet 是 <strong>Inception v1</strong> 网络的一种。</li>
+<li>采用全局平均池化层。将后面的全连接层全部替换为简单的全局平均池化，在最后参数会变得更少。而在 AlexNet 中最后 3 层的全连接层参数差不多占总参数的 90%，使用大网络在宽度和深度上允许 GoogleNet 移除全连接层，但并不会影响到结果的精度。</li>
+</ul>
+<h1 id="ResNet"><a href="#ResNet" class="headerlink" title="ResNet"></a>ResNet</h1><p>&emsp;&emsp;AlexNet、VGG、GoogLeNet 等网络模型的出现将神经网络的发展带入了几十层的阶段，研究人员发现网络的层数越深，越有可能获得更好的泛化能力。但是当模型加深以后，网络变得越来越难训练，这主要是由于梯度弥散和梯度爆炸现象造成的。在较深层数的神经网络中，梯度信息由网络的末层逐层传向网络的首层时，传递的过程中会出现梯度接近于 0 或梯度值非常大的现象。网络层数越深，这种现象可能会越严重。对于深层神经网络的梯度弥散和梯度爆炸现象，我们可以想到浅层神经网络不容易出现这些梯度现象，那么可以尝试给深层神经网络添加一种回退到浅层神经网络的机制。当深层神经网络可以轻松地回退到浅层神经网络时，深层神经网络可以获得与浅层神经网络相当的模型性能，而不至于更糟糕。<br>&emsp;&emsp;2015 年，微软亚洲研究院何凯明等人发表了深度残差网络(Residual Neural Network，简称 ResNet)算法 [10]，并提出了 18 层、34 层、50 层、101层、152 层的 ResNet-18、ResNet-34、ResNet-50、ResNet-101 和 ResNet-152 等模型。ResNet 在网络结构上做了一大创新，即采用残差网络结构，而不再是简单地堆积层数，ResNet 在卷积神经网络中提供了一个新思路。ResNet 在 ILSVRC 2015 挑战赛 ImageNet数据集上的分类、检测等任务上面均获得了最好性能。</p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>&emsp;&emsp;ResNet 通过在卷积层的输入和输出之间添加残差链接实现层数回退机制。</p>
+<p><img src="https://img-blog.csdnimg.cn/ae2a26c169914e2db0b84dfdf01b84f5.png#pic_center" alt="在这里插入图片描述"></p>
+<p>上图中，输入 $\boldsymbol{x}$ 通过两个卷积层，得到特征变换后的输出 $\boldsymbol{F(𝒙)}$，与输入 $\boldsymbol{x}$ 进行对应元素的相加运算，得到最终输出 $\boldsymbol{H(x)}$：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{H(x) = F(x) + x}</script><p> $\boldsymbol{H(x)}$ 叫作残差模块(Residual Block，简称 ResBlock)，由于卷积神经网络需要学习映射 $\boldsymbol{F(x) = H(x) - x}$，故称为残差网络。为了能够满足输入 $\boldsymbol{x}$ 与卷积层的输出出 $\boldsymbol{F(𝒙)}$ 能够相加运算，需要输入 $\boldsymbol{x}$ 的 <strong>shape</strong> 与 $\boldsymbol{F(𝒙)}$ 的完全一致。当出现 <strong>shape</strong> 不一致时，一般通过在残差连接上添加额外的卷积运算环节将输入 $\boldsymbol{x}$ 变换到与 $\boldsymbol{F(𝒙)}$ 相同的 <strong>shape</strong>，如上图中 $\boldsymbol{dentity(𝒙)}$ 函数。因为再卷积过程中我们常常使用 <strong>Vaild卷积</strong>，因此 $\boldsymbol{dentity(𝒙)}$ 以<strong>1 × 1</strong>的卷积运算居多，主要用于调整输入的通道数。<br> &emsp;&emsp;模型架构：34 层的深度残差网络、34 层的普通深度网络以及 19 层的 VGG 网络结构如下图。可以看到，深度残差网络通过堆叠残差模块，达到了较深的网络层数，从而获得了训练稳定、性能优越的深层网络模型。</p>
+<p> <img src="https://img-blog.csdnimg.cn/6fffa970f5cb4bc397eab122728c3184.png#pic_center" alt="在这里插入图片描述"></p>
+<p>&emsp;&emsp;模型特点：</p>
+<ul>
+<li>层数非常深，已经超过百层；</li>
+<li>引入残差单元来解决退化问题。</li>
+</ul>
+<h1 id="DenseNet"><a href="#DenseNet" class="headerlink" title="DenseNet"></a>DenseNet</h1><p>&emsp;&emsp;DenseNet 将前面所有层的特征图信息通过 <strong>Skip Connection</strong> 与当前层输出进行聚合，与 ResNet 的对应位置相加方式不同，DenseNet 采用在通道轴 $\boldsymbol{c}$ 维度进行拼接操作，聚合特征信息。</p>
+<p><img src="https://img-blog.csdnimg.cn/903767be083a4ecf9e2f7118040059ed.png#pic_center" alt="在这里插入图片描述"></p>
+<p>上图中，输入 $\boldsymbol{X}$ 通过 $\boldsymbol{H_1}$ 卷积层得到输出 $\boldsymbol{X_1}$，$\boldsymbol{X_1}$ 与 $\boldsymbol{X}$ 在通道轴上进行拼接，得到聚合后的特征张量，送入 $\boldsymbol{H_2}$ 卷积层，得到输出 $\boldsymbol{X_2}$，同样的方法，$\boldsymbol{X_2}$ 与前面所有层的特征信息 $\boldsymbol{X_1}$ 与 $\boldsymbol{X}$ 进行聚合，再送入下一层。如此循环，直至最后一层的输出 $\boldsymbol{X_4}$ 和前面所有层的特征信息：$\boldsymbol{\{X_i\}_{i = 0, 1, 2 ,3}}$进行聚合得到模块的最终输出。<br>&emsp;&emsp;模型架构：DenseNet 通过堆叠多个 Dense Block 构成复杂的深层神经网络。</p>
+<p><img src="https://img-blog.csdnimg.cn/982bee45930b4c818752a0fb98eb368d.png#pic_center" alt="在这里插入图片描述"></p>
+<p>&emsp;&emsp;模型特点：</p>
+<ul>
+<li>引入来稠密连接模块解决退化问题。</li>
+</ul>
+<p>不同版本的 DenseNet 的性能、DenseNet 与 ResNet 的性能比较，以及DenseNet 与 ResNet 训练曲线比较如下：<br><img src="https://img-blog.csdnimg.cn/88f8963b05a14dc19eb03bf1e6b1a517.png#pic_center" alt="在这里插入图片描述"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 机器学习</a>
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
+              <a href="/tags/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"># 卷积神经网络</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%BA%8C%EF%BC%89/" rel="prev" title="卷积神经网络（二）">
+      <i class="fa fa-chevron-left"></i> 卷积神经网络（二）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%B8%80%EF%BC%89/" rel="next" title="循环神经网络（一）">
+      循环神经网络（一） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LeNet-5"><span class="nav-text">LeNet-5</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AlexNet"><span class="nav-text">AlexNet</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#VGG"><span class="nav-text">VGG</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#GoogleNet"><span class="nav-text">GoogleNet</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ResNet"><span class="nav-text">ResNet</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-text">原理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DenseNet"><span class="nav-text">DenseNet</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">61k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:41</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

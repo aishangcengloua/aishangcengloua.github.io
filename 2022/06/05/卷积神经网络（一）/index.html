@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1    简介&amp;emsp;&amp;emsp;卷积网络（convolutional network）(LeCun, 1989)，也叫做 卷积神经网络（convolutional neural network, CNN），是一种专门用来处理具有类似网格结构的数据的神经网络。例如时间序列数据（可以认为是在时间轴上有规律地采样形成的一维网格）和图像数据（可以看作是二维的像素网格）。卷积网络在诸多应用领域都表现优">
+<meta property="og:type" content="article">
+<meta property="og:title" content="卷积神经网络（一）">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%B8%80%EF%BC%89/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="1    简介&amp;emsp;&amp;emsp;卷积网络（convolutional network）(LeCun, 1989)，也叫做 卷积神经网络（convolutional neural network, CNN），是一种专门用来处理具有类似网格结构的数据的神经网络。例如时间序列数据（可以认为是在时间轴上有规律地采样形成的一维网格）和图像数据（可以看作是二维的像素网格）。卷积网络在诸多应用领域都表现优">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/0f19278124b24dc8bf173254b12592a0.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/d67ed130fab64b38873845e7e13a6114.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/295c94aed75b4daca2c7aebdcff2d248.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/090c5cd557af42a586f92eb8f5c4e774.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/69d40f9aa9764aae88c092127b785b7f.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/f6e87cd35b984715bac41a76f68578b3.gif#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/ec9c330197fe4a93ac71a10041ce27f3.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/8c855c50c2b54b0a9fd64aa02c76dd07.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/86b6e06a014e421cacd6b9e94abcb36a.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/51bbf50f32194180b073f7850c3ae09d.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/7c1985e4181b409db125e6d05012e8cb.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/0c3558365d93465ba921c1dbc0a4f675.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/75d121f60ebf471ba5aa22a45738b09a.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/e329b80f1ddd4148ba61e7ef0d39c237.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/189c48be4e384941977d6f405be730cd.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/ffb728e215374554af5454a835e1b13b.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/7ed94b8d22814d00878f9102b9f827ec.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/d22dfa54f52e4ec2b220e3ffc3e10361.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/37e2c77c7f164f8bac2da94939681f64.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/7c993edb7281400285b2bb80f9204a4a.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/23c1e632e73b4dab974fd86844bd333f.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/e0b0df7456de4ef9a332b5ea981101aa.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/eea96add1bf5496489c757891b148bc3.png">
+<meta property="article:published_time" content="2022-06-05T08:22:46.000Z">
+<meta property="article:modified_time" content="2022-06-05T08:33:22.612Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="卷积神经网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/0f19278124b24dc8bf173254b12592a0.png">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%B8%80%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>卷积神经网络（一） | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">19</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">24</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%B8%80%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          卷积神经网络（一）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 16:22:46 / 修改时间：16:33:22" itemprop="dateCreated datePublished" datetime="2022-06-05T16:22:46+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%B8%80%EF%BC%89/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%B8%80%EF%BC%89/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>8.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>14 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="1-简介"><a href="#1-简介" class="headerlink" title="1    简介"></a>1    简介</h1><p>&emsp;&emsp;<strong>卷积网络</strong>（convolutional network）(LeCun, 1989)，也叫做 <strong>卷积神经网络</strong>（convolutional neural network, CNN），是一种专门用来处理具有类似网格结构的数据的神经网络。例如时间序列数据（可以认为是在时间轴上有规律地采样形成的一维网格）和图像数据（可以看作是二维的像素网格）。卷积网络在诸多应用领域都表现优异。“卷积神经网络’’ 一词表明该网络使用了 <strong>卷积</strong>（convolution）这种数学运算。卷积是一种特殊的线性运算。卷积网络是指那些至少在网络的一层中使用卷积运算来替代一般的矩阵乘法运算的神经网络。<br>&emsp;&emsp;卷积网络为什么会出现？得先看看更早时期提出的 <strong>全连接网络</strong>（Fully Connected Neural Network，FC）在处理类似图片数据时会出现的问题：</p>
+<ul>
+<li>参数过多；</li>
+<li>破坏图像的空间分布和像素之间的距离关系；</li>
+</ul>
+<p>针对上述问题，图像的主要特点：</p>
+<ul>
+<li>图像的关键特征可能只是图像的一小部分；</li>
+<li>相同的特征可能出现在不同位置；</li>
+<li>对一张图像进行抽样，不改变预测目标。</li>
+</ul>
+<p><strong>CNN</strong> 正是针对图像的特点来解决 <strong>FC</strong> 的缺点的。卷积神经网络通常由一个或多个卷积层和顶端的全连通层（对应经典的神经网络）组成，同时也包括 <strong>关联权重</strong> 和 <strong>池化层</strong>（Pooling Layer）等。下图就是一个卷积神经网络架构。</p>
+<p><img src="https://img-blog.csdnimg.cn/0f19278124b24dc8bf173254b12592a0.png" alt="在这里插入图片描述"><br>与其他深度学习结构相比，卷积神经网络在图像和语音识别方面能够给出更好的结果。这一模型也可以使用反向传播算法进行训练。相比其他深度、前馈神经网络，卷积神经网络可以用更少的参数，却获得更高的性能。卷积神经网络的一般结构包括卷积神经网络的常用层， 如卷积层、池化层、全连接层和输出层；有些还包括其他层，如正则化层、 高级层等。</p>
+<h1 id="2-卷积层"><a href="#2-卷积层" class="headerlink" title="2    卷积层"></a>2    卷积层</h1><p>&emsp;&emsp;针对FC神经网络处理图片数据的两个缺点，CNN提出的解决方案是 <strong>权值共享</strong> 和 <strong>卷积操作</strong>。首先要先理解一个概念：<strong>感受野</strong>，感受野表示当前特征图的 <strong>每个像素</strong> 表示 <strong>原始图像</strong> 的哪部分，看图说话：</p>
+<p><img src="https://img-blog.csdnimg.cn/d67ed130fab64b38873845e7e13a6114.png#pic_center" alt="在这里插入图片描述"></p>
+<p>输入图像  $\boldsymbol{X}$，维度为  $\boldsymbol{5×5}$，<strong>Layer2</strong> 的输出特征维度是 $\boldsymbol{3×3}$，则其中的任一像素表征着  $\boldsymbol{X}$ 的 9 个像素即 <strong>Layer1</strong> 中的绿色部分，则 <strong>Layer2</strong> 的感受野为 3，<strong>Layer3</strong> 的输出特征维度是 $\boldsymbol{1×1}$，只有一个像素，表征着 <strong>Layer2</strong> 整张特征图，对应到  $\boldsymbol{X}$ 也是表征  $\boldsymbol{X}$ 的整幅特征图，因此 <strong>Layer3</strong> 的感受野是 5。总结成一个规律就是，特征图越小，其感受野越大。 </p>
+<h2 id="2-1-权值共享"><a href="#2-1-权值共享" class="headerlink" title="2.1    权值共享"></a>2.1    权值共享</h2><p>&emsp;&emsp;由我们上面介绍的感受野的概念，网络层的每个输出节点（输出像素）仅与感受野区域内 $\boldsymbol{k × k}$ 个输入节点相连接，假如输出节点数为 $\boldsymbol{J}$，则当前层的参数量为 $\boldsymbol{k × k×J}$，相对于全连接层的 $\boldsymbol{I×J}$，$\boldsymbol{k}$ 一般取值较小，如 1、 3、5 等，$\boldsymbol{k×k}$ 远小于 $\boldsymbol{I}$，因此成功地将参数量减少了很多。<strong>注：</strong> 上述假设以及在后面的示例中只有一层卷积层，这是为了用感受野容易表示卷积图像位置，如果是多层卷积，则不能随便使用感受野这个名词。<br>&emsp;&emsp;通过权值共享的思想，对于每个输出节点 $\boldsymbol{o_j}$，均使用相同的权值矩阵 $\boldsymbol{W}$，那么无论输出节点的数量 $\boldsymbol{J}$ 是多少，网络层的参数量总是 $\boldsymbol{k × k}$。如下图所示，在计算左上角位置的输出像素时，使用权值矩阵 $\boldsymbol{W}$：</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+w_{00} & w_{01} & w_{02} \\
+ w_{10} & w_{11} & w_{12}\\
+ w_{020} & w_{21} & w_{22}
+\end{bmatrix}</script><p>与对应感受野内部的像素相乘累加，作为左上角像素的输出值；在计算右下方感受野区域时，共享权值参数 $\boldsymbol{W}$，即使用相同的权值参数 $\boldsymbol{W}$相乘累加，得到右下角像素的输出值，此时网络层的参数量只有 $\boldsymbol{3 × 3 = 9}$ 个，且与输入、输出节点数无关。</p>
+<p><img src="https://img-blog.csdnimg.cn/295c94aed75b4daca2c7aebdcff2d248.png#pic_center" alt="在这里插入图片描述"><br>通过运用局部相关性和权值共享的思想，我们成功把全连接网络的参数量从 $\boldsymbol{I×J}$ 减少到  $\boldsymbol{𝑘 × 𝑘}$ (准确地说，是在单输入通道、单卷积核的条件下)。这种共享权值的“局部连接层”网络其实就是卷积神经网络。</p>
+<h2 id="2-2-卷积操作"><a href="#2-2-卷积操作" class="headerlink" title="2.2    卷积操作"></a>2.2    卷积操作</h2><p>&emsp;&emsp;卷积层是卷积神经网络的核心层，而卷积（Convolution）又是卷积层的核心。对卷积直观的理解，就是两个函数的一种运算，这种运算就称为卷积运算。下图就是一个简单的二维空间卷积运算示例，虽然简单，但却包含了卷积的核心内容。</p>
+<p><img src="https://img-blog.csdnimg.cn/090c5cd557af42a586f92eb8f5c4e774.png#pic_center" alt="在这里插入图片描述"><br>上图中，输入和卷积核都是张量，卷积运算就是用卷积分别乘以输入张量中的每个元素，然后输出一个代表每个输入信息的张量。其中卷积核 （kernel）又称权重过滤器，简称为过滤器（filter）。我们可以将输入、卷积 核推广到更高维空间上，输入由 $\boldsymbol{2×2}$ 矩阵，拓展为 $\boldsymbol{5×5}$ 矩阵，卷积核由一个标量拓展为一个 $\boldsymbol{3×3}$ 矩阵，卷积结果如下：</p>
+<p><img src="https://img-blog.csdnimg.cn/69d40f9aa9764aae88c092127b785b7f.png#pic_center" alt="在这里插入图片描述"><br>用卷积核中每个元素，乘以对应输入矩阵中的对应元素，这点还是一 样，但输入张量为 $\boldsymbol{5×5}$ 矩阵，而卷积核为 $\boldsymbol{3×3}$ 矩阵，所以这里首先就要解决 一个如何对应的问题，这个问题解决了，这个推广也就完成了。把卷积核作为在输入矩阵上的一个移动窗口，对应关系就迎刃而解了。了解上述的卷积方式之后，下面开始介绍的卷积是单通道输入、单卷积核的情况，然后推广至多通道输入、单卷积核，最后讨论最常用，也是最复杂的多通道输入、多个卷积核的卷积层实现。动图如下：<br><img src="https://img-blog.csdnimg.cn/f6e87cd35b984715bac41a76f68578b3.gif#pic_center" alt="在这里插入图片描述"><br>从数学上来讲，深度学习里面所谓的卷积运算，其实它被称为 <strong>互相关</strong>（cross-correlation）运算：将图像矩阵中，从左到右，由上到下，取与滤波器同等大小的一部分，每一部分中的值与滤波器中的值对应相乘后求和，最后的结果组成一个矩阵，其中没有对核进行翻转。</p>
+<h2 id="2-3-单通道输入和单卷积核"><a href="#2-3-单通道输入和单卷积核" class="headerlink" title="2.3    单通道输入和单卷积核"></a>2.3    单通道输入和单卷积核</h2><p>&emsp;&emsp;首先讨论单通道输入 $\boldsymbol{C_{in} = 1}$，如灰度图片只有灰度值一个通道，单个卷积核 $\boldsymbol{C_{out} = 1}$ 的情况（卷积核的个数决定卷积层的输出通道数）。以输入 $\boldsymbol{X}$ 为 $\boldsymbol{5×5}$ 的矩阵，卷积核为 $\boldsymbol{3×3}$ 的矩阵为例，如下图：</p>
+<p><img src="https://img-blog.csdnimg.cn/ec9c330197fe4a93ac71a10041ce27f3.png#pic_center" alt="在这里插入图片描述"><br>计算过程如下：与卷积核同大小的感受野(输入 $\boldsymbol{X}$ 上方的绿色方框)首先移动至输入 $\boldsymbol{X}$ 最左上方，选中输入 $\boldsymbol{X}$ 上 $\boldsymbol{3×3}$ 的感受野元素，与卷积核(图片中间 $\boldsymbol{3×3}$ 方框)对应元素相乘：</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+1 & -1 & 0\\
+-1 & -2 & 2\\
+1 & 2 & -2 \\
+\end{bmatrix}⨀
+\begin{bmatrix}
+-1 & 1 & 2\\
+1 & -1 & 3\\
+0 & -1 & -2 \\
+\end{bmatrix}=
+\begin{bmatrix}
+-1 & -1 & 0\\
+-1 & 2 & 6\\
+0 & -2 & 4 \\
+\end{bmatrix}</script><p>⨀ 符号表示哈达马积(Hadamard Product)，即矩阵的对应元素相乘。运算后得到 $\boldsymbol{3×3}$ 的矩阵，这 9 个数值全部相加：</p>
+<script type="math/tex; mode=display">
+− 1−1 + 0−1 + 2 +6 + 0− 2 + 4=7</script><p>得到标量 7，写入输出矩阵第一行、第一列的位置。完成第一个感受野区域的特征提取后，感受野窗口向右移动一个步长单位(Strides，记 为𝑠，默认为 1)，选中下图中绿色方框中的 9 个感受野元素，按照同样的计算方法，与卷积核对应元素相乘累加，得到输出 10，写入第一行、第二列位置。</p>
+<p><img src="https://img-blog.csdnimg.cn/8c855c50c2b54b0a9fd64aa02c76dd07.png#pic_center" alt="在这里插入图片描述"><br>感受野窗口再次向右移动一个步长单位，选中下图中绿色方框中的元素，并与卷积核相乘累加，得到输出 3，并写入输出的第一行、第三列位置。</p>
+<p><img src="https://img-blog.csdnimg.cn/86b6e06a014e421cacd6b9e94abcb36a.png#pic_center" alt="在这里插入图片描述"><br>此时感受野已经移动至输入 $\boldsymbol{X}$ 的有效像素的最右边，无法向右边继续移动(在不填充无效元素的情况下），因此感受野窗口向下移动一个步长单位(𝑠 = 1)，并回到当前行的行首位置，继续选中新的感受野元素区域，与卷积核运算得到输出-1。此时的感受野由于经过向下移动一个步长单位，因此输出值 -1 写入第二行、第一列位置。</p>
+<p><img src="https://img-blog.csdnimg.cn/51bbf50f32194180b073f7850c3ae09d.png#pic_center" alt="在这里插入图片描述"><br>以此类推得到最终的结果：</p>
+<p><img src="https://img-blog.csdnimg.cn/7c1985e4181b409db125e6d05012e8cb.png#pic_center" alt="在这里插入图片描述"><br>最终输出我们得到一个 $\boldsymbol{3×3}$ 的矩阵，比输入 $\boldsymbol{5×5}$ 略小，这是因为感受野不能超出元素边界的缘故，由此我们也能知道，在没有扩展输入图像的情况下卷积，输出图像的维度一定会变小，我们将这种卷积方式称作 <strong>Vaild卷积</strong>。可以观察到，卷积运算的输出矩阵大小由卷积核的大小 $\boldsymbol{k}$ ，输入 $\boldsymbol{X}$ 的高宽，移动步长 $\boldsymbol{s}$，是否填充等因素共同决定。</p>
+<h2 id="2-4-多通道输入和单卷积核"><a href="#2-4-多通道输入和单卷积核" class="headerlink" title="2.4    多通道输入和单卷积核"></a>2.4    多通道输入和单卷积核</h2><p>&emsp;&emsp;多通道输入的卷积层更为常见，比如彩色的图片包含了 <strong>R/G/B</strong> 三个通道，每个通道上<br>面的像素值表示 <strong>R/G/B</strong> 色彩的强度。下面我们以 3 通道输入、单个卷积核为例，将单通道输入的卷积运算方法推广到多通道的情况。在多通道输入的情况下，卷积核的通道数需要和输入 $\boldsymbol{X}$ 的通道数量相匹配，卷积核的第𝑖个通道和 $\boldsymbol{X}$ 的第 $\boldsymbol{i}$ 个通道运算，得到第 $\boldsymbol{i}$ 个中间矩阵，此时可以视为单通道输入与单卷积核的情况，所有通道的中间矩阵对应元素再次相加，作为最终输出。</p>
+<p><img src="https://img-blog.csdnimg.cn/0c3558365d93465ba921c1dbc0a4f675.png#pic_center" alt="在这里插入图片描述"><br>上图中：每行的最左边 $\boldsymbol{5×5}$ 的矩阵表示输入 $\boldsymbol{X}$ 的 <strong>1~3</strong> 通道，第 <strong>2</strong> 列的 $\boldsymbol{3×3}$ 矩阵分别表示卷积核的 <strong>1~3</strong> 通道，第 <strong>3</strong> 列的矩阵表示当前通道上运算结果的中间矩阵，最右边一个矩阵表示卷积层运算的最终输出。在初始状态，每个通道上面的感受野窗口同步落在对应通道上面的最左边、最上方位置，每个通道上感受野区域元素与卷积核对应通道上面的矩阵相乘累加，分别得到三个通道上面的输出 7、-11、-1 的中间变量，这些中间<br>变量相加得到输出-5，写入对应位置。<br>&emsp;&emsp;随后，感受野窗口同步在 $\boldsymbol{X}$ 的每个通道上向右移动 $\boldsymbol{s = 1}$ 个步长单位，此时感受野区域元素如下图所示，每个通道上面的感受野与卷积核对应通道上面的矩阵相乘累加，得到中间变量 10、20、20，全部相加得到输出 50，写入第一行、第二列元素位置。</p>
+<p><img src="https://img-blog.csdnimg.cn/75d121f60ebf471ba5aa22a45738b09a.png#pic_center" alt="在这里插入图片描述"><br>以此方式同步移动感受野窗口，直至最右边、最下方位置，此时全部完成输入和卷积核的卷积运算，得到 $\boldsymbol{3×3}$ 的输出矩阵。</p>
+<p><img src="https://img-blog.csdnimg.cn/e329b80f1ddd4148ba61e7ef0d39c237.png#pic_center" alt="在这里插入图片描述"><br>输入的每个通道处的感受野均与卷积核的对应通道相乘累加，得到与通道数量相等的中间变量，这些中间变量全部相加即得到当前位置的输出值。输入通道的通道数量决定了卷积核的通道数。一个卷积核只能得到一个输出矩阵，无论输入 $\boldsymbol{X}$ 的通道数量。</p>
+<p><img src="https://img-blog.csdnimg.cn/189c48be4e384941977d6f405be730cd.png#pic_center" alt="在这里插入图片描述"><br>一般来说，一个卷积核只能完成某种逻辑的特征提取，当需要同时提取多种逻辑特征时，可以通过增加多个卷积核来得到多种特征，提高神经网络的表达能力，这就是多通道输入、多卷积核的情况。</p>
+<h2 id="2-5-多通道输入和多卷积核"><a href="#2-5-多通道输入和多卷积核" class="headerlink" title="2.5    多通道输入和多卷积核"></a>2.5    多通道输入和多卷积核</h2><p>&emsp;&emsp;多通道输入、多卷积核是卷积神经网络中最为常见的形式，前面已经介绍了单卷积核的运算过程，每个卷积核和输入 $\boldsymbol{X}$ 做卷积运算，得到一个输出矩阵。当出现多卷积核时，第 $\boldsymbol{i}$  ( $\boldsymbol{ 𝑖 ∈ 𝑛 }$，𝑛为卷积核个数)个卷积核与输入 $\boldsymbol{X}$ 运算得到第𝑖个输出矩阵(也称为输出张量 $\boldsymbol{O}$ 的通道 $\boldsymbol{i}$），最后全部的输出矩阵在通道维度上进行拼接(Stack 操作，创建输出通道数的新维度)，产生输出张量 $\boldsymbol{O}$ ，$\boldsymbol{O}$ 包含了 $\boldsymbol{n}$ 个通道数。<br>&emsp;&emsp;以 <strong>3</strong> 通道输入、<strong>2</strong> 个卷积核的卷积层为例。第一个卷积核与输入 $\boldsymbol{X}$ 运算得到输出 $\boldsymbol{O}$ 的第一个通道，第二个卷积核与输入𝑿运算得到输出𝑶的第二个通道，输出的两个通道拼接在一起形成了最终输出 $\boldsymbol{O}$ 。每个卷积核的大小 $\boldsymbol{k}$ 、步长 $\boldsymbol{s}$ 、填充设定等都是统一设置，这样才能保证输出的每个通道大小一致，从而满足拼接的条件。</p>
+<p><img src="https://img-blog.csdnimg.cn/ffb728e215374554af5454a835e1b13b.png#pic_center" alt="在这里插入图片描述"><br>在CNN中，通常我们会使用大小为奇数的卷积核，因为进行卷积操作时一般会以卷积核模块的一个位置为基准进行滑动，这个基准通常就是卷积核模块的中心。若卷积核为奇数，卷积锚点很好找，自然就是卷积模块中心，但如果卷积核是偶数，这时候就没有办法确定了，让谁是锚点似乎都不怎么好。</p>
+<h2 id="2-6-步长"><a href="#2-6-步长" class="headerlink" title="2.6    步长"></a>2.6    步长</h2><p>&emsp;&emsp;步长就是卷积核或过滤器在左边窗口中每次移动的格数 （无论是自左向右移动，或自上向下移动），对于 2D 输入来说，分为沿 $\boldsymbol{x}$ (向右)方向和 $\boldsymbol{y}$ (向下)方向的移动长度。下图中，绿色实线代表的卷积核的位置是当前位置，绿色虚线代表是上一次卷积核所在位置，从上一次位置移动到当前位置的移动长度即是步长的定义。下图中感受野沿 $\boldsymbol{x}$ 方向的步长为 2，表达为步长 $\boldsymbol{s = 2}$。</p>
+<p><img src="https://img-blog.csdnimg.cn/7ed94b8d22814d00878f9102b9f827ec.png#pic_center" alt="在这里插入图片描述"><br>当感受野移动至输入 $\boldsymbol{X}$ 右边的边界时，感受野向下移动一个步长 $\boldsymbol{s = 2}$，并回到行首。如下图，感受野向下移动 2 个单位，并回到行首位置，进行相乘累加运算。</p>
+<p><img src="https://img-blog.csdnimg.cn/d22dfa54f52e4ec2b220e3ffc3e10361.png" alt="在这里插入图片描述"></p>
+<p>循环往复移动，直至达到最下方、最右边边缘位置。然后得到 $\boldsymbol{2×2}$ 的矩阵。</p>
+<p><img src="https://img-blog.csdnimg.cn/37e2c77c7f164f8bac2da94939681f64.png" alt="在这里插入图片描述"></p>
+<p>可以看到，通过设定步长𝑠，可以有效地控制信息密度的提取。当步长设计的较小时，卷积核以较小幅度移动窗口，有利于提取到更多的特征信息，输出张量的尺寸也更大；当步长设计的较大时，卷积核以较大幅度移动窗口，有利于减少计算代价，过滤冗余信息，输出张量的尺寸也更小。<br>&emsp;&emsp;同时，在卷积核移动过程中，其值始终是不变的，都是卷积核的值。也可以说，卷积核的值在整个过程中都是共享的，所以又把卷积核的值称为共享变 量。卷积神经网络采用参数共享的方法大大降低了参数的数量。在下图中，卷积核如果继续往右移动2格，卷积核窗口部分将在输入矩 阵之外，这种情况该如何处理？具体处理方法就涉及下面的内容——填充（Padding）。</p>
+<p><img src="https://img-blog.csdnimg.cn/7c993edb7281400285b2bb80f9204a4a.png" alt="在这里插入图片描述"></p>
+<h2 id="2-7-填充"><a href="#2-7-填充" class="headerlink" title="2.7    填充"></a>2.7    填充</h2><p>&emsp;&emsp;在前面我们提过，如果不对图片进行拓展的话，经过卷积运算后的输出 $\boldsymbol{O}$ 的高宽会小于输入 $\boldsymbol{X}$ 的高宽；且当卷积核的步长过大时，卷积核可能会超过图片边界。在实际的网络模型设计时，我们通常希望输出 $\boldsymbol{O}$ 的高宽能够与输入 $\boldsymbol{X}$ 的高宽相同，从而方便网络参数的设计、残差连接等。为了让输出  $\boldsymbol{O}$ 的高宽能够与输入  $\boldsymbol{X}$  的相等，一般通过在原输入  $\boldsymbol{X}$  的高和宽维度上面进行填充(padding)若干无效元素操作，得到增大的输入 $\boldsymbol{X’}$ 。通过精心设计填充单元的数量，在 $\boldsymbol{X’}$ 上面进行卷积运算得到输出 $\boldsymbol{O}$ 的高宽可以和原输入  $\boldsymbol{X}$  相等。这种输入与输出的特征图维度一样的卷积方式，我们称作 <strong>Same卷积</strong>，不填充称作 <strong>Vaild卷积</strong>。<br>&emsp;&emsp;如下图，在高/行方向的上(Top)、下(Bottom)方向，宽/列方向的左(Left)、 右(Right)均可以进行不定数量的填充操作，填充的数值一般默认为 0，也可以填充自定义的数据。上、下方向各填充 1 行，左、右方向各填充 2 列，得到新的输入 $\boldsymbol{X’}$。</p>
+<p><img src="https://img-blog.csdnimg.cn/23c1e632e73b4dab974fd86844bd333f.png" alt="在这里插入图片描述"></p>
+<p>那么添加填充后的卷积层运算同样，仅仅是把参与运算的输入从  $\boldsymbol{X}$  换成了填充后得到的新张量  $\boldsymbol{X’}$ 。如下图，感受野的初始位置在填充后的  $\boldsymbol{X’}$  的左上方，完成相乘累加运算，得到输出 1，写入输出张量的对应位置。</p>
+<p><img src="https://img-blog.csdnimg.cn/e0b0df7456de4ef9a332b5ea981101aa.png" alt="在这里插入图片描述"></p>
+<p>循环往复，最终得到 $\boldsymbol{5 × 5}$ 的输出张量。</p>
+<p><img src="https://img-blog.csdnimg.cn/eea96add1bf5496489c757891b148bc3.png" alt="在这里插入图片描述"></p>
+<h2 id="2-8-卷积的计算公式"><a href="#2-8-卷积的计算公式" class="headerlink" title="2.8    卷积的计算公式"></a>2.8    卷积的计算公式</h2><p>&emsp;&emsp;经过上述对输入图像、卷积核、步长、填充、输出图像的分析，使用张量将它们表示如下：</p>
+<ul>
+<li>输入图片的尺寸：一般用  $\boldsymbol{n × n}$  表示输入的图像大小；</li>
+<li>卷积核的大小：一般用  $\boldsymbol{f × f}$  表示卷积核的大小；</li>
+<li>填充（padding）：一般用  $\boldsymbol{p}$  来表示填充大小；</li>
+<li>步长(stride)：一般用  $\boldsymbol{s}$  来表示步长大小；</li>
+<li>输出图片的尺寸：一般用  $\boldsymbol{o}$  来表示。</li>
+</ul>
+<p>如果已知 $\boldsymbol{n、f、s}$，则  $\boldsymbol{p = \frac{f - 1}{2}}$，$\boldsymbol{o = \lfloor \frac{n + 2p - f}{s} + 1\rfloor}$。最后再来分析以下卷积核在 <a href="##2.5多通道输入和多卷积核">2.5    多通道输入和多卷积核</a> 的末尾我分析过在实际中卷积核的大小 $\boldsymbol{f}$ 常常使用奇数是为了找到一个好锚点。实际上选择奇数的卷积核也更容易（padding）。当我们使用 <strong>Same卷积</strong> 时，这时候我们就需要用到 padding。但是如果  $\boldsymbol{f}$ 是偶数的话，  $\boldsymbol{p = \frac{f - 1}{2}}$就不是整数了。这意味着我们只需要在输入图像的一边或者两边进行填充。<br>&emsp;&emsp;(这里可选看)在 <strong>PyTorch</strong> 中，假设 <strong>Input</strong> 维度为  $\boldsymbol{(N,C_{in},H_{in}, W_{in})}$，<strong>Output</strong> 维度为  $\boldsymbol{(N,C_{out},H_{out}, W_{out})}$，两维度关系如下：</p>
+<ul>
+<li>$\boldsymbol{H_{out} = \frac{H_{in} + 2 × padding[0] - dilation[0] ×(kernel\_size[0] - 1) - 1}{stride[0]} + 1}$</li>
+<li>$\boldsymbol{W_{out} = \frac{W_{in} + 2 × padding[1] - dilation[1] ×(kernel\_size[1] - 1) - 1}{stride[1]} + 1}$</li>
+</ul>
+<h1 id="3-总结"><a href="#3-总结" class="headerlink" title="3    总结"></a>3    总结</h1><p>&emsp;&emsp;在本篇博客中，我跟大家分享了卷积神经网络中的基础结构——卷积层，并依次介绍了权值共享、卷积操作、卷积核，填充等内容。卷积神经网络的基础知识有很多，本篇博客介绍不完，剩下的我放到下一篇博客。期待您的访问！感恩！</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 机器学习</a>
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
+              <a href="/tags/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"># 卷积神经网络</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E5%89%8D%E5%90%91%E4%BC%A0%E6%92%AD/" rel="prev" title="前向传播">
+      <i class="fa fa-chevron-left"></i> 前向传播
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%BA%8C%EF%BC%89/" rel="next" title="卷积神经网络（二）">
+      卷积神经网络（二） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E7%AE%80%E4%BB%8B"><span class="nav-text">1    简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E5%8D%B7%E7%A7%AF%E5%B1%82"><span class="nav-text">2    卷积层</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-%E6%9D%83%E5%80%BC%E5%85%B1%E4%BA%AB"><span class="nav-text">2.1    权值共享</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-%E5%8D%B7%E7%A7%AF%E6%93%8D%E4%BD%9C"><span class="nav-text">2.2    卷积操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-%E5%8D%95%E9%80%9A%E9%81%93%E8%BE%93%E5%85%A5%E5%92%8C%E5%8D%95%E5%8D%B7%E7%A7%AF%E6%A0%B8"><span class="nav-text">2.3    单通道输入和单卷积核</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-%E5%A4%9A%E9%80%9A%E9%81%93%E8%BE%93%E5%85%A5%E5%92%8C%E5%8D%95%E5%8D%B7%E7%A7%AF%E6%A0%B8"><span class="nav-text">2.4    多通道输入和单卷积核</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-%E5%A4%9A%E9%80%9A%E9%81%93%E8%BE%93%E5%85%A5%E5%92%8C%E5%A4%9A%E5%8D%B7%E7%A7%AF%E6%A0%B8"><span class="nav-text">2.5    多通道输入和多卷积核</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-6-%E6%AD%A5%E9%95%BF"><span class="nav-text">2.6    步长</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-7-%E5%A1%AB%E5%85%85"><span class="nav-text">2.7    填充</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-8-%E5%8D%B7%E7%A7%AF%E7%9A%84%E8%AE%A1%E7%AE%97%E5%85%AC%E5%BC%8F"><span class="nav-text">2.8    卷积的计算公式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E6%80%BB%E7%BB%93"><span class="nav-text">3    总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">61k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:41</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

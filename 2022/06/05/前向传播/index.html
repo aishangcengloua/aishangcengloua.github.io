@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="一、Learning rate前言">
+<meta property="og:type" content="article">
+<meta property="og:title" content="前向传播">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/%E5%89%8D%E5%90%91%E4%BC%A0%E6%92%AD/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="一、Learning rate前言">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/d01b9835e2264c7b9e81ed8e431e8824.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/f5c537eea08244889a835027671b8d14.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/9e68d8dd538a43ccb978343394cfb365.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/3026ef9a40be4970a47e20184b7e2458.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/d30a77a1a71848ddb1e40d45d9149c34.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/ee5b846ca140495c89eb308077217486.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/74f768cc249f499aa97ef276c10e4ec4.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2950f70ec1ba48ed8fd06236df08722c.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/e44708fa01b64c6eab2d79fdff90bf0d.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/d20cf402a93c48cfa6861b99059dd2e2.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/036bf3a6f06b4ce7887944c753e1fe4a.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/b7a114266f664c81a52dfd3139dc1469.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/7f3d35962c424a00af9605f6b4f7b8c5.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/df8ed34532034b039c27eda2e796004f.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/158a6ed277ca46a68fb7946c78fe8180.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/84200e0269764827aada97b055868bec.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/b3d8aef1a911433da070ddda757a4b78.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/88ce9b37a3d74ef5a2d8e9a06e9398aa.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/843878427f184940a40d2e9337c2a743.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20ffebbcfb72426590151b6691096fce.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/c0485ddfd05f430ebe212ec3ef195d32.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/920d7fb08e504d15a8ae92bbe04e7ad2.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/e7d9ff9b971d477b8dfc48aa688d893f.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/428644aa65a24bf49e06a89e57264e2b.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/79230d73a6854f4eab4d0c1c1710c1e0.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/44a18541c94c4c13bc08443d391fa954.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/37d00de5708245989c58a6b02ede0642.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/d8c92380d5164808b2760b8e4f94a3c9.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/263bf80c401647f1becfa9084d788548.png#pic_center">
+<meta property="article:published_time" content="2022-06-05T08:20:33.000Z">
+<meta property="article:modified_time" content="2022-06-05T08:21:30.730Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="机器学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/d01b9835e2264c7b9e81ed8e431e8824.png#pic_center">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/%E5%89%8D%E5%90%91%E4%BC%A0%E6%92%AD/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>前向传播 | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">19</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">24</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E5%89%8D%E5%90%91%E4%BC%A0%E6%92%AD/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          前向传播
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 16:20:33 / 修改时间：16:21:30" itemprop="dateCreated datePublished" datetime="2022-06-05T16:20:33+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E5%89%8D%E5%90%91%E4%BC%A0%E6%92%AD/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E5%89%8D%E5%90%91%E4%BC%A0%E6%92%AD/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>2.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="一、Learning-rate"><a href="#一、Learning-rate" class="headerlink" title="一、Learning rate"></a>一、Learning rate</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>顾名思义，就是要给每个参数不同的learning rate，上一篇笔记中，我们提到了在沿着Loss函数我们可能会陷入local minima等一些gradient为零从而导致参数无法更新，Loss也就不再下降。但事实是当Loss不再下降的时候，gradient不一定很小，如下图<img src="https://img-blog.csdnimg.cn/d01b9835e2264c7b9e81ed8e431e8824.png#pic_center" alt="在这里插入图片描述"><br>当Loss很小时，gradient仍有在某时候是很大的，我们可以想象下面这样的情形导致的<img src="https://img-blog.csdnimg.cn/f5c537eea08244889a835027671b8d14.png#pic_center" alt="在这里插入图片描述"><br>由图知道Loss不再下降并不是因为卡在local minima或者saddle point，而是因为此时的learning rate太大导致点更新的步伐过大使gradient在“山谷”两侧“反复横跳”导致Loss不再下降。再如下面这个例子：假设只有两个参数不断计算gradient来降低Loss<img src="https://img-blog.csdnimg.cn/9e68d8dd538a43ccb978343394cfb365.png#pic_center" alt="在这里插入图片描述"><br>我们的目的就是能够使黑点到达黄色点的地方，此时Loss最小，设黄色点为山谷最低端，两旁是山壁，前文有说到当Loss不再下降时可能是因为“反复横跳”：<img src="https://img-blog.csdnimg.cn/3026ef9a40be4970a47e20184b7e2458.png#pic_center" alt="在这里插入图片描述"><br>接下来可能就有一个疑问就是，为什么不把learning rate设低一点让黑点跨的步伐小一点进入中间地区呢？嗯，是个好疑问，我们把learning rate设为10e-7看看<img src="https://img-blog.csdnimg.cn/d30a77a1a71848ddb1e40d45d9149c34.png#pic_center" alt="在这里插入图片描述"><br>从图可以看出，虽然黑点不再反复横跳，但他仍然不能到达黄点，这是因为此时的Loss函数已经十分平缓，而learning rate又太小而导致他不能继续再往前，所以我们需要更加特殊的gradient descent</p>
+<h2 id="1-1-不同的参数需要不同的learning-rate"><a href="#1-1-不同的参数需要不同的learning-rate" class="headerlink" title="1.1 不同的参数需要不同的learning rate"></a>1.1 不同的参数需要不同的learning rate</h2><p>当在某个地方的方向十分陡峭时我们就需要小的learning rate，反之需要大的learning rate<img src="https://img-blog.csdnimg.cn/ee5b846ca140495c89eb308077217486.png#pic_center" alt="在这里插入图片描述"><br>按照普通的gradient descent，我们更新参数的方法是这样的<img src="https://img-blog.csdnimg.cn/74f768cc249f499aa97ef276c10e4ec4.png#pic_center" alt="在这里插入图片描述"><br>而现在我们因为需要同时更新learning rate，所以将learning rate除以依赖于某个对应参数的未知参数δ<img src="https://img-blog.csdnimg.cn/2950f70ec1ba48ed8fd06236df08722c.png#pic_center" alt="在这里插入图片描述"><br>下面来计算δ的值</p>
+<h3 id="1-1-1-Root-Mean-Square计算δ"><a href="#1-1-1-Root-Mean-Square计算δ" class="headerlink" title="1.1.1 Root Mean Square计算δ"></a>1.1.1 Root Mean Square计算δ</h3><p><img src="https://img-blog.csdnimg.cn/e44708fa01b64c6eab2d79fdff90bf0d.png#pic_center" alt="在这里插入图片描述"><br>依照刚刚的δ的计算方法，当在Loss函数曲线较平缓的地方的gradient较小，因为δ跟gradient是呈正比关系，则算出来的δ也小，则learning rate较大，那便可以跨的步伐更大使Loss变化大一点<img src="https://img-blog.csdnimg.cn/d20cf402a93c48cfa6861b99059dd2e2.png#pic_center" alt="在这里插入图片描述"><br>在较陡的地方则相反<img src="https://img-blog.csdnimg.cn/036bf3a6f06b4ce7887944c753e1fe4a.png#pic_center" alt="在这里插入图片描述"><br>但是的话上面的方法还是不够好的，从上面的图中gradient的值都是差不多，都是朝着一个方向呈单调性变化的，但是在现实实验中我们可能会遇到的gradient在一个方向变化的程度可以是很大的<img src="https://img-blog.csdnimg.cn/b7a114266f664c81a52dfd3139dc1469.png#pic_center" alt="在这里插入图片描述"><br>所以我们就需要能够动态改变learning rate的值</p>
+<h3 id="1-1-2-RMSProp计算δ"><a href="#1-1-2-RMSProp计算δ" class="headerlink" title="1.1.2 RMSProp计算δ"></a>1.1.2 RMSProp计算δ</h3><p><img src="https://img-blog.csdnimg.cn/7f3d35962c424a00af9605f6b4f7b8c5.png#pic_center" alt="在这里插入图片描述"><br>δ的值取决于gradient的大小，当gradient比较大的时候说明loss很陡峭需要刹车，所以δ的值也会变大，使得learning rate变小，达到一个刹车的目的，否则反之<br><img src="https://img-blog.csdnimg.cn/df8ed34532034b039c27eda2e796004f.png#pic_center" alt="在这里插入图片描述"><br>我们结合RMSProp和Momentum就可以构成最常用的优化器：Adam</p>
+<h2 id="1-2-检验结果"><a href="#1-2-检验结果" class="headerlink" title="1.2 检验结果"></a>1.2 检验结果</h2><p>没有动态调整learning rate<br><img src="https://img-blog.csdnimg.cn/158a6ed277ca46a68fb7946c78fe8180.png#pic_center" alt="在这里插入图片描述"><br>之所以 出现红色圆圈里的现象是因为，随着gradient在y轴方向积累了很多小的值，使得δ在y轴方向很小导致learning rate太大出现井喷现象，但不会永远做简谐运动，因为随着learning rate还在不断更新黑点又会重新回到中间，我们有一种方法可以解决这个问题，就是Learning Rate Scheduling<img src="https://img-blog.csdnimg.cn/84200e0269764827aada97b055868bec.png#pic_center" alt="在这里插入图片描述"><br>使随着时间的增加让learning rate变的小一些<img src="https://img-blog.csdnimg.cn/b3d8aef1a911433da070ddda757a4b78.png#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="二、Classification"><a href="#二、Classification" class="headerlink" title="二、Classification"></a>二、Classification</h1><p>在第一篇的笔记中有写过Regression的output是一个数值，Classification的output是一个类别，如果结合起来看，我们是否可以将Classification当作Regression去训练呢？<br>这期间要求我们做得变化是将类别变成one-hot vector（独热向量）：<br>Class 1 = [1 0 0]T<br>Class 2 = [0 1 0]T<br>Class 3 = [0 0 1]T<br>所以我们就能像做Regression一样得到三组数据<br><img src="https://img-blog.csdnimg.cn/88ce9b37a3d74ef5a2d8e9a06e9398aa.png#pic_center" alt="在这里插入图片描述"><br>最后将得到的y值经过softmax函数得到y’再计算与y^的距离<img src="https://img-blog.csdnimg.cn/843878427f184940a40d2e9337c2a743.png#pic_center" alt="在这里插入图片描述"><br>因为经过神经网络我们得到的y值可能是任何值，但是我们的target只有0和1，所以需要做normalization（归一化）将y值限制到0-1之间，softmax的工作就是这个，具体过程如下：<br><img src="https://img-blog.csdnimg.cn/20ffebbcfb72426590151b6691096fce.png#pic_center" alt="在这里插入图片描述"><br>当我们在做两个类别分类时，可以直接使用sigmoid函数，因为sigmoid函数的取值范围是在0-1之间。<br>对于Classification时我们常用的Loss函数是Cross-entropy，表达式为：Error = -∑y^i*lny’i，在pytorch中，Cross-entropy常常是与softmax结合在一起的。</p>
+<h1 id="Batch-Normalization"><a href="#Batch-Normalization" class="headerlink" title="Batch Normalization"></a>Batch Normalization</h1><p>首先我们先来看两个参数w1、w2对Loss的影响：<br><img src="https://img-blog.csdnimg.cn/c0485ddfd05f430ebe212ec3ef195d32.png#pic_center" alt="在这里插入图片描述"><br>且对应的神经网络是十分简单的：<br><img src="https://img-blog.csdnimg.cn/920d7fb08e504d15a8ae92bbe04e7ad2.png#pic_center" alt="在这里插入图片描述"><br>x1改变一点后，最终L值会改变，但是由于x1的输入都很小时，其实对L的影响变不大。但是如果w2的输入很大，虽然w2只是改变一点点，最终也会对L造成很大影响<img src="https://img-blog.csdnimg.cn/e7d9ff9b971d477b8dfc48aa688d893f.png#pic_center" alt="在这里插入图片描述"><br>所以我们应该让不同维度的数值都有一个相同范围。<br>假设R笔数据分布是这样的<br><img src="https://img-blog.csdnimg.cn/428644aa65a24bf49e06a89e57264e2b.png#pic_center" alt="在这里插入图片描述"><br>我们先把同一维不同笔资料的mean计算出来，用那一维的数减去mean，再除以standard deviation（标准偏差）得到新的x’再放回原来位置，最终feature值都在0左右。考虑深度学习神经网络做normalization<br><img src="https://img-blog.csdnimg.cn/79230d73a6854f4eab4d0c1c1710c1e0.png#pic_center" alt="在这里插入图片描述"><br>开始时我们对input vector做了normalization之后得到z1，z2，z3，而他们又是后一层网络的输入，但是我们得到z值的时候他们的分布并不是分布在0和1之间的，这样会导致第二层训练起来比较困难。所以我们要对z做normalization，一样的步骤，计算mean，std：<br><img src="https://img-blog.csdnimg.cn/44a18541c94c4c13bc08443d391fa954.png#pic_center" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/37d00de5708245989c58a6b02ede0642.png#pic_center" alt="在这里插入图片描述"><br>上面这一大部分我们可以看成一层网络，这一层网络时是十分复杂的，因为里面有多个input和output，假如我们一次性把全部的资料读进去的话，计算量十分大，所以我们要考虑每次只对一部分的资料normalization，这就是Batch Normalization。值得注意的是Batch要足够多才行，只有这样才能算出u和δ的值<br>上面都是训练过程，现在来看一下testing：<br>上面我们知道u和    δ只能从比较大的Batch算出来，但是testing时，我们的数据量是不一定能够达到所需Batch值，<img src="https://img-blog.csdnimg.cn/d8c92380d5164808b2760b8e4f94a3c9.png#pic_center" alt="在这里插入图片描述"><br>这里有一个解决方法是，在训练时会把我们每次normalization得到的u1，u2，u3……拿出来计算得到平均值：<br><img src="https://img-blog.csdnimg.cn/263bf80c401647f1becfa9084d788548.png#pic_center" alt="在这里插入图片描述"><br>所以我们在testing时就不用计算u和δ的值，直接拿平均值即可</p>
+<h1 id="三、结语"><a href="#三、结语" class="headerlink" title="三、结语"></a>三、结语</h1><p>以上是我本人学习机器学习的学习笔记的第三篇，有错误的地方还望指出，共勉！</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 机器学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BB%BB%E5%8A%A1/" rel="prev" title="机器学习任务">
+      <i class="fa fa-chevron-left"></i> 机器学习任务
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%B8%80%EF%BC%89/" rel="next" title="卷积神经网络（一）">
+      卷积神经网络（一） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81Learning-rate"><span class="nav-text">一、Learning rate</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-%E4%B8%8D%E5%90%8C%E7%9A%84%E5%8F%82%E6%95%B0%E9%9C%80%E8%A6%81%E4%B8%8D%E5%90%8C%E7%9A%84learning-rate"><span class="nav-text">1.1 不同的参数需要不同的learning rate</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-1-Root-Mean-Square%E8%AE%A1%E7%AE%97%CE%B4"><span class="nav-text">1.1.1 Root Mean Square计算δ</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-2-RMSProp%E8%AE%A1%E7%AE%97%CE%B4"><span class="nav-text">1.1.2 RMSProp计算δ</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-%E6%A3%80%E9%AA%8C%E7%BB%93%E6%9E%9C"><span class="nav-text">1.2 检验结果</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81Classification"><span class="nav-text">二、Classification</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Batch-Normalization"><span class="nav-text">Batch Normalization</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E7%BB%93%E8%AF%AD"><span class="nav-text">三、结语</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">61k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:41</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

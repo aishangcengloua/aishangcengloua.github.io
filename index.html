@@ -124,17 +124,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">1</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">19</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">1</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">5</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">2</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">24</span></a>
 
   </li>
         <li class="menu-item menu-item-rss">
@@ -197,7 +197,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/03/PCA/">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/Adult-%E6%95%B0%E6%8D%AE%E9%9B%86%E5%88%86%E6%9E%90%E5%8F%8A%E5%9B%9B%E7%A7%8D%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
@@ -211,7 +211,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/06/03/PCA/" class="post-title-link" itemprop="url">PCA</a>
+            <a href="/2022/06/05/Adult-%E6%95%B0%E6%8D%AE%E9%9B%86%E5%88%86%E6%9E%90%E5%8F%8A%E5%9B%9B%E7%A7%8D%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0/" class="post-title-link" itemprop="url">Adult 数据集分析及四种模型实现</a>
         </h2>
 
         <div class="post-meta">
@@ -220,23 +220,17 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2022-06-03 21:44:16" itemprop="dateCreated datePublished" datetime="2022-06-03T21:44:16+08:00">2022-06-03</time>
+              <time title="创建时间：2022-06-05 17:38:07 / 修改时间：17:46:54" itemprop="dateCreated datePublished" datetime="2022-06-05T17:38:07+08:00">2022-06-05</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-06-05 14:03:55" itemprop="dateModified" datetime="2022-06-05T14:03:55+08:00">2022-06-05</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98/" itemprop="url" rel="index"><span itemprop="name">数据挖掘</span></a>
                 </span>
             </span>
 
@@ -249,8 +243,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2022/06/03/PCA/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/03/PCA/" itemprop="commentCount"></span>
+    <a title="valine" href="/2022/06/05/Adult-%E6%95%B0%E6%8D%AE%E9%9B%86%E5%88%86%E6%9E%90%E5%8F%8A%E5%9B%9B%E7%A7%8D%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/Adult-%E6%95%B0%E6%8D%AE%E9%9B%86%E5%88%86%E6%9E%90%E5%8F%8A%E5%9B%9B%E7%A7%8D%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -277,40 +271,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="1-原理简述"><a href="#1-原理简述" class="headerlink" title="1    原理简述"></a>1    原理简述</h1><p>&emsp;&emsp;Self-Attention Layer 一次检查同一句子中的所有单词的注意力，这使得它成为一个简单的矩阵计算，并且能够在计算单元上并行计算。 此外，Self-Attention Layer 可以使用下面提到的 Multi-Head 架构来拓宽视野，也就是多头注意力机制。Self-Attention Layer 基本结构如下：<br><img src="https://img-blog.csdnimg.cn/fc65b9f0024549318aad9019931c293a.png" alt="在这里插入图片描述"></p>
-<p>对于每个输入 $\boldsymbol{x}$，首先经过 <strong>Embedding</strong> 层对每个输入进行编码得到 $\boldsymbol{a_1,a_2,a_3,a_4}$，后将输入特征经过三个全连接层分别得到 <strong>Query，Key，Value</strong>：</p>
-<ul>
-<li>$\boldsymbol{q^i(Query) = W^q a^i}$；</li>
-<li>$\boldsymbol{k^i(Key) = W^k a^i}$；</li>
-<li>$\boldsymbol{v^i(Value) = W^v a^i}$。</li>
-</ul>
-<p>$\boldsymbol{W^q, W^k,W^v}$ 由网络训练而来。注意力矩阵是由 Query 和 Key 计算得到，方式由许多种，如点积、缩放点积等。Value 可以看作是信息提取器，将根据单词的注意力提取一个唯一的值，也即某个特征有多少成分被提取出来。下面计算一种注意力矩阵的方式：缩放点积。<br><img src="https://img-blog.csdnimg.cn/6385301128964680b30be08f2ac35638.gif#pic_center" alt="在这里插入图片描述"><br>注意力矩阵 $\boldsymbol{A}$ 定义为 Query (giver) 和 Key (receiver) 的内积除以其维度的平方根。 每个单词通过提供 Query 来匹配作为注意力的目标单词的 Key，从而对所有单词产生注意力。为防止注意力分数随维度增大而增大，让注意力矩阵除以向量的维度的开方。 然后对得到的注意力矩阵 $\boldsymbol{A}$ 进行 <strong>Softmax</strong> 归一化得到 $\boldsymbol{\hat{A}}$，最后将  $\boldsymbol{\hat{A}}$ 乘以 Value 矩阵并相加得到最终的特征 $\boldsymbol{b}$。<br><img src="https://img-blog.csdnimg.cn/9c375b3ad70240f1b2014231cbdd5e14.gif#pic_center" alt="在这里插入图片描述"></p>
-<p>矩阵化如下：<br><img src="https://img-blog.csdnimg.cn/8b635a6a21ef402e8702d8f191da661a.png" alt="在这里插入图片描述"></p>
-<p>在上述的 self-attention 中，我们最终只得到一个注意力矩阵，也就是说这个注意力矩阵所关注的信息只偏句子之间的一种关系，但是在时序序列中，往往特征之间不止一种关系，所以我们要提取多个注意力矩阵，这样可以捕获更多的信息，这种注意力机制也就是 <strong>多头注意力机制(Multi-Heads)</strong>。在实现过程中，我们只需要将原始的 $\boldsymbol{q^i,k^i,v^i}$ 分裂为 $\boldsymbol{n}$ 个就得到 $\boldsymbol{n}$ 头自注意力机制了。<br><img src="https://img-blog.csdnimg.cn/6ba45518a73649e9818594897369ff57.gif#pic_center" alt="在这里插入图片描述"></p>
-<h1 id="2-PyTorch-实现"><a href="#2-PyTorch-实现" class="headerlink" title="2    PyTorch 实现"></a>2    PyTorch 实现</h1><p>定义 num_attention_heads 为注意力机制的头数，input_size 为输入特征维度，hidden_size 为 $\boldsymbol{q^i,k^i,v^i}$ 的总维度，这样每个头的维度也可以求出，定义为 attention_head_size：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">self.num_attention_heads = num_attention_heads</span><br><span class="line">self.attention_head_size = <span class="built_in">int</span>(hidden_size / num_attention_heads)</span><br><span class="line">self.all_head_size = hidden_size</span><br></pre></td></tr></table></figure>
-<p>定义 $\boldsymbol{W^q, W^k,W^v}$，通过全连接网络生成：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">self.key_layer = nn.Linear(input_size, hidden_size)</span><br><span class="line">self.query_layer = nn.Linear(input_size, hidden_size)</span><br><span class="line">self.value_layer = nn.Linear(input_size, hidden_size)</span><br></pre></td></tr></table></figure>
-<p>使用输入特征乘 $\boldsymbol{W^q, W^k,W^v}$ 得到 <strong>Query，Key，Value</strong> 矩阵，维度为 $(batch\_size,seq\_len, hidden\_size)$：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">key = self.key_layer(x)</span><br><span class="line">query = self.query_layer(x)</span><br><span class="line">value = self.value_layer(x)</span><br></pre></td></tr></table></figure>
-<p>求多头注意力机制的 $\boldsymbol{W^q, W^k,W^v}$，头数为 num_attention_heads，并要调换维度，即将 $seq\_len$ 维度与 $num\_attention\_heads$ 维度对换，最终 $\boldsymbol{W^q, W^k,W^v}$ 维度为 $(batch\_size,num\_attention\_heads,seq\_len,attention\_head\_size)$：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">trans_to_multiple_heads</span>(<span class="params">self, x</span>):</span><br><span class="line">    new_size = x.size()[ : -<span class="number">1</span>] + (self.num_attention_heads, self.attention_head_size)</span><br><span class="line">    x = x.view(new_size)</span><br><span class="line">    <span class="keyword">return</span> x.permute(<span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">3</span>)</span><br><span class="line">key_heads = self.trans_to_multiple_heads(key)</span><br><span class="line">query_heads = self.trans_to_multiple_heads(query)</span><br><span class="line">value_heads = self.trans_to_multiple_heads(value)</span><br></pre></td></tr></table></figure>
-<p>将 $\boldsymbol{Q}$ 和 $\boldsymbol{K}$ 矩阵做点积运算，并进行缩放，得到注意力矩阵的维度为 $(batch\_size,num\_attention\_heads,seq\_len,seq\_len)$：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">attention_scores = torch.matmul(query_heads, key_heads.permute(<span class="number">0</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>))</span><br><span class="line">attention_scores = attention_scores / math.sqrt(self.attention_head_size)</span><br></pre></td></tr></table></figure>
-<p>对注意力矩阵进行归一化，归一化的维度为 3，矩阵的维度不发生变化：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">attention_probs = F.softmax(attention_scores, dim = -<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
-<p>将注意力矩阵乘以矩阵 $\boldsymbol{V}$，得到输出特征，维度为 $(batch\_size,num\_attention\_heads,seq\_len,attention\_head\_size)$：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">context = torch.matmul(attention_probs, value_heads)</span><br></pre></td></tr></table></figure>
-<p>将各头的注意力矩阵进行拼接，contiguous() 是将 tensor 的内存变成连续的，否则进行 view 操作时会报错，至于原因可参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/kdongyi/article/details/108180250"><strong>https://blog.csdn.net/kdongyi/article/details/108180250</strong></a>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">context = context.permute(<span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">3</span>).contiguous()</span><br><span class="line">new_size = context.size()[ : -<span class="number">2</span>] + (self.all_head_size , )</span><br><span class="line">context = context.view(*new_size)</span><br></pre></td></tr></table></figure>
-<p>全部代码：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> math</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">selfAttention</span>(nn.Module) :</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, num_attention_heads, input_size, hidden_size</span>):</span><br><span class="line">        <span class="built_in">super</span>(selfAttention, self).__init__()</span><br><span class="line">        <span class="keyword">if</span> hidden_size % num_attention_heads != <span class="number">0</span> :</span><br><span class="line">            <span class="keyword">raise</span> ValueError(</span><br><span class="line">                <span class="string">&quot;the hidden size %d is not a multiple of the number of attention heads&quot;</span></span><br><span class="line">                <span class="string">&quot;%d&quot;</span> % (hidden_size, num_attention_heads)</span><br><span class="line">            )</span><br><span class="line"></span><br><span class="line">        self.num_attention_heads = num_attention_heads</span><br><span class="line">        self.attention_head_size = <span class="built_in">int</span>(hidden_size / num_attention_heads)</span><br><span class="line">        self.all_head_size = hidden_size</span><br><span class="line"></span><br><span class="line">        self.key_layer = nn.Linear(input_size, hidden_size)</span><br><span class="line">        self.query_layer = nn.Linear(input_size, hidden_size)</span><br><span class="line">        self.value_layer = nn.Linear(input_size, hidden_size)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">trans_to_multiple_heads</span>(<span class="params">self, x</span>):</span><br><span class="line">        new_size = x.size()[ : -<span class="number">1</span>] + (self.num_attention_heads, self.attention_head_size)</span><br><span class="line">        x = x.view(new_size)</span><br><span class="line">        <span class="keyword">return</span> x.permute(<span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">3</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        key = self.key_layer(x)</span><br><span class="line">        query = self.query_layer(x)</span><br><span class="line">        value = self.value_layer(x)</span><br><span class="line"></span><br><span class="line">        key_heads = self.trans_to_multiple_heads(key)</span><br><span class="line">        query_heads = self.trans_to_multiple_heads(query)</span><br><span class="line">        value_heads = self.trans_to_multiple_heads(value)</span><br><span class="line"></span><br><span class="line">        attention_scores = torch.matmul(query_heads, key_heads.permute(<span class="number">0</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>))</span><br><span class="line">        attention_scores = attention_scores / math.sqrt(self.attention_head_size)</span><br><span class="line"></span><br><span class="line">        attention_probs = F.softmax(attention_scores, dim = -<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">        context = torch.matmul(attention_probs, value_heads)</span><br><span class="line">        context = context.permute(<span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">3</span>).contiguous()</span><br><span class="line">        new_size = context.size()[ : -<span class="number">2</span>] + (self.all_head_size , )</span><br><span class="line">        context = context.view(*new_size)</span><br><span class="line">        <span class="keyword">return</span> context</span><br></pre></td></tr></table></figure>
-<p>测试：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">features = torch.rand((<span class="number">32</span>, <span class="number">20</span>, <span class="number">10</span>))</span><br><span class="line">attention = selfAttention(<span class="number">2</span>, <span class="number">10</span>, <span class="number">20</span>)</span><br><span class="line">result = attention.forward(features)</span><br><span class="line"><span class="built_in">print</span>(result.shape)</span><br></pre></td></tr></table></figure>
-<p>结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">torch.Size([<span class="number">32</span>, <span class="number">20</span>, <span class="number">20</span>])</span><br></pre></td></tr></table></figure>
-<p>参考：<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/beilizhang/article/details/115282604"><strong><em>https://blog.csdn.net/beilizhang/article/details/115282604</em></strong></a></p>
-
+          <h1 id="一、数据集"><a href="#一、数据集" class="headerlink" title="一、数据集"></a>一、数据集</h1><h2 id="数据集介绍"><a href="#数据集介绍" class="headerlink" title="数据集介绍"></a>数据集介绍</h2>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/06/05/Adult-%E6%95%B0%E6%8D%AE%E9%9B%86%E5%88%86%E6%9E%90%E5%8F%8A%E5%9B%9B%E7%A7%8D%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -329,7 +298,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/03/hello-world/">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/LSTM-%E9%A2%84%E6%B5%8B%E8%82%A1%E7%A5%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
@@ -343,7 +312,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/06/03/hello-world/" class="post-title-link" itemprop="url">Hello World</a>
+            <a href="/2022/06/05/LSTM-%E9%A2%84%E6%B5%8B%E8%82%A1%E7%A5%A8/" class="post-title-link" itemprop="url">LSTM 预测股票</a>
         </h2>
 
         <div class="post-meta">
@@ -354,7 +323,20 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2022-06-03 12:21:06 / 修改时间：23:17:49" itemprop="dateCreated datePublished" datetime="2022-06-03T12:21:06+08:00">2022-06-03</time>
+              <time title="创建时间：2022-06-05 17:26:11 / 修改时间：17:37:28" itemprop="dateCreated datePublished" datetime="2022-06-05T17:26:11+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+                </span>
             </span>
 
           
@@ -366,8 +348,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2022/06/03/hello-world/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/03/hello-world/" itemprop="commentCount"></span>
+    <a title="valine" href="/2022/06/05/LSTM-%E9%A2%84%E6%B5%8B%E8%82%A1%E7%A5%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/LSTM-%E9%A2%84%E6%B5%8B%E8%82%A1%E7%A5%A8/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -376,7 +358,212 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>299</span>
+              <span>991</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>﻿tushare是一个开源的金融数据源，目前维护的数据非常丰富，质量也很高，对于一般的分析已经足够，可以省去自己到处去爬数据。我这里下载沪深300指数数据进行预测每日的最高价</p>
+<blockquote>
+<p><em>首先使用pip install tushare安装tushare工具包 ，github地址为：<br><a target="_blank" rel="noopener" href="https://github.com/aishangcengloua/MLData/blob/master/PyTorch/NLP/Forecast_stock/LSTM.ipynb">https://github.com/aishangcengloua/MLData/blob/master/PyTorch/NLP/Forecast_stock/LSTM.ipynb</a></em></p>
+</blockquote>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/06/05/LSTM-%E9%A2%84%E6%B5%8B%E8%82%A1%E7%A5%A8/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E8%AF%A6%E8%A7%A3-Tensorboard-%E5%8F%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/06/05/%E8%AF%A6%E8%A7%A3-Tensorboard-%E5%8F%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" class="post-title-link" itemprop="url">详解 Tensorboard 及使用教程</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 17:24:28 / 修改时间：17:25:11" itemprop="dateCreated datePublished" datetime="2022-06-05T17:24:28+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E8%AF%A6%E8%A7%A3-Tensorboard-%E5%8F%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E8%AF%A6%E8%A7%A3-Tensorboard-%E5%8F%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="一、什么是Tensorboard"><a href="#一、什么是Tensorboard" class="headerlink" title="一、什么是Tensorboard"></a>一、什么是Tensorboard</h1><p>Tensorboard原本是Google TensorFlow的可视化工具，可以用于记录训练数据、评估数据、网络结构、图像等，并且可以在web上展示，对于观察神经网络的过程非常有帮助。PyTorch也推出了自己的可视化工具，一个是<strong>tensorboardX</strong>包，一个是<strong>torch.utils.tensorboard</strong>，二者的使用相差不大，这里介绍后者</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/06/05/%E8%AF%A6%E8%A7%A3-Tensorboard-%E5%8F%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E5%9C%A8%E4%BD%BF%E7%94%A8-tensorboard-%E6%97%B6%E6%8A%A5%E9%94%99/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/06/05/%E5%9C%A8%E4%BD%BF%E7%94%A8-tensorboard-%E6%97%B6%E6%8A%A5%E9%94%99/" class="post-title-link" itemprop="url">在使用 tensorboard 时报错</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 17:21:55 / 修改时间：17:22:49" itemprop="dateCreated datePublished" datetime="2022-06-05T17:21:55+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E5%9C%A8%E4%BD%BF%E7%94%A8-tensorboard-%E6%97%B6%E6%8A%A5%E9%94%99/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E5%9C%A8%E4%BD%BF%E7%94%A8-tensorboard-%E6%97%B6%E6%8A%A5%E9%94%99/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>268</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -394,16 +581,657 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+          <p>﻿昨天在使用 tensorboard 时， 输入命令之后，一直出现下面的错误</p>
+<blockquote>
+<p>tensorboard: error: invalid choice: ‘Recognizer\\logs’ (choose from ‘serve’, ‘dev’)</p>
+</blockquote>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/06/05/%E5%9C%A8%E4%BD%BF%E7%94%A8-tensorboard-%E6%97%B6%E6%8A%A5%E9%94%99/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
 
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/Numpy-%E5%AE%9E%E7%8E%B0-K-means-%E7%AE%97%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/06/05/Numpy-%E5%AE%9E%E7%8E%B0-K-means-%E7%AE%97%E6%B3%95/" class="post-title-link" itemprop="url">Numpy 实现 K_means 算法</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 17:19:59 / 修改时间：17:20:41" itemprop="dateCreated datePublished" datetime="2022-06-05T17:19:59+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98/" itemprop="url" rel="index"><span itemprop="name">数据挖掘</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/Numpy-%E5%AE%9E%E7%8E%B0-K-means-%E7%AE%97%E6%B3%95/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/Numpy-%E5%AE%9E%E7%8E%B0-K-means-%E7%AE%97%E6%B3%95/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>388</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>﻿<a target="_blank" rel="noopener" href="https://github.com/aishangcengloua/Python/blob/master/Lab4/Lab4.dat">代码所需数据</a><br>聚类就是根据数据之间的相似度将数据集划分为多个类别或组，使类别内的数据相似度较大而类别间的数据相似度较小。如下图所示，左边是原始数据，右边是聚类之后的效果，不同的颜色代表不同的类别。<br><img src="https://img-blog.csdnimg.cn/798a5b8629b348c29c9b58c281d4d1cc.png" alt="在这里插入图片描述"></p>
+<p>对于本次代码聚类步骤如下（聚类算法大体步骤，可根据需求进行修改）：</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/06/05/Numpy-%E5%AE%9E%E7%8E%B0-K-means-%E7%AE%97%E6%B3%95/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E5%AF%B9%E5%90%AB%E6%9C%89%E5%A5%87%E5%BC%82%E5%80%BC%E5%92%8C%E9%AB%98%E6%96%AF%E5%99%AA%E5%A3%B0%E7%9A%84%E6%95%B0%E6%8D%AE%E8%BF%9B%E8%A1%8C%E5%A4%84%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/06/05/%E5%AF%B9%E5%90%AB%E6%9C%89%E5%A5%87%E5%BC%82%E5%80%BC%E5%92%8C%E9%AB%98%E6%96%AF%E5%99%AA%E5%A3%B0%E7%9A%84%E6%95%B0%E6%8D%AE%E8%BF%9B%E8%A1%8C%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">对含有奇异值和高斯噪声的数据进行处理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 17:16:04 / 修改时间：17:17:52" itemprop="dateCreated datePublished" datetime="2022-06-05T17:16:04+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98/" itemprop="url" rel="index"><span itemprop="name">数据挖掘</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E5%AF%B9%E5%90%AB%E6%9C%89%E5%A5%87%E5%BC%82%E5%80%BC%E5%92%8C%E9%AB%98%E6%96%AF%E5%99%AA%E5%A3%B0%E7%9A%84%E6%95%B0%E6%8D%AE%E8%BF%9B%E8%A1%8C%E5%A4%84%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E5%AF%B9%E5%90%AB%E6%9C%89%E5%A5%87%E5%BC%82%E5%80%BC%E5%92%8C%E9%AB%98%E6%96%AF%E5%99%AA%E5%A3%B0%E7%9A%84%E6%95%B0%E6%8D%AE%E8%BF%9B%E8%A1%8C%E5%A4%84%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>92</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>﻿分别用平均滑动窗口、指数滑动窗口、SG滤波法对含有奇异值和高斯噪声的两列数据进行去奇异值和降噪，最终拟合曲线推测函数表达式。<a target="_blank" rel="noopener" href="https://blog.csdn.net/hajlyx/article/details/100580316">去噪方法理论知识参考</a><br>对第一列数据：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy <span class="keyword">import</span> optimize</span><br><span class="line"><span class="keyword">import</span> scipy.io <span class="keyword">as</span> scio</span><br><span class="line">%matplotlib</span><br><span class="line"><span class="comment">#防止中文乱码</span></span><br><span class="line">plt.rcParams[<span class="string">&quot;font.sans-serif&quot;</span>] = [<span class="string">&quot;Simhei&quot;</span>]</span><br><span class="line">plt.rcParams[<span class="string">&quot;axes.unicode_minus&quot;</span>] = <span class="literal">False</span></span><br><span class="line">data = scio.loadmat(<span class="string">&#x27;2 data_preprocess_practice.mat&#x27;</span>)</span><br><span class="line"></span><br><span class="line">yy3 = data[<span class="string">&quot;yy3&quot;</span>]</span><br><span class="line">x = np.arange(<span class="number">0</span>, <span class="number">20001</span>, <span class="number">1</span>)</span><br><span class="line"><span class="comment">#去除奇异值</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Noise_reduction</span>(<span class="params">data_col</span>) :</span><br><span class="line">    lst = []</span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    <span class="comment">#此处用的是3sigema的方法</span></span><br><span class="line">    <span class="keyword">while</span> i + <span class="number">12</span> &lt; <span class="number">20001</span> :</span><br><span class="line">        lst1 = data_col[i : i + <span class="number">12</span>]</span><br><span class="line">        mean = np.mean(lst1)</span><br><span class="line">        std = np.std(lst1)</span><br><span class="line">        <span class="keyword">for</span> value <span class="keyword">in</span> lst1 :</span><br><span class="line">            <span class="keyword">if</span> (value - mean) &gt;= -<span class="number">3</span> * std <span class="keyword">and</span> (value - mean) &lt;= <span class="number">3</span> * std :</span><br><span class="line">                lst.append(value)</span><br><span class="line">        i += <span class="number">12</span></span><br><span class="line">        lst1 = []</span><br><span class="line">    <span class="keyword">return</span> lst</span><br><span class="line"></span><br><span class="line"><span class="comment">#平均滑动去噪</span></span><br><span class="line"><span class="comment">#滑动平均法适用于，噪声的均值为0，真实值变化不大或线性变化的场景</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Average_sliding_denoising</span>(<span class="params">arr, window_size</span>) :</span><br><span class="line">    <span class="comment">#对数组进首尾扩展，以滑动窗口可以处理到首尾点，思想与图片滤波算子相似</span></span><br><span class="line">    New_arr = arr[ : ]</span><br><span class="line">    window_size = (window_size - <span class="number">1</span>) // <span class="number">2</span></span><br><span class="line">    <span class="keyword">for</span> step <span class="keyword">in</span> <span class="built_in">range</span>(window_size) :</span><br><span class="line">        arr.insert(step, <span class="built_in">sum</span>(arr[ : window_size]) / window_size)</span><br><span class="line">        arr.insert(<span class="built_in">len</span>(arr) - step, <span class="built_in">sum</span>(arr[<span class="built_in">len</span>(arr) - window_size : <span class="built_in">len</span>(arr)]) / window_size)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(window_size, <span class="built_in">len</span>(arr) - window_size) :</span><br><span class="line">        New_arr[i - window_size] = (<span class="built_in">sum</span>(arr[i - window_size : i + window_size + <span class="number">1</span>])) / (<span class="number">2</span> * window_size + <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> New_arr</span><br><span class="line"></span><br><span class="line"><span class="comment">#指数平均滑动去噪</span></span><br><span class="line"><span class="comment">#当误差不受观测值大小影响的话，指数滑动平均比滑动平均好；当误差随观测值大小变化时，滑动平均比指数滑动平均更好。</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Exponential_sliding_denoising</span>(<span class="params">arr, weight = <span class="number">0.01</span></span>) :</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, <span class="built_in">len</span>(arr)) :</span><br><span class="line">        arr[i] = weight * arr[i] + (<span class="number">1</span> - weight) * arr[i - <span class="number">1</span>]</span><br><span class="line">    <span class="keyword">return</span> arr</span><br><span class="line"></span><br><span class="line"><span class="comment">#Savitzky-Golay平滑去噪</span></span><br><span class="line"><span class="comment">#SG滤波法对于数据的观测信息保持的更好，在一些注重数据变化的场合会比较适用。</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">create_x</span>(<span class="params">size, rank</span>):</span><br><span class="line">    x = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span> * size + <span class="number">1</span>):</span><br><span class="line">        m = i - size</span><br><span class="line">        row = [m ** j <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(rank)]</span><br><span class="line">        x.append(row) </span><br><span class="line">    x = np.mat(x)</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Savgol_Denosing</span>(<span class="params">arr, window_size, rank</span>) :</span><br><span class="line">    New_arr = arr[ : ]</span><br><span class="line">    m = (window_size - <span class="number">1</span>) // <span class="number">2</span></span><br><span class="line">    <span class="comment"># 处理边缘数据，用边缘值首尾增加m个首尾项</span></span><br><span class="line">    <span class="keyword">for</span> step <span class="keyword">in</span> <span class="built_in">range</span>(m) :</span><br><span class="line">        arr.insert(step, arr[<span class="number">0</span>])</span><br><span class="line">        arr.insert(<span class="built_in">len</span>(arr) - step, arr[<span class="built_in">len</span>(arr) - <span class="number">1</span>])</span><br><span class="line">    <span class="comment"># 创建X矩阵</span></span><br><span class="line">    X = create_x(m, rank)</span><br><span class="line">    <span class="comment"># 计算加权系数矩阵B</span></span><br><span class="line">    B = (X * (X.T * X).I) * X.T</span><br><span class="line">    <span class="comment">#只用更新第m个点，因此只需取B系数矩阵的第m行即可</span></span><br><span class="line">    A0 = B[m].T</span><br><span class="line">    <span class="comment"># 计算平滑修正后的值</span></span><br><span class="line">    narr = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(New_arr)):</span><br><span class="line">        y = [arr[i + j] <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(window_size)]</span><br><span class="line">        y1 = np.mat(y) * A0</span><br><span class="line">        y1 = <span class="built_in">float</span>(y1)</span><br><span class="line">        narr.append(y1)</span><br><span class="line">    <span class="keyword">return</span> narr</span><br><span class="line"></span><br><span class="line"><span class="comment">#可视化不同去噪方法的效果</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Mapping</span>(<span class="params">lst, arr, arr1, arr2</span>) :</span><br><span class="line">    x = np.array(<span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">0</span>, <span class="built_in">len</span>(arr), <span class="number">1</span>)))</span><br><span class="line">    fig = plt.figure(figsize=(<span class="number">15</span>, <span class="number">5</span>))</span><br><span class="line">    fig.<span class="built_in">set</span>(alpha = <span class="number">0.2</span>)</span><br><span class="line">    plt.subplot2grid((<span class="number">1</span>,<span class="number">4</span>), (<span class="number">0</span>, <span class="number">0</span>))</span><br><span class="line">    plt.plot(x, arr, label = <span class="string">&#x27;Average_sliding_denoising&#x27;</span>)</span><br><span class="line">    plt.legend(loc = <span class="number">1</span>)</span><br><span class="line">    plt.subplot2grid((<span class="number">1</span>, <span class="number">4</span>), (<span class="number">0</span>, <span class="number">1</span>))</span><br><span class="line">    plt.plot(x, arr1, <span class="string">&#x27;g-&#x27;</span>, label = <span class="string">&#x27;Exponential_sliding_denoising&#x27;</span>)</span><br><span class="line">    plt.legend(loc = <span class="number">1</span>)</span><br><span class="line">    plt.subplot2grid((<span class="number">1</span>, <span class="number">4</span>), (<span class="number">0</span>, <span class="number">2</span>))</span><br><span class="line">    plt.plot(x, arr2, <span class="string">&#x27;r-&#x27;</span>, label = <span class="string">&#x27;Savgol_Denosing&#x27;</span>)</span><br><span class="line">    plt.legend(loc = <span class="number">1</span>)</span><br><span class="line">    plt.subplot2grid((<span class="number">1</span>, <span class="number">4</span>), (<span class="number">0</span>, <span class="number">3</span>))</span><br><span class="line">    plt.plot(x, lst, <span class="string">&#x27;b-&#x27;</span>, x, arr, <span class="string">&#x27;pink&#x27;</span>, x, arr1, <span class="string">&#x27;g&#x27;</span>, x, arr2, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">    plt.legend([<span class="string">&#x27;Before Denoising&#x27;</span>, <span class="string">&#x27;Exponential_sliding_denoising&#x27;</span>, <span class="string">&#x27;Average_sliding_denoising&#x27;</span>, <span class="string">&#x27;Savgol_Denosing&#x27;</span>], loc = <span class="number">1</span>)</span><br><span class="line">    plt.show()</span><br><span class="line"></span><br><span class="line"><span class="comment">#小结，单纯从可视化效果来看，指数平均化动的效果是最好的</span></span><br><span class="line">    </span><br><span class="line"><span class="comment">#数据重新拟合，推测函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Polynomial_fitting</span>(<span class="params">lst</span>) :</span><br><span class="line">    x1 = np.arange(<span class="number">0</span>, <span class="built_in">len</span>(lst), <span class="number">1</span>).astype(<span class="built_in">float</span>)</span><br><span class="line">    z1 = np.polyfit(x1, lst, <span class="number">11</span>)</span><br><span class="line"><span class="comment">#     print(np.poly1d(z1))</span></span><br><span class="line">    x_points = np.linspace(<span class="number">0</span>, <span class="number">19973</span>, <span class="number">19973</span>)</span><br><span class="line">    y_point = np.polyval(z1, x_points)</span><br><span class="line">    fig1 = plt.figure()</span><br><span class="line">    plt.plot(x1, lst, x_points, y_point, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">    plt.legend([<span class="string">&#x27;Before fitting&#x27;</span>, <span class="string">&#x27;After fitting&#x27;</span>], loc = <span class="number">1</span>)</span><br><span class="line">    plt.show()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">data_col1 = []</span><br><span class="line">data_col2 = []</span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> yy3 :</span><br><span class="line">    data_col1.append(line[<span class="number">0</span>])</span><br><span class="line">    data_col2.append(line[<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">data_col1 = np.array(data_col1)</span><br><span class="line">data_col2 = np.array(data_col2)</span><br><span class="line"></span><br><span class="line">lst1 = Noise_reduction(data_col1)</span><br><span class="line">lst1_A = Average_sliding_denoising(Noise_reduction(data_col1), <span class="number">61</span>)</span><br><span class="line">lst1_E = Exponential_sliding_denoising(Noise_reduction(data_col1))</span><br><span class="line">lst1_S = Savgol_Denosing(Noise_reduction(data_col1), <span class="number">59</span>, <span class="number">2</span>)</span><br><span class="line">Mapping(lst1, lst1_A, lst1_E, lst1_S)</span><br><span class="line">Polynomial_fitting1(lst1_A)</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/06/05/%E5%AF%B9%E5%90%AB%E6%9C%89%E5%A5%87%E5%BC%82%E5%80%BC%E5%92%8C%E9%AB%98%E6%96%AF%E5%99%AA%E5%A3%B0%E7%9A%84%E6%95%B0%E6%8D%AE%E8%BF%9B%E8%A1%8C%E5%A4%84%E7%90%86/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E7%94%9F%E6%88%90%E5%AF%B9%E6%8A%97%E7%BD%91%E7%BB%9C%EF%BC%88GAN%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/06/05/%E7%94%9F%E6%88%90%E5%AF%B9%E6%8A%97%E7%BD%91%E7%BB%9C%EF%BC%88GAN%EF%BC%89/" class="post-title-link" itemprop="url">生成对抗网络（GAN）</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 17:14:07 / 修改时间：17:15:02" itemprop="dateCreated datePublished" datetime="2022-06-05T17:14:07+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E7%94%9F%E6%88%90%E5%AF%B9%E6%8A%97%E7%BD%91%E7%BB%9C%EF%BC%88GAN%EF%BC%89/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E7%94%9F%E6%88%90%E5%AF%B9%E6%8A%97%E7%BD%91%E7%BB%9C%EF%BC%88GAN%EF%BC%89/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>3.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;&emsp;在生成对抗网络(Generative Adversarial Network，简称 GAN)发明之前，变分自编码器(VAE)被认为是理论完备，实现简单，使用神经网络训练起来很稳定，生成的图片逼近度也较高，但是人眼还是可以很轻易地分辨出真实图片与机器生成的图片。但在2014年GAN被提出之后，在之后的几年里面里迅速发展，生成的图片越来越逼真。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/06/05/%E7%94%9F%E6%88%90%E5%AF%B9%E6%8A%97%E7%BD%91%E7%BB%9C%EF%BC%88GAN%EF%BC%89/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/06/05/%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8/" class="post-title-link" itemprop="url">自编码器</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 17:11:00 / 修改时间：17:13:19" itemprop="dateCreated datePublished" datetime="2022-06-05T17:11:00+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>3.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;&emsp;目前我们可以通过爬虫等方式获取海量的样本数据𝒙，如照片、语音、文本等，是相对容易的，但困难的是获取这些数据所对应的标签信息，例如机器翻译，除了收集源语言的对话文本外，还需要待翻译的目标语言文本数据。数据的标注工作目前主要还是依赖人的先验知识来完成。因此，面对海量的无标注数据，我们需要从中学习到数据的分布𝑃(𝒙)的算法，而无监督算法模型就是针对这类问题而发展的。特别地，如果算法把𝒙作为监督信号来学习，这类算法称为自监督学习，本博客介绍的自编码器就属于自监督学习范畴。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/06/05/%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E3%80%90OpenCv%E3%80%91Canny-%E7%AE%97%E5%AD%90%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/06/05/%E3%80%90OpenCv%E3%80%91Canny-%E7%AE%97%E5%AD%90%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B/" class="post-title-link" itemprop="url">【OpenCv】Canny 算子边缘检测</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 17:08:53 / 修改时间：17:09:20" itemprop="dateCreated datePublished" datetime="2022-06-05T17:08:53+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%9C%BA%E5%99%A8%E8%A7%86%E8%A7%89/" itemprop="url" rel="index"><span itemprop="name">机器视觉</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E3%80%90OpenCv%E3%80%91Canny-%E7%AE%97%E5%AD%90%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E3%80%90OpenCv%E3%80%91Canny-%E7%AE%97%E5%AD%90%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>567</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>﻿Canny 算子和 Marr（LoG）边缘检测方法类似，也属于是先平滑后求导数的方法John Canny研究了最优边缘检测方法所需的特性，给出了评价边缘检测性能优劣的三个指标：</p>
+<ul>
+<li>好的信噪比，即将非边缘点判定为边缘点的概率要低，将边缘点判为非边缘点的概率要低；</li>
+<li>高的定位性能，即检测出的边缘点要尽可能在实际边缘的中心；</li>
+<li>对单一边缘仅有唯一响应，即单个边缘产生多个响应的概率要低，并且虚假响应边缘应该得到最大抑制。</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/06/05/%E3%80%90OpenCv%E3%80%91Canny-%E7%AE%97%E5%AD%90%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E3%80%90OpenCv%E3%80%91Marr-%E7%AE%97%E5%AD%90%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/06/05/%E3%80%90OpenCv%E3%80%91Marr-%E7%AE%97%E5%AD%90%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B/" class="post-title-link" itemprop="url">【OpenCv】Marr 算子边缘检测</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 17:05:36 / 修改时间：17:06:11" itemprop="dateCreated datePublished" datetime="2022-06-05T17:05:36+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%9C%BA%E5%99%A8%E8%A7%86%E8%A7%89/" itemprop="url" rel="index"><span itemprop="name">机器视觉</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E3%80%90OpenCv%E3%80%91Marr-%E7%AE%97%E5%AD%90%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E3%80%90OpenCv%E3%80%91Marr-%E7%AE%97%E5%AD%90%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>627</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>﻿Marr算子: Laplacian of a Gaussian（LOG）</p>
+<ul>
+<li>Marr算子是在Laplacian算子的基础上实现的，它得益于对人的视觉机理的研究，有一定的生物学和生理学意义。</li>
+<li>由于Laplacian算子对噪声比较敏感，为了减少噪声影响，提出了将高斯滤<br>波和拉普拉斯检测算子结合在一起进行边缘检测的方法：先对图像进行平滑，然后再用Laplacian算子检测边缘。</li>
+<li>平滑函数应能反映不同远近的周围点对给定像素具有不同的平滑作用，因此，平滑函数采用正态分布的高斯函数，即：<br><img src="https://img-blog.csdnimg.cn/689572f9726448c3b82d02949431e800.png#pic_center" alt="在这里插入图片描述"><br>卷积操作具有结合律，因此我们先将高斯平滑滤波器与拉普拉斯滤波器进行卷积，然后利用得到的混合滤波器去对图片进行卷积以得到所需的结果。<br>两个优点：</li>
+<li>由于高斯和拉普拉斯核通常都比图像小得多，所以这种方法通常只需要很少的算术运算。</li>
+<li>LoG (‘ Laplacian of Gaussian’)内核的参数可以预先计算，因此在运行时只需要对图像执行一遍的卷积即可。<br><img src="https://img-blog.csdnimg.cn/bd40ed4914ef4ebaa5fd705721f23519.png#pic_center" alt="在这里插入图片描述">算法步骤如下：</li>
+<li>滤波：首先对图像f(x,y)进行平滑滤波，其滤波函数根据人类视觉特性选为高斯函数，</li>
+<li>增强：对平滑图像进行拉普拉斯运算，</li>
+<li>检测：利用二阶导数算子过零点的性质，可确定图像中阶跃边缘的位置</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/06/05/%E3%80%90OpenCv%E3%80%91Marr-%E7%AE%97%E5%AD%90%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -420,6 +1248,9 @@
 
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
 
 
 
@@ -486,20 +1317,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">24</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">19</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -553,13 +1384,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">2k</span>
+    <span title="站点总字数">61k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">4 分钟</span>
+    <span title="站点阅读时长">1:41</span>
 </div>
 <!--
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动

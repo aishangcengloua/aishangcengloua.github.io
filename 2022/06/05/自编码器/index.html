@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言&amp;emsp;&amp;emsp;目前我们可以通过爬虫等方式获取海量的样本数据𝒙，如照片、语音、文本等，是相对容易的，但困难的是获取这些数据所对应的标签信息，例如机器翻译，除了收集源语言的对话文本外，还需要待翻译的目标语言文本数据。数据的标注工作目前主要还是依赖人的先验知识来完成。因此，面对海量的无标注数据，我们需要从中学习到数据的分布𝑃(𝒙)的算法，而无监督算法模型就是针对这类问题而发展的。特别">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自编码器">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="前言&amp;emsp;&amp;emsp;目前我们可以通过爬虫等方式获取海量的样本数据𝒙，如照片、语音、文本等，是相对容易的，但困难的是获取这些数据所对应的标签信息，例如机器翻译，除了收集源语言的对话文本外，还需要待翻译的目标语言文本数据。数据的标注工作目前主要还是依赖人的先验知识来完成。因此，面对海量的无标注数据，我们需要从中学习到数据的分布𝑃(𝒙)的算法，而无监督算法模型就是针对这类问题而发展的。特别">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/ad29328da64c473bacd2b582ad6f817e.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/32d703628a7344b88533bbc59f8d41d2.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/6d62bb75794546f2b72c93b2cdf5831d.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/05c32307ae444242a8bb8181aa18991b.png#">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/f062f51cf95c490781564ea4c4ec2ed3.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/d5fc0ade729346b794fec89c1219f75d.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/4f54d125906e4eae952b11f263763ac8.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/15df6f69a6084f62ac52c4db7dd35e23.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/e8bb31276b44466e88709706a27a1301.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/b51ea0edf97f445893d9fc98b50337bd.png#pic_center">
+<meta property="article:published_time" content="2022-06-05T09:11:00.000Z">
+<meta property="article:modified_time" content="2022-06-05T09:13:19.488Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="PyTorch">
+<meta property="article:tag" content="自编码器">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/ad29328da64c473bacd2b582ad6f817e.png#pic_center">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>自编码器 | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">19</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">24</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          自编码器
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 17:11:00 / 修改时间：17:13:19" itemprop="dateCreated datePublished" datetime="2022-06-05T17:11:00+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>3.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;&emsp;目前我们可以通过爬虫等方式获取海量的样本数据𝒙，如照片、语音、文本等，是相对容易的，但困难的是获取这些数据所对应的标签信息，例如机器翻译，除了收集源语言的对话文本外，还需要待翻译的目标语言文本数据。数据的标注工作目前主要还是依赖人的先验知识来完成。因此，面对海量的无标注数据，我们需要从中学习到数据的分布𝑃(𝒙)的算法，而无监督算法模型就是针对这类问题而发展的。特别地，如果算法把𝒙作为监督信号来学习，这类算法称为自监督学习，本博客介绍的自编码器就属于自监督学习范畴。</p>
+<h1 id="1-自编码器"><a href="#1-自编码器" class="headerlink" title="1    自编码器"></a>1    自编码器</h1><h2 id="1-1-原理"><a href="#1-1-原理" class="headerlink" title="1.1    原理"></a>1.1    原理</h2><p>&emsp;&emsp;自编码器是通过对输入$x$进行编码后得到一个低维的向量$z$，然后根据 这个向量还原出输入$x$。通过对比$x$与$\bar{x}$的误差，再利用神经网络去训练使得误差逐渐减小，从而达到非监督学习的目的。结构如下图所示。<br><img src="https://img-blog.csdnimg.cn/ad29328da64c473bacd2b582ad6f817e.png#pic_center" alt="在这里插入图片描述"><br>&emsp;&emsp;其中我们将数据𝒙本身作为监督信号来指导网络的训练，即希望神经网络能够学习到映射${𝑓_θ}$: $x$ → $x$，我们把网络𝑓𝜃切分为两个部分，前面的子网络尝试学习映射关系：$g_{θ1}$: $x$ → $z$，后面的子网络尝试学习映射关系：$h_{θ2}$：$z$ → $x$。我们把$g_{θ1}$看成一个数据编码(Encode)的过程，作用就是将输入$x$编码成低纬度的隐藏变量$z$，$h_{θ2}$看成一个数据解码(Dncode)的过程，作用是将隐藏变量$z$重塑成高纬度的$x$。编码器和解码器共同完成了输入数据$x$的编码和解码过程，我们把整个网路模型${𝑓_θ}$叫做自动编码器(Auto-Encoder)，如果网络含有多个隐藏层，则称为深度自编码器(Deep Auto-encoder)。<img src="https://img-blog.csdnimg.cn/32d703628a7344b88533bbc59f8d41d2.png#pic_center" alt="在这里插入图片描述"><br>&emsp;&emsp;自编码器的编码器通过编码器压缩得到的隐藏变量$z$重塑$\bar{x}$，我们希望解码器的输出能够完美地或者近似恢复出原来的输入，即$x$约等于$\bar{x}$，则自编码器的损失函数可定义为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&Minimize  ℒ = dist(x, \bar{x})\\
+&\bar{x} = h_{θ2}(g_{θ1}(x))\\
+\end{aligned}</script><p>&emsp;&emsp;其中$dist(x, \bar{x})$表示$x$与 $\bar{x}$ 的距离，常见的距离度量函数为欧氏距离(也即均方差):</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&ℒ = \sum_{i}(x - \bar{x})^2\\
+\end{aligned}</script><h2 id="1-2-PyTorch实现图片重塑"><a href="#1-2-PyTorch实现图片重塑" class="headerlink" title="1.2    PyTorch实现图片重塑"></a>1.2    PyTorch实现图片重塑</h2><h3 id="1-2-1-Fashion-MNIST-数据集"><a href="#1-2-1-Fashion-MNIST-数据集" class="headerlink" title="1.2.1    Fashion MNIST 数据集"></a>1.2.1    Fashion MNIST 数据集</h3><p>&emsp;&emsp;Fashion MNIST 是一个定位在比 MNIST 图片识别问题稍复杂的数据集，它的设定与MNIST 几乎完全一样，包含了 10 类不同类型的衣服、鞋子、包等灰度图片，图片大小为28 × 28，共 70000 张图片，其中 60000 张用于训练集，10000 张用于测试集。Fashion MNIST 除了图片内容与 MNIST 不一样，其它设定都相同，大部分情况可以直接替换掉原来基于 MNIST 训练的算法代码，而不需要额外修改。由于 Fashion MNIST 图片识别相对于 MNIST 图片更难，因此可以用于测试稍复杂的算法性能。<br><img src="https://img-blog.csdnimg.cn/6d62bb75794546f2b72c93b2cdf5831d.png#pic_center" alt="在这里插入图片描述"><br>&emsp;&emsp;在PyTorch中可以直接使用torchvision包进行在线下载。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dataset = datasets.FashionMNIST(root = <span class="string">&#x27;data2&#x27;</span>,</span><br><span class="line">                        train = <span class="literal">False</span>,</span><br><span class="line">                        download = <span class="literal">True</span>,</span><br><span class="line">                        transform = transforms.ToTensor())</span><br></pre></td></tr></table></figure>
+<h3 id="1-2-2-网络结构"><a href="#1-2-2-网络结构" class="headerlink" title="1.2.2    网络结构"></a>1.2.2    网络结构</h3><p>&emsp;&emsp;我们利用编码器将输入图片$x ∈ 𝑅^{784}降维到较低维度的隐藏向量z∈ 𝑅^{20}$，并基于隐藏向量 利用解码器重建图片，自编码器模型如图所示，编码器由 3 层全连接层网络组成，输出节点数分别为 256、128、20，解码器同样由 3 层全连接网络组成，输出节点数分别为 128、256、784。<br><img src="https://img-blog.csdnimg.cn/05c32307ae444242a8bb8181aa18991b.png#" alt="在这里插入图片描述"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">AE</span>(nn.Module) :</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(AE, self).__init__()</span><br><span class="line">        self.fc1 = nn.Linear(<span class="number">784</span>, <span class="number">256</span>)</span><br><span class="line">        self.relu1 = nn.ReLU()</span><br><span class="line">        self.fc2 = nn.Linear(<span class="number">256</span>, <span class="number">128</span>)</span><br><span class="line">        self.relu2 = nn.ReLU()</span><br><span class="line">        self.fc3 = nn.Linear(<span class="number">128</span>, <span class="number">20</span>)</span><br><span class="line">        self.fc4 = nn.Linear(<span class="number">20</span>, <span class="number">128</span>)</span><br><span class="line">        self.relu3 = nn.ReLU()</span><br><span class="line">        self.fc5 = nn.Linear(<span class="number">128</span>, <span class="number">256</span>)</span><br><span class="line">        self.relu4 = nn.ReLU()</span><br><span class="line">        self.fc6 = nn.Linear(<span class="number">256</span>, <span class="number">784</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">Encoder</span>(<span class="params">self, x</span>):</span><br><span class="line">        h1 = self.relu1(self.fc1(x))</span><br><span class="line">        h2 = self.relu2(self.fc2(h1))</span><br><span class="line">        <span class="keyword">return</span> self.fc3(h2)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">Decoder</span>(<span class="params">self, z</span>):</span><br><span class="line">        h1 = self.relu3(self.fc4(z))</span><br><span class="line">        h2 = self.relu4(self.fc5(h1))</span><br><span class="line">        <span class="keyword">return</span> F.sigmoid(self.fc6(h2))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        z = self.Encoder(x)</span><br><span class="line">        <span class="comment"># print(z.shape)</span></span><br><span class="line">        x_reconst = self.Decoder(z)</span><br><span class="line">        <span class="keyword">return</span> x_reconst</span><br></pre></td></tr></table></figure>
+<h3 id="1-2-3-训练"><a href="#1-2-3-训练" class="headerlink" title="1.2.3    训练"></a>1.2.3    训练</h3><p>&emsp;&emsp;自编码器的训练过程与分类器的基本一致，通过误差函数计算出重建向量$\bar{x} 与原始输入向量x$之间的距离。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(MAX_EPOCH) :</span><br><span class="line">    model.train()</span><br><span class="line">    <span class="keyword">for</span> i, (x, _) <span class="keyword">in</span> <span class="built_in">enumerate</span>(data_loader) :</span><br><span class="line">        x = x.to(device)</span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        x = x.view(-<span class="number">1</span>, image_size)</span><br><span class="line">        x_reconst = model(x)</span><br><span class="line">        <span class="comment"># 重构损失，使用二元分类损失</span></span><br><span class="line">        reconst_loss = F.binary_cross_entropy(x_reconst, x, size_average=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line">        reconst_loss.backward()</span><br><span class="line">        optimizer.step()</span><br></pre></td></tr></table></figure>
+<h3 id="1-2-4-图片重塑"><a href="#1-2-4-图片重塑" class="headerlink" title="1.2.4    图片重塑"></a>1.2.4    图片重塑</h3><p>&emsp;&emsp;与分类问题不同的是，自编码器的模型性能一般不好量化评价，尽管ℒ值可以在一定程度上代表网络的学习效果，但我们最终希望获得还原度较高、样式较丰富的重建样本。对于图片来说，一般依赖于人工主观的评估。在这次实践中正确做法应是将数据集划分为训练集和测试集，用测试集来进行图片重塑对比，但我为了方便就直接使用训练集来进行重塑了。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> torch.no_grad() :</span><br><span class="line">    out = model(x)</span><br><span class="line">    <span class="comment">#将与原图与重塑图像进行拼接，奇数列为原图像，偶数列为重塑图像</span></span><br><span class="line">    x_concat = torch.cat([x.view(-<span class="number">1</span>, <span class="number">1</span>, <span class="number">28</span>, <span class="number">28</span>), out.view(-<span class="number">1</span>, <span class="number">1</span>, <span class="number">28</span>, <span class="number">28</span>)], dim = <span class="number">3</span>)</span><br><span class="line">    save_image(x_concat, os.path.join(samples_dir, <span class="string">f&#x27;reconst-<span class="subst">&#123;epoch </span></span></span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/f062f51cf95c490781564ea4c4ec2ed3.png#pic_center" alt="在这里插入图片描述"></p>
+<p>&emsp;&emsp;重塑图像如上图，其中奇数列为原图像，偶数列为重塑图像。可以看到，第一个 Epoch 时，图片重建效果较差，图片非常模糊，逼真度较差；随着训练的进行，重建图片边缘越来越清晰，第 100 个 Epoch时，重建的图片效果已经比较接近真实图片。<br>全部代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> cv2 <span class="keyword">as</span> cv</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">import</span> torchvision.datasets <span class="keyword">as</span> datasets</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader, Dataset</span><br><span class="line"><span class="keyword">from</span> torchvision.utils <span class="keyword">import</span> save_image</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> transforms</span><br><span class="line"></span><br><span class="line">MAX_EPOCH = <span class="number">100</span></span><br><span class="line">lr_learning = <span class="number">0.001</span></span><br><span class="line">batch_size = <span class="number">64</span></span><br><span class="line">image_size = <span class="number">784</span></span><br><span class="line">os.makedirs(<span class="string">&#x27;samples_AE&#x27;</span>, exist_ok = <span class="literal">True</span>)</span><br><span class="line">samples_dir = <span class="string">&#x27;samples_AE&#x27;</span></span><br><span class="line"></span><br><span class="line">dataset = datasets.FashionMNIST(root = <span class="string">&#x27;data2&#x27;</span>,</span><br><span class="line">                        train = <span class="literal">False</span>,</span><br><span class="line">                        download = <span class="literal">True</span>,</span><br><span class="line">                        transform = transforms.ToTensor())</span><br><span class="line"></span><br><span class="line">data_loader = DataLoader(dataset, shuffle = <span class="literal">True</span>, batch_size = batch_size, drop_last = <span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AE</span>(nn.Module) :</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(AE, self).__init__()</span><br><span class="line">        self.fc1 = nn.Linear(<span class="number">784</span>, <span class="number">256</span>)</span><br><span class="line">        self.relu1 = nn.ReLU()</span><br><span class="line">        self.fc2 = nn.Linear(<span class="number">256</span>, <span class="number">128</span>)</span><br><span class="line">        self.relu2 = nn.ReLU()</span><br><span class="line">        self.fc3 = nn.Linear(<span class="number">128</span>, <span class="number">20</span>)</span><br><span class="line">        self.fc4 = nn.Linear(<span class="number">20</span>, <span class="number">128</span>)</span><br><span class="line">        self.relu3 = nn.ReLU()</span><br><span class="line">        self.fc5 = nn.Linear(<span class="number">128</span>, <span class="number">256</span>)</span><br><span class="line">        self.relu4 = nn.ReLU()</span><br><span class="line">        self.fc6 = nn.Linear(<span class="number">256</span>, <span class="number">784</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">Encoder</span>(<span class="params">self, x</span>):</span><br><span class="line">        h1 = self.relu1(self.fc1(x))</span><br><span class="line">        h2 = self.relu2(self.fc2(h1))</span><br><span class="line">        <span class="keyword">return</span> self.fc3(h2)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">Decoder</span>(<span class="params">self, z</span>):</span><br><span class="line">        h1 = self.relu3(self.fc4(z))</span><br><span class="line">        h2 = self.relu4(self.fc5(h1))</span><br><span class="line">        <span class="keyword">return</span> F.sigmoid(self.fc6(h2))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        z = self.Encoder(x)</span><br><span class="line">        <span class="comment"># print(z.shape)</span></span><br><span class="line">        x_reconst = self.Decoder(z)</span><br><span class="line">        <span class="keyword">return</span> x_reconst</span><br><span class="line"></span><br><span class="line">device = torch.device(<span class="string">&quot;cuda&quot;</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&quot;cpu&quot;</span>)</span><br><span class="line">model = AE().to(device)</span><br><span class="line">optimizer = optim.Adam(model.parameters(), lr = lr_learning)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(MAX_EPOCH) :</span><br><span class="line">    model.train()</span><br><span class="line">    <span class="keyword">for</span> i, (x, _) <span class="keyword">in</span> <span class="built_in">enumerate</span>(data_loader) :</span><br><span class="line">        x = x.to(device)</span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        x = x.view(-<span class="number">1</span>, image_size)</span><br><span class="line">        x_reconst = model(x)</span><br><span class="line">        <span class="comment"># 重构损失，使用二元分类损失</span></span><br><span class="line">        reconst_loss = F.binary_cross_entropy(x_reconst, x, size_average=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line">        reconst_loss.backward()</span><br><span class="line">        optimizer.step()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> torch.no_grad() :</span><br><span class="line">        out = model(x)</span><br><span class="line">        <span class="comment">#将与原图与重塑图像进行拼接，奇数列为原图像，偶数列为重塑图像</span></span><br><span class="line">        x_concat = torch.cat([x.view(-<span class="number">1</span>, <span class="number">1</span>, <span class="number">28</span>, <span class="number">28</span>), out.view(-<span class="number">1</span>, <span class="number">1</span>, <span class="number">28</span>, <span class="number">28</span>)], dim = <span class="number">3</span>)</span><br><span class="line">        save_image(x_concat, os.path.join(samples_dir, <span class="string">f&#x27;reconst-<span class="subst">&#123;epoch + <span class="number">1</span>&#125;</span>.png&#x27;</span>))</span><br><span class="line"></span><br><span class="line">img1 = cv.imread(<span class="string">&#x27;samples_AE/reconst-1.png&#x27;</span>)</span><br><span class="line">img2 = cv.imread(<span class="string">&#x27;samples_AE/reconst-50.png&#x27;</span>)</span><br><span class="line">img3 = cv.imread(<span class="string">&#x27;samples_AE/reconst-100.png&#x27;</span>)</span><br><span class="line"></span><br><span class="line">images = [img1, img2, img3]</span><br><span class="line">xlabels = [<span class="string">&#x27;epoch : 1&#x27;</span>, <span class="string">&#x27;epoch : 50&#x27;</span>, <span class="string">&#x27;epoch : 100&#x27;</span>]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>) :</span><br><span class="line">    plt.subplot(<span class="number">1</span>, <span class="number">3</span>, i + <span class="number">1</span>)</span><br><span class="line">    plt.imshow(images[i], <span class="string">&#x27;gray&#x27;</span>)</span><br><span class="line">    plt.axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line">    plt.title(xlabels[i])</span><br><span class="line">    plt.tight_layout()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<h1 id="2-自编码器变种"><a href="#2-自编码器变种" class="headerlink" title="2    自编码器变种"></a>2    自编码器变种</h1><h2 id="2-1-降噪自编码器-DAE"><a href="#2-1-降噪自编码器-DAE" class="headerlink" title="2.1    降噪自编码器(DAE)"></a>2.1    降噪自编码器(DAE)</h2><p>&emsp;&emsp;DAE是通过改变重构误差项来获得一个能学到有用信息的自编码器。对于传统的自编码器最小优化目标：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&θ^∗ = argmin _θ \quad\ dist(ℎθ2(𝑔θ1(x)), x)\\
+\end{aligned}</script><p>&emsp;&emsp;对于这个函数如果模型被赋予过大的容量，损失函数仅仅使得 g ◦ f 学成一个恒等函数。也即网络会简单地复制输入，网络没有学习特征的能力。DAE给网络输入$x$添加采样自高斯分布的噪声$\alpha$：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&x^\prime = x + \alpha, \alpha∈𝒩(0, var)\\
+\end{aligned}</script><p>则优化目标变成：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&θ^∗ = argmin _θ \quad\ dist(ℎ_{θ2}(𝑔_{θ1}(x^\prime)), x)\\
+\end{aligned}</script><p>&emsp;&emsp;其中$x^\prime$是被某种噪声损坏的$x$的副本。因此去噪自编码器必须撤消这些损坏，而不是简单地复制输入。<br><img src="https://img-blog.csdnimg.cn/d5fc0ade729346b794fec89c1219f75d.png#pic_center" alt="在这里插入图片描述"></p>
+<h2 id="2-2-对抗自编码器-AAE"><a href="#2-2-对抗自编码器-AAE" class="headerlink" title="2.2    对抗自编码器(AAE)"></a>2.2    对抗自编码器(AAE)</h2><p>&emsp;&emsp;为了能够方便地从某个已知的先验分布中𝑝(𝒛)采样隐藏变量𝒛，方便利用𝑝(𝒛)来重建输 入，对抗自编码器利用额外的判别器网络(Discriminator，简称 D网络)来判定降维的隐藏变量𝒛是否采样自先验分布𝑝(𝒛)。判别器网络的输出为一个属于[0,1]区间的变量，表征隐藏向量是否采样自先验分布𝑝(𝒛)：所有采样自先验分布𝑝(𝒛)的𝒛标注为真，采样自编码器的条件概率𝑞(𝒛|𝒙)的𝒛标注为假。通过这种方式训练，除了可以重建样本，还可以约束条件概率分布𝑞(𝒛|𝒙)逼近先验分布𝑝(𝒛)。<br><img src="https://img-blog.csdnimg.cn/4f54d125906e4eae952b11f263763ac8.png" alt="在这里插入图片描述"></p>
+<h2 id="2-3-变分自编码器-VAE"><a href="#2-3-变分自编码器-VAE" class="headerlink" title="2.3    变分自编码器(VAE)"></a>2.3    变分自编码器(VAE)</h2><h3 id="2-3-1-原理"><a href="#2-3-1-原理" class="headerlink" title="2.3.1    原理"></a>2.3.1    原理</h3><p>&emsp;&emsp;自编码器因不能随意产生合理的潜在变量，从而导致它无法产生新的内容。因为潜在变量$z$都是编码器从原始图片中产生的。为解决这一问题，研究人员对潜在空间$z$(潜在变量对应的空间)增加一些约束，使$z$满足正态分布，由此就出现了VAE模型，VAE对编码器添加约束，就是强迫它产生服从单位正态分布的潜在变量。正是这种约束，把VAE和自编码器区分开来。<br>&emsp;&emsp;从神经网络的角度来看，VAE 相对于自编码器模型，同样具有编码器和解码器两个子网络。解码器接受输入$x$，输出为隐变量$z$；解码器负责将隐变量$z$解码为重建的$x$。不同的是，VAE 模型对隐变量$z$的分布有显式地约束，希望隐变量$z$符合预设的先验分布P($z$)。因此，在损失函数的设计上，除了原有的重建误差项外，还添加了隐变量$z$分布的约束项。也即我们优化目标希望$z$的分布接近于正态分布。度量图像的相似度一般采用交叉熵(如nn.BCELoss)，度量两个分布 的相似度一般采用KL散度(Kullback-Leibler divergence)。这两个度量的和 构成了整个模型的损失函数。变分自编码器的结构如下：<br><img src="https://img-blog.csdnimg.cn/15df6f69a6084f62ac52c4db7dd35e23.png#pic_center" alt="在这里插入图片描述"><br>模块1：把输入样本$x$通过编码器输出两个m维向量(mu、log_var)，这两个向量是潜在空间(假设满足正态分布)的两个参数(相当于均值和方差)。<br>模块2：从标准正态分布N(0,I)中采样 一个ε。<br>模块3：使得$z$=mu+exp(log_var)*ε。<br>模块4：$z$通过解码器生成一个样本$\bar{x}$。</p>
+<p>损失函数的具体代码如下，推导过程：<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1606.05908.pdf">https://arxiv.org/pdf/1606.05908.pdf</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义重构损失函数及KL散度 </span></span><br><span class="line">reconst_loss = F.binary_cross_entropy(x_reconst, x, size_average=<span class="literal">False</span>)</span><br><span class="line">kl_div = - <span class="number">0.5</span> * torch.<span class="built_in">sum</span>(<span class="number">1</span> + log_var - mu.<span class="built_in">pow</span>(<span class="number">2</span>) - log_var.exp()) </span><br><span class="line"><span class="comment">#两者相加得总损失 loss= reconst_loss+ kl_div</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-3-2-VAE图片生成"><a href="#2-3-2-VAE图片生成" class="headerlink" title="2.3.2    VAE图片生成"></a>2.3.2    VAE图片生成</h3><p>&emsp;&emsp;此次我们基于 VAE 模型实战MNIST手写数字图片的重建与生成。输入为 MNIST手写数字图片向量，经过 3 个全连接层后得到隐向量𝐳的均值与方差，分别用两个输出节点数为 20 的全连接层表示，FC2 的 20 个输出节点表示 20 个特征分布的均值向量，FC3 的 20 个输出节点表示 20 个特征分布的取log后的方差向量。采样获得长度为 20 的隐向量𝐳，并通过 FC4 和 FC5 重建出样本图片。<br>&emsp;&emsp;VAE 作为生成模型，除了可以重建输入样本，还可以单独使用解码器生成样本。通过从先验分布𝑝(𝐳)中直接采样获得隐向量𝐳，经过解码后可以产生生成的样本。<br><img src="https://img-blog.csdnimg.cn/e8bb31276b44466e88709706a27a1301.png#pic_center" alt="在这里插入图片描述"><br>&emsp;&emsp;此过程的实现与图片的重塑过程相差不大，主要差异在损失函数部分和潜在变量$z$的采样部分。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cv2 <span class="keyword">as</span> cv</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">import</span> torchvision.datasets <span class="keyword">as</span> datasets</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader, Dataset</span><br><span class="line"><span class="keyword">from</span> torchvision.utils <span class="keyword">import</span> save_image</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> transforms</span><br><span class="line"></span><br><span class="line">MAX_EPOCH = <span class="number">100</span></span><br><span class="line">lr_learning = <span class="number">0.001</span></span><br><span class="line">batch_size = <span class="number">64</span></span><br><span class="line">hidden_size = <span class="number">400</span></span><br><span class="line">z_size = <span class="number">20</span></span><br><span class="line">image_size = <span class="number">784</span></span><br><span class="line">os.makedirs(<span class="string">&#x27;samples&#x27;</span>, exist_ok = <span class="literal">True</span>)</span><br><span class="line">samples_dir = <span class="string">&#x27;samples&#x27;</span></span><br><span class="line"></span><br><span class="line">dataset=datasets.MNIST( root = <span class="string">&#x27;data&#x27;</span>,</span><br><span class="line">                        train = <span class="literal">False</span>,</span><br><span class="line">                        download = <span class="literal">True</span>,</span><br><span class="line">                        transform = transforms.ToTensor())</span><br><span class="line"></span><br><span class="line">data_loader = DataLoader(dataset, shuffle = <span class="literal">True</span>, batch_size = batch_size, drop_last = <span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">VAE</span>(nn.Module) :</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, image_size, hidden_size, z_size</span>):</span><br><span class="line">        <span class="built_in">super</span>(VAE, self).__init__()</span><br><span class="line">        self.fc1 = nn.Linear(image_size, hidden_size)</span><br><span class="line">        self.relu1 = nn.ReLU()</span><br><span class="line">        self.fc2 = nn.Linear(hidden_size, z_size)</span><br><span class="line">        self.fc3 = nn.Linear(hidden_size, z_size)</span><br><span class="line">        self.fc4 = nn.Linear(z_size, hidden_size)</span><br><span class="line">        self.relu2 = nn.ReLU()</span><br><span class="line">        self.fc5 = nn.Linear(hidden_size, image_size)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">Encoder</span>(<span class="params">self, x</span>):</span><br><span class="line">        h = self.relu1(self.fc1(x))</span><br><span class="line">        <span class="keyword">return</span> self.fc2(h), self.fc3(h)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">Reparameterize</span>(<span class="params">self, mu, Log_var</span>):</span><br><span class="line">        std = torch.exp(Log_var / <span class="number">2</span>)</span><br><span class="line">        eps = torch.randn_like((std))</span><br><span class="line">        <span class="keyword">return</span> mu + eps * std</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">Decoder</span>(<span class="params">self, z</span>):</span><br><span class="line">        h = self.relu2(self.fc4(z))</span><br><span class="line">        <span class="keyword">return</span> F.sigmoid(self.fc5(h))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        mu, Log_var = self.Encoder(x)</span><br><span class="line">        z = self.Reparameterize(mu, Log_var)</span><br><span class="line">        x_reconst = self.Decoder(z)</span><br><span class="line">        <span class="keyword">return</span> x_reconst, mu, Log_var</span><br><span class="line"></span><br><span class="line">device = torch.device(<span class="string">&quot;cuda&quot;</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&quot;cpu&quot;</span>)</span><br><span class="line">model = VAE(image_size, hidden_size, z_size).to(device)</span><br><span class="line">optimizer = optim.Adam(model.parameters(), lr = lr_learning)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(MAX_EPOCH) :</span><br><span class="line">    model.train()</span><br><span class="line">    <span class="keyword">for</span> i, (x, _) <span class="keyword">in</span> <span class="built_in">enumerate</span>(data_loader) :</span><br><span class="line">        x = x.to(device)</span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        x = x.view(-<span class="number">1</span>, image_size)</span><br><span class="line">        x_reconst, mu, Log_var = model(x)</span><br><span class="line">        <span class="comment"># 计算重构损失和KL散度</span></span><br><span class="line">        <span class="comment"># 重构损失</span></span><br><span class="line">        reconst_loss = F.binary_cross_entropy(x_reconst, x, size_average=<span class="literal">False</span>)</span><br><span class="line">        <span class="comment"># KL散度</span></span><br><span class="line">        kl_div = - <span class="number">0.5</span> * torch.<span class="built_in">sum</span>(<span class="number">1</span> + Log_var - mu.<span class="built_in">pow</span>(<span class="number">2</span>) - Log_var.exp())</span><br><span class="line">        loss = reconst_loss + kl_div</span><br><span class="line">        loss.backward()</span><br><span class="line">        optimizer.step()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># if i % 10 == 0 :</span></span><br><span class="line">        <span class="comment">#     print(f&#x27;reconst_loss : &#123;reconst_loss : 0.3f&#125;, kl_div : &#123;kl_div : 0.3f&#125;&#x27;)</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> torch.no_grad() :</span><br><span class="line">        <span class="comment">#图片生成</span></span><br><span class="line">        z = torch.randn(batch_size, z_size).to(device)</span><br><span class="line">        out = model.Decoder(z).view(-<span class="number">1</span>, <span class="number">1</span>, <span class="number">28</span>, <span class="number">28</span>)</span><br><span class="line">        save_image(out, os.path.join(samples_dir, <span class="string">f&#x27;sampled-<span class="subst">&#123;epoch + <span class="number">1</span>&#125;</span>.png&#x27;</span>))</span><br><span class="line">        <span class="comment">#图片重塑</span></span><br><span class="line">        out, _, _ = model(x)</span><br><span class="line">        <span class="built_in">print</span>(x.shape)</span><br><span class="line">        x_concat = torch.cat([x.view(-<span class="number">1</span>, <span class="number">1</span>, <span class="number">28</span>, <span class="number">28</span>), out.view(-<span class="number">1</span>, <span class="number">1</span>, <span class="number">28</span>, <span class="number">28</span>)], dim = <span class="number">3</span>)</span><br><span class="line">        save_image(x_concat, os.path.join(samples_dir, <span class="string">f&#x27;reconst-<span class="subst">&#123;epoch + <span class="number">1</span>&#125;</span>.png&#x27;</span>))</span><br><span class="line"></span><br><span class="line">img1 = cv.imread(<span class="string">&#x27;samples/sampled-1.png&#x27;</span>)</span><br><span class="line">img2 = cv.imread(<span class="string">&#x27;samples/sampled-50.png&#x27;</span>)</span><br><span class="line">img3 = cv.imread(<span class="string">&#x27;samples/sampled-100.png&#x27;</span>)</span><br><span class="line"></span><br><span class="line">img4 = cv.imread(<span class="string">&#x27;samples/reconst-1.png&#x27;</span>)</span><br><span class="line">img5 = cv.imread(<span class="string">&#x27;samples/reconst-50.png&#x27;</span>)</span><br><span class="line">img6 = cv.imread(<span class="string">&#x27;samples/reconst-100.png&#x27;</span>)</span><br><span class="line"></span><br><span class="line">images = [img1, img2, img3, img4, img5, img6]</span><br><span class="line">xlabels = [<span class="string">&#x27;images sample epoch : 1&#x27;</span>, <span class="string">&#x27;epoch : 50&#x27;</span>, <span class="string">&#x27;epoch : 100&#x27;</span>, <span class="string">&#x27;images reconst epoch : 1&#x27;</span>, <span class="string">&#x27;epoch : 50&#x27;</span>, <span class="string">&#x27;epoch : 100&#x27;</span>]</span><br><span class="line">plt.figure(figsize = (<span class="number">15</span>, <span class="number">10</span>))</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">6</span>) :</span><br><span class="line">    plt.subplot(<span class="number">2</span>, <span class="number">3</span>, i + <span class="number">1</span>)</span><br><span class="line">    plt.imshow(images[i], <span class="string">&#x27;gray&#x27;</span>)</span><br><span class="line">    plt.axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line">    plt.title(xlabels[i])</span><br><span class="line">    plt.tight_layout()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;效果如下，其中重塑图片中奇数列是原图，偶数列为重塑图像。由潜在空间点$z$生成的图像随着epoch的增加是越来越清晰的。<br><img src="https://img-blog.csdnimg.cn/b51ea0edf97f445893d9fc98b50337bd.png#pic_center" alt="在这里插入图片描述"><br><strong>参考</strong><br>《TensorFlow深度学习》<br>《Python深度学习基于PyTorch》</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
+              <a href="/tags/PyTorch/" rel="tag"># PyTorch</a>
+              <a href="/tags/%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8/" rel="tag"># 自编码器</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E3%80%90OpenCv%E3%80%91Canny-%E7%AE%97%E5%AD%90%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B/" rel="prev" title="【OpenCv】Canny 算子边缘检测">
+      <i class="fa fa-chevron-left"></i> 【OpenCv】Canny 算子边缘检测
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E7%94%9F%E6%88%90%E5%AF%B9%E6%8A%97%E7%BD%91%E7%BB%9C%EF%BC%88GAN%EF%BC%89/" rel="next" title="生成对抗网络（GAN）">
+      生成对抗网络（GAN） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8"><span class="nav-text">1    自编码器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-%E5%8E%9F%E7%90%86"><span class="nav-text">1.1    原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-PyTorch%E5%AE%9E%E7%8E%B0%E5%9B%BE%E7%89%87%E9%87%8D%E5%A1%91"><span class="nav-text">1.2    PyTorch实现图片重塑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-1-Fashion-MNIST-%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="nav-text">1.2.1    Fashion MNIST 数据集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-2-%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="nav-text">1.2.2    网络结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-3-%E8%AE%AD%E7%BB%83"><span class="nav-text">1.2.3    训练</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-4-%E5%9B%BE%E7%89%87%E9%87%8D%E5%A1%91"><span class="nav-text">1.2.4    图片重塑</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8%E5%8F%98%E7%A7%8D"><span class="nav-text">2    自编码器变种</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-%E9%99%8D%E5%99%AA%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8-DAE"><span class="nav-text">2.1    降噪自编码器(DAE)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-%E5%AF%B9%E6%8A%97%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8-AAE"><span class="nav-text">2.2    对抗自编码器(AAE)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-%E5%8F%98%E5%88%86%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8-VAE"><span class="nav-text">2.3    变分自编码器(VAE)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-1-%E5%8E%9F%E7%90%86"><span class="nav-text">2.3.1    原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-2-VAE%E5%9B%BE%E7%89%87%E7%94%9F%E6%88%90"><span class="nav-text">2.3.2    VAE图片生成</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">61k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:41</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

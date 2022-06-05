@@ -6,7 +6,7 @@
   <link href="https://aishangcengloua.github.io/atom.xml" rel="self"/>
   
   <link href="https://aishangcengloua.github.io/"/>
-  <updated>2022-06-05T06:03:55.039Z</updated>
+  <updated>2022-06-05T09:46:54.098Z</updated>
   <id>https://aishangcengloua.github.io/</id>
   
   <author>
@@ -17,48 +17,485 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>PCA</title>
-    <link href="https://aishangcengloua.github.io/2022/06/03/PCA/"/>
-    <id>https://aishangcengloua.github.io/2022/06/03/PCA/</id>
-    <published>2022-06-03T13:44:16.000Z</published>
-    <updated>2022-06-05T06:03:55.039Z</updated>
+    <title>Adult 数据集分析及四种模型实现</title>
+    <link href="https://aishangcengloua.github.io/2022/06/05/Adult-%E6%95%B0%E6%8D%AE%E9%9B%86%E5%88%86%E6%9E%90%E5%8F%8A%E5%9B%9B%E7%A7%8D%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0/"/>
+    <id>https://aishangcengloua.github.io/2022/06/05/Adult-%E6%95%B0%E6%8D%AE%E9%9B%86%E5%88%86%E6%9E%90%E5%8F%8A%E5%9B%9B%E7%A7%8D%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0/</id>
+    <published>2022-06-05T09:38:07.000Z</published>
+    <updated>2022-06-05T09:46:54.098Z</updated>
     
     
-      
-      
-        
-        
-    <summary type="html">&lt;h1 id=&quot;1-原理简述&quot;&gt;&lt;a href=&quot;#1-原理简述&quot; class=&quot;headerlink&quot; title=&quot;1    原理简述&quot;&gt;&lt;/a&gt;1    原理简述&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;Self-Attention Layer</summary>
-        
-      
+    <summary type="html">&lt;h1 id=&quot;一、数据集&quot;&gt;&lt;a href=&quot;#一、数据集&quot; class=&quot;headerlink&quot; title=&quot;一、数据集&quot;&gt;&lt;/a&gt;一、数据集&lt;/h1&gt;&lt;h2 id=&quot;数据集介绍&quot;&gt;&lt;a href=&quot;#数据集介绍&quot; class=&quot;headerlink&quot; title=&quot;数据集介绍&quot;&gt;&lt;/a&gt;数据集介绍&lt;/h2&gt;</summary>
+    
+    
+    
+    <category term="数据挖掘" scheme="https://aishangcengloua.github.io/categories/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98/"/>
+    
+    
+    <category term="数据处理" scheme="https://aishangcengloua.github.io/tags/%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/"/>
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="深度学习" scheme="https://aishangcengloua.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>LSTM 预测股票</title>
+    <link href="https://aishangcengloua.github.io/2022/06/05/LSTM-%E9%A2%84%E6%B5%8B%E8%82%A1%E7%A5%A8/"/>
+    <id>https://aishangcengloua.github.io/2022/06/05/LSTM-%E9%A2%84%E6%B5%8B%E8%82%A1%E7%A5%A8/</id>
+    <published>2022-06-05T09:26:11.000Z</published>
+    <updated>2022-06-05T09:37:28.936Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;﻿tushare是一个开源的金融数据源，目前维护的数据非常丰富，质量也很高，对于一般的分析已经足够，可以省去自己到处去爬数据。我这里下载沪深300指数数据进行预测每日的最高价&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;首先使用pip install tushare安装tushare工具包 ，github地址为：&lt;br&gt;&lt;a href=&quot;https://github.com/aishangcengloua/MLData/blob/master/PyTorch/NLP/Forecast_stock/LSTM.ipynb&quot;&gt;https://github.com/aishangcengloua/MLData/blob/master/PyTorch/NLP/Forecast_stock/LSTM.ipynb&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;/blockquote&gt;</summary>
+    
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="深度学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+    <category term="深度学习" scheme="https://aishangcengloua.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="LSTM" scheme="https://aishangcengloua.github.io/tags/LSTM/"/>
+    
+    <category term="PyTorch" scheme="https://aishangcengloua.github.io/tags/PyTorch/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>详解 Tensorboard 及使用教程</title>
+    <link href="https://aishangcengloua.github.io/2022/06/05/%E8%AF%A6%E8%A7%A3-Tensorboard-%E5%8F%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/"/>
+    <id>https://aishangcengloua.github.io/2022/06/05/%E8%AF%A6%E8%A7%A3-Tensorboard-%E5%8F%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</id>
+    <published>2022-06-05T09:24:28.000Z</published>
+    <updated>2022-06-05T09:25:11.564Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;一、什么是Tensorboard&quot;&gt;&lt;a href=&quot;#一、什么是Tensorboard&quot; class=&quot;headerlink&quot; title=&quot;一、什么是Tensorboard&quot;&gt;&lt;/a&gt;一、什么是Tensorboard&lt;/h1&gt;&lt;p&gt;Tensorboard原本是Google TensorFlow的可视化工具，可以用于记录训练数据、评估数据、网络结构、图像等，并且可以在web上展示，对于观察神经网络的过程非常有帮助。PyTorch也推出了自己的可视化工具，一个是&lt;strong&gt;tensorboardX&lt;/strong&gt;包，一个是&lt;strong&gt;torch.utils.tensorboard&lt;/strong&gt;，二者的使用相差不大，这里介绍后者&lt;/p&gt;</summary>
     
     
     
     <category term="机器学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
     
     
-    <category term="主成分分析" scheme="https://aishangcengloua.github.io/tags/%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90/"/>
+    <category term="PyTorch" scheme="https://aishangcengloua.github.io/tags/PyTorch/"/>
     
   </entry>
   
   <entry>
-    <title>Hello World</title>
-    <link href="https://aishangcengloua.github.io/2022/06/03/hello-world/"/>
-    <id>https://aishangcengloua.github.io/2022/06/03/hello-world/</id>
-    <published>2022-06-03T04:21:06.559Z</published>
-    <updated>2022-06-03T15:17:49.023Z</updated>
+    <title>在使用 tensorboard 时报错</title>
+    <link href="https://aishangcengloua.github.io/2022/06/05/%E5%9C%A8%E4%BD%BF%E7%94%A8-tensorboard-%E6%97%B6%E6%8A%A5%E9%94%99/"/>
+    <id>https://aishangcengloua.github.io/2022/06/05/%E5%9C%A8%E4%BD%BF%E7%94%A8-tensorboard-%E6%97%B6%E6%8A%A5%E9%94%99/</id>
+    <published>2022-06-05T09:21:55.000Z</published>
+    <updated>2022-06-05T09:22:49.823Z</updated>
     
     
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.io/docs/&quot;&gt;documentation&lt;/a&gt;</summary>
-        
-      
+    <summary type="html">&lt;p&gt;﻿昨天在使用 tensorboard 时， 输入命令之后，一直出现下面的错误&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;tensorboard: error: invalid choice: ‘Recognizer\\logs’ (choose from ‘serve’, ‘dev’)&lt;/p&gt;
+&lt;/blockquote&gt;</summary>
     
     
     
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+    <category term="PyTorch" scheme="https://aishangcengloua.github.io/tags/PyTorch/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Numpy 实现 K_means 算法</title>
+    <link href="https://aishangcengloua.github.io/2022/06/05/Numpy-%E5%AE%9E%E7%8E%B0-K-means-%E7%AE%97%E6%B3%95/"/>
+    <id>https://aishangcengloua.github.io/2022/06/05/Numpy-%E5%AE%9E%E7%8E%B0-K-means-%E7%AE%97%E6%B3%95/</id>
+    <published>2022-06-05T09:19:59.000Z</published>
+    <updated>2022-06-05T09:20:41.674Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;﻿&lt;a href=&quot;https://github.com/aishangcengloua/Python/blob/master/Lab4/Lab4.dat&quot;&gt;代码所需数据&lt;/a&gt;&lt;br&gt;聚类就是根据数据之间的相似度将数据集划分为多个类别或组，使类别内的数据相似度较大而类别间的数据相似度较小。如下图所示，左边是原始数据，右边是聚类之后的效果，不同的颜色代表不同的类别。&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/798a5b8629b348c29c9b58c281d4d1cc.png&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;/p&gt;
+&lt;p&gt;对于本次代码聚类步骤如下（聚类算法大体步骤，可根据需求进行修改）：&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="数据挖掘" scheme="https://aishangcengloua.github.io/categories/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98/"/>
+    
+    
+    <category term="聚类" scheme="https://aishangcengloua.github.io/tags/%E8%81%9A%E7%B1%BB/"/>
+    
+    <category term="numpy" scheme="https://aishangcengloua.github.io/tags/numpy/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>对含有奇异值和高斯噪声的数据进行处理</title>
+    <link href="https://aishangcengloua.github.io/2022/06/05/%E5%AF%B9%E5%90%AB%E6%9C%89%E5%A5%87%E5%BC%82%E5%80%BC%E5%92%8C%E9%AB%98%E6%96%AF%E5%99%AA%E5%A3%B0%E7%9A%84%E6%95%B0%E6%8D%AE%E8%BF%9B%E8%A1%8C%E5%A4%84%E7%90%86/"/>
+    <id>https://aishangcengloua.github.io/2022/06/05/%E5%AF%B9%E5%90%AB%E6%9C%89%E5%A5%87%E5%BC%82%E5%80%BC%E5%92%8C%E9%AB%98%E6%96%AF%E5%99%AA%E5%A3%B0%E7%9A%84%E6%95%B0%E6%8D%AE%E8%BF%9B%E8%A1%8C%E5%A4%84%E7%90%86/</id>
+    <published>2022-06-05T09:16:04.000Z</published>
+    <updated>2022-06-05T09:17:52.866Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;﻿分别用平均滑动窗口、指数滑动窗口、SG滤波法对含有奇异值和高斯噪声的两列数据进行去奇异值和降噪，最终拟合曲线推测函数表达式。&lt;a href=&quot;https://blog.csdn.net/hajlyx/article/details/100580316&quot;&gt;去噪方法理论知识参考&lt;/a&gt;&lt;br&gt;对第一列数据：&lt;/p&gt;
+&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;33&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;34&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;35&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;36&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;37&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;38&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;39&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;40&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;41&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;42&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;43&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;44&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;45&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;46&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;47&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;48&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;49&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;50&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;51&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;52&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;53&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;54&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;55&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;56&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;57&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;58&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;59&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;60&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;61&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;62&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;63&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;64&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;65&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;66&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;67&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;68&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;69&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;70&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;71&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;72&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;73&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;74&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;75&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;76&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;77&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;78&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;79&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;80&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;81&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;82&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;83&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;84&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;85&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;86&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;87&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;88&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;89&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;90&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;91&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;92&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;93&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;94&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;95&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;96&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;97&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;98&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;99&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;100&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;101&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;102&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;103&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;104&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;105&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;106&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;107&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;108&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;109&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;110&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;111&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;112&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;113&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;114&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;115&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;116&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;117&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;118&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;119&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;120&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;121&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;122&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;123&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;124&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;125&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;126&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;127&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;128&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;129&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;130&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; matplotlib.pyplot &lt;span class=&quot;keyword&quot;&gt;as&lt;/span&gt; plt&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; numpy &lt;span class=&quot;keyword&quot;&gt;as&lt;/span&gt; np&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;from&lt;/span&gt; scipy &lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; optimize&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; scipy.io &lt;span class=&quot;keyword&quot;&gt;as&lt;/span&gt; scio&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;%matplotlib&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;#防止中文乱码&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;plt.rcParams[&lt;span class=&quot;string&quot;&gt;&amp;quot;font.sans-serif&amp;quot;&lt;/span&gt;] = [&lt;span class=&quot;string&quot;&gt;&amp;quot;Simhei&amp;quot;&lt;/span&gt;]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;plt.rcParams[&lt;span class=&quot;string&quot;&gt;&amp;quot;axes.unicode_minus&amp;quot;&lt;/span&gt;] = &lt;span class=&quot;literal&quot;&gt;False&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;data = scio.loadmat(&lt;span class=&quot;string&quot;&gt;&amp;#x27;2 data_preprocess_practice.mat&amp;#x27;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;yy3 = data[&lt;span class=&quot;string&quot;&gt;&amp;quot;yy3&amp;quot;&lt;/span&gt;]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;x = np.arange(&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;20001&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;#去除奇异值&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;title function_&quot;&gt;Noise_reduction&lt;/span&gt;(&lt;span class=&quot;params&quot;&gt;data_col&lt;/span&gt;) :&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    lst = []&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    i = &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;#此处用的是3sigema的方法&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;while&lt;/span&gt; i + &lt;span class=&quot;number&quot;&gt;12&lt;/span&gt; &amp;lt; &lt;span class=&quot;number&quot;&gt;20001&lt;/span&gt; :&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        lst1 = data_col[i : i + &lt;span class=&quot;number&quot;&gt;12&lt;/span&gt;]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        mean = np.mean(lst1)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        std = np.std(lst1)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; value &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; lst1 :&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (value - mean) &amp;gt;= -&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt; * std &lt;span class=&quot;keyword&quot;&gt;and&lt;/span&gt; (value - mean) &amp;lt;= &lt;span class=&quot;number&quot;&gt;3&lt;/span&gt; * std :&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                lst.append(value)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        i += &lt;span class=&quot;number&quot;&gt;12&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        lst1 = []&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; lst&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;#平均滑动去噪&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;#滑动平均法适用于，噪声的均值为0，真实值变化不大或线性变化的场景&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;title function_&quot;&gt;Average_sliding_denoising&lt;/span&gt;(&lt;span class=&quot;params&quot;&gt;arr, window_size&lt;/span&gt;) :&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;#对数组进首尾扩展，以滑动窗口可以处理到首尾点，思想与图片滤波算子相似&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    New_arr = arr[ : ]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    window_size = (window_size - &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;) // &lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; step &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;range&lt;/span&gt;(window_size) :&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        arr.insert(step, &lt;span class=&quot;built_in&quot;&gt;sum&lt;/span&gt;(arr[ : window_size]) / window_size)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        arr.insert(&lt;span class=&quot;built_in&quot;&gt;len&lt;/span&gt;(arr) - step, &lt;span class=&quot;built_in&quot;&gt;sum&lt;/span&gt;(arr[&lt;span class=&quot;built_in&quot;&gt;len&lt;/span&gt;(arr) - window_size : &lt;span class=&quot;built_in&quot;&gt;len&lt;/span&gt;(arr)]) / window_size)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; i &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;range&lt;/span&gt;(window_size, &lt;span class=&quot;built_in&quot;&gt;len&lt;/span&gt;(arr) - window_size) :&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        New_arr[i - window_size] = (&lt;span class=&quot;built_in&quot;&gt;sum&lt;/span&gt;(arr[i - window_size : i + window_size + &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;])) / (&lt;span class=&quot;number&quot;&gt;2&lt;/span&gt; * window_size + &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; New_arr&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;#指数平均滑动去噪&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;#当误差不受观测值大小影响的话，指数滑动平均比滑动平均好；当误差随观测值大小变化时，滑动平均比指数滑动平均更好。&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;title function_&quot;&gt;Exponential_sliding_denoising&lt;/span&gt;(&lt;span class=&quot;params&quot;&gt;arr, weight = &lt;span class=&quot;number&quot;&gt;0.01&lt;/span&gt;&lt;/span&gt;) :&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; i &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;range&lt;/span&gt;(&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;, &lt;span class=&quot;built_in&quot;&gt;len&lt;/span&gt;(arr)) :&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        arr[i] = weight * arr[i] + (&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt; - weight) * arr[i - &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; arr&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;#Savitzky-Golay平滑去噪&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;#SG滤波法对于数据的观测信息保持的更好，在一些注重数据变化的场合会比较适用。&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;title function_&quot;&gt;create_x&lt;/span&gt;(&lt;span class=&quot;params&quot;&gt;size, rank&lt;/span&gt;):&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    x = []&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; i &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;range&lt;/span&gt;(&lt;span class=&quot;number&quot;&gt;2&lt;/span&gt; * size + &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;):&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        m = i - size&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        row = [m ** j &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; j &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;range&lt;/span&gt;(rank)]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        x.append(row) &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    x = np.mat(x)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; x&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;title function_&quot;&gt;Savgol_Denosing&lt;/span&gt;(&lt;span class=&quot;params&quot;&gt;arr, window_size, rank&lt;/span&gt;) :&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    New_arr = arr[ : ]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    m = (window_size - &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;) // &lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;# 处理边缘数据，用边缘值首尾增加m个首尾项&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; step &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;range&lt;/span&gt;(m) :&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        arr.insert(step, arr[&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;])&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        arr.insert(&lt;span class=&quot;built_in&quot;&gt;len&lt;/span&gt;(arr) - step, arr[&lt;span class=&quot;built_in&quot;&gt;len&lt;/span&gt;(arr) - &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;])&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;# 创建X矩阵&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    X = create_x(m, rank)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;# 计算加权系数矩阵B&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    B = (X * (X.T * X).I) * X.T&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;#只用更新第m个点，因此只需取B系数矩阵的第m行即可&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    A0 = B[m].T&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;# 计算平滑修正后的值&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    narr = []&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; i &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;range&lt;/span&gt;(&lt;span class=&quot;built_in&quot;&gt;len&lt;/span&gt;(New_arr)):&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        y = [arr[i + j] &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; j &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;range&lt;/span&gt;(window_size)]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        y1 = np.mat(y) * A0&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        y1 = &lt;span class=&quot;built_in&quot;&gt;float&lt;/span&gt;(y1)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        narr.append(y1)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; narr&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;#可视化不同去噪方法的效果&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;title function_&quot;&gt;Mapping&lt;/span&gt;(&lt;span class=&quot;params&quot;&gt;lst, arr, arr1, arr2&lt;/span&gt;) :&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    x = np.array(&lt;span class=&quot;built_in&quot;&gt;list&lt;/span&gt;(&lt;span class=&quot;built_in&quot;&gt;range&lt;/span&gt;(&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;, &lt;span class=&quot;built_in&quot;&gt;len&lt;/span&gt;(arr), &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;)))&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    fig = plt.figure(figsize=(&lt;span class=&quot;number&quot;&gt;15&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;))&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    fig.&lt;span class=&quot;built_in&quot;&gt;set&lt;/span&gt;(alpha = &lt;span class=&quot;number&quot;&gt;0.2&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    plt.subplot2grid((&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;,&lt;span class=&quot;number&quot;&gt;4&lt;/span&gt;), (&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;))&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    plt.plot(x, arr, label = &lt;span class=&quot;string&quot;&gt;&amp;#x27;Average_sliding_denoising&amp;#x27;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    plt.legend(loc = &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    plt.subplot2grid((&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;4&lt;/span&gt;), (&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;))&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    plt.plot(x, arr1, &lt;span class=&quot;string&quot;&gt;&amp;#x27;g-&amp;#x27;&lt;/span&gt;, label = &lt;span class=&quot;string&quot;&gt;&amp;#x27;Exponential_sliding_denoising&amp;#x27;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    plt.legend(loc = &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    plt.subplot2grid((&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;4&lt;/span&gt;), (&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;))&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    plt.plot(x, arr2, &lt;span class=&quot;string&quot;&gt;&amp;#x27;r-&amp;#x27;&lt;/span&gt;, label = &lt;span class=&quot;string&quot;&gt;&amp;#x27;Savgol_Denosing&amp;#x27;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    plt.legend(loc = &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    plt.subplot2grid((&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;4&lt;/span&gt;), (&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;))&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    plt.plot(x, lst, &lt;span class=&quot;string&quot;&gt;&amp;#x27;b-&amp;#x27;&lt;/span&gt;, x, arr, &lt;span class=&quot;string&quot;&gt;&amp;#x27;pink&amp;#x27;&lt;/span&gt;, x, arr1, &lt;span class=&quot;string&quot;&gt;&amp;#x27;g&amp;#x27;&lt;/span&gt;, x, arr2, &lt;span class=&quot;string&quot;&gt;&amp;#x27;r&amp;#x27;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    plt.legend([&lt;span class=&quot;string&quot;&gt;&amp;#x27;Before Denoising&amp;#x27;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&amp;#x27;Exponential_sliding_denoising&amp;#x27;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&amp;#x27;Average_sliding_denoising&amp;#x27;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&amp;#x27;Savgol_Denosing&amp;#x27;&lt;/span&gt;], loc = &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    plt.show()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;#小结，单纯从可视化效果来看，指数平均化动的效果是最好的&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;#数据重新拟合，推测函数&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;title function_&quot;&gt;Polynomial_fitting&lt;/span&gt;(&lt;span class=&quot;params&quot;&gt;lst&lt;/span&gt;) :&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    x1 = np.arange(&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;, &lt;span class=&quot;built_in&quot;&gt;len&lt;/span&gt;(lst), &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;).astype(&lt;span class=&quot;built_in&quot;&gt;float&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    z1 = np.polyfit(x1, lst, &lt;span class=&quot;number&quot;&gt;11&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;#     print(np.poly1d(z1))&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    x_points = np.linspace(&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;19973&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;19973&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    y_point = np.polyval(z1, x_points)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    fig1 = plt.figure()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    plt.plot(x1, lst, x_points, y_point, &lt;span class=&quot;string&quot;&gt;&amp;#x27;r&amp;#x27;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    plt.legend([&lt;span class=&quot;string&quot;&gt;&amp;#x27;Before fitting&amp;#x27;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&amp;#x27;After fitting&amp;#x27;&lt;/span&gt;], loc = &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    plt.show()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;data_col1 = []&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;data_col2 = []&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; line &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; yy3 :&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    data_col1.append(line[&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;])&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    data_col2.append(line[&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;])&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;data_col1 = np.array(data_col1)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;data_col2 = np.array(data_col2)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;lst1 = Noise_reduction(data_col1)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;lst1_A = Average_sliding_denoising(Noise_reduction(data_col1), &lt;span class=&quot;number&quot;&gt;61&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;lst1_E = Exponential_sliding_denoising(Noise_reduction(data_col1))&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;lst1_S = Savgol_Denosing(Noise_reduction(data_col1), &lt;span class=&quot;number&quot;&gt;59&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Mapping(lst1, lst1_A, lst1_E, lst1_S)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Polynomial_fitting1(lst1_A)&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
+    
+    
+    
+    <category term="数据挖掘" scheme="https://aishangcengloua.github.io/categories/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98/"/>
+    
+    
+    <category term="数据分析" scheme="https://aishangcengloua.github.io/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/"/>
+    
+    <category term="数据去噪" scheme="https://aishangcengloua.github.io/tags/%E6%95%B0%E6%8D%AE%E5%8E%BB%E5%99%AA/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>生成对抗网络（GAN）</title>
+    <link href="https://aishangcengloua.github.io/2022/06/05/%E7%94%9F%E6%88%90%E5%AF%B9%E6%8A%97%E7%BD%91%E7%BB%9C%EF%BC%88GAN%EF%BC%89/"/>
+    <id>https://aishangcengloua.github.io/2022/06/05/%E7%94%9F%E6%88%90%E5%AF%B9%E6%8A%97%E7%BD%91%E7%BB%9C%EF%BC%88GAN%EF%BC%89/</id>
+    <published>2022-06-05T09:14:07.000Z</published>
+    <updated>2022-06-05T09:15:02.637Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;在生成对抗网络(Generative Adversarial Network，简称 GAN)发明之前，变分自编码器(VAE)被认为是理论完备，实现简单，使用神经网络训练起来很稳定，生成的图片逼近度也较高，但是人眼还是可以很轻易地分辨出真实图片与机器生成的图片。但在2014年GAN被提出之后，在之后的几年里面里迅速发展，生成的图片越来越逼真。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="深度学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+    <category term="深度学习" scheme="https://aishangcengloua.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="PyTorch" scheme="https://aishangcengloua.github.io/tags/PyTorch/"/>
+    
+    <category term="生成对抗网络" scheme="https://aishangcengloua.github.io/tags/%E7%94%9F%E6%88%90%E5%AF%B9%E6%8A%97%E7%BD%91%E7%BB%9C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>自编码器</title>
+    <link href="https://aishangcengloua.github.io/2022/06/05/%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8/"/>
+    <id>https://aishangcengloua.github.io/2022/06/05/%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8/</id>
+    <published>2022-06-05T09:11:00.000Z</published>
+    <updated>2022-06-05T09:13:19.488Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;目前我们可以通过爬虫等方式获取海量的样本数据𝒙，如照片、语音、文本等，是相对容易的，但困难的是获取这些数据所对应的标签信息，例如机器翻译，除了收集源语言的对话文本外，还需要待翻译的目标语言文本数据。数据的标注工作目前主要还是依赖人的先验知识来完成。因此，面对海量的无标注数据，我们需要从中学习到数据的分布𝑃(𝒙)的算法，而无监督算法模型就是针对这类问题而发展的。特别地，如果算法把𝒙作为监督信号来学习，这类算法称为自监督学习，本博客介绍的自编码器就属于自监督学习范畴。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="深度学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+    <category term="深度学习" scheme="https://aishangcengloua.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="PyTorch" scheme="https://aishangcengloua.github.io/tags/PyTorch/"/>
+    
+    <category term="自编码器" scheme="https://aishangcengloua.github.io/tags/%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>【OpenCv】Canny 算子边缘检测</title>
+    <link href="https://aishangcengloua.github.io/2022/06/05/%E3%80%90OpenCv%E3%80%91Canny-%E7%AE%97%E5%AD%90%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B/"/>
+    <id>https://aishangcengloua.github.io/2022/06/05/%E3%80%90OpenCv%E3%80%91Canny-%E7%AE%97%E5%AD%90%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B/</id>
+    <published>2022-06-05T09:08:53.000Z</published>
+    <updated>2022-06-05T09:09:20.191Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;﻿Canny 算子和 Marr（LoG）边缘检测方法类似，也属于是先平滑后求导数的方法John Canny研究了最优边缘检测方法所需的特性，给出了评价边缘检测性能优劣的三个指标：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;好的信噪比，即将非边缘点判定为边缘点的概率要低，将边缘点判为非边缘点的概率要低；&lt;/li&gt;
+&lt;li&gt;高的定位性能，即检测出的边缘点要尽可能在实际边缘的中心；&lt;/li&gt;
+&lt;li&gt;对单一边缘仅有唯一响应，即单个边缘产生多个响应的概率要低，并且虚假响应边缘应该得到最大抑制。&lt;/li&gt;
+&lt;/ul&gt;</summary>
+    
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="机器视觉" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%9C%BA%E5%99%A8%E8%A7%86%E8%A7%89/"/>
+    
+    
+    <category term="机器视觉" scheme="https://aishangcengloua.github.io/tags/%E6%9C%BA%E5%99%A8%E8%A7%86%E8%A7%89/"/>
+    
+    <category term="边缘检测" scheme="https://aishangcengloua.github.io/tags/%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>【OpenCv】Marr 算子边缘检测</title>
+    <link href="https://aishangcengloua.github.io/2022/06/05/%E3%80%90OpenCv%E3%80%91Marr-%E7%AE%97%E5%AD%90%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B/"/>
+    <id>https://aishangcengloua.github.io/2022/06/05/%E3%80%90OpenCv%E3%80%91Marr-%E7%AE%97%E5%AD%90%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B/</id>
+    <published>2022-06-05T09:05:36.000Z</published>
+    <updated>2022-06-05T09:06:11.025Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;﻿Marr算子: Laplacian of a Gaussian（LOG）&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Marr算子是在Laplacian算子的基础上实现的，它得益于对人的视觉机理的研究，有一定的生物学和生理学意义。&lt;/li&gt;
+&lt;li&gt;由于Laplacian算子对噪声比较敏感，为了减少噪声影响，提出了将高斯滤&lt;br&gt;波和拉普拉斯检测算子结合在一起进行边缘检测的方法：先对图像进行平滑，然后再用Laplacian算子检测边缘。&lt;/li&gt;
+&lt;li&gt;平滑函数应能反映不同远近的周围点对给定像素具有不同的平滑作用，因此，平滑函数采用正态分布的高斯函数，即：&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/689572f9726448c3b82d02949431e800.png#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;br&gt;卷积操作具有结合律，因此我们先将高斯平滑滤波器与拉普拉斯滤波器进行卷积，然后利用得到的混合滤波器去对图片进行卷积以得到所需的结果。&lt;br&gt;两个优点：&lt;/li&gt;
+&lt;li&gt;由于高斯和拉普拉斯核通常都比图像小得多，所以这种方法通常只需要很少的算术运算。&lt;/li&gt;
+&lt;li&gt;LoG (‘ Laplacian of Gaussian’)内核的参数可以预先计算，因此在运行时只需要对图像执行一遍的卷积即可。&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/bd40ed4914ef4ebaa5fd705721f23519.png#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;算法步骤如下：&lt;/li&gt;
+&lt;li&gt;滤波：首先对图像f(x,y)进行平滑滤波，其滤波函数根据人类视觉特性选为高斯函数，&lt;/li&gt;
+&lt;li&gt;增强：对平滑图像进行拉普拉斯运算，&lt;/li&gt;
+&lt;li&gt;检测：利用二阶导数算子过零点的性质，可确定图像中阶跃边缘的位置&lt;/li&gt;
+&lt;/ul&gt;</summary>
+    
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="机器视觉" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%9C%BA%E5%99%A8%E8%A7%86%E8%A7%89/"/>
+    
+    
+    <category term="机器视觉" scheme="https://aishangcengloua.github.io/tags/%E6%9C%BA%E5%99%A8%E8%A7%86%E8%A7%89/"/>
+    
+    <category term="边缘检测" scheme="https://aishangcengloua.github.io/tags/%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>【OpenCv】kirsch 算子边缘检测</title>
+    <link href="https://aishangcengloua.github.io/2022/06/05/%E3%80%90OpenCv%E3%80%91kirsch-%E7%AE%97%E5%AD%90%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B/"/>
+    <id>https://aishangcengloua.github.io/2022/06/05/%E3%80%90OpenCv%E3%80%91kirsch-%E7%AE%97%E5%AD%90%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B/</id>
+    <published>2022-06-05T09:00:38.000Z</published>
+    <updated>2022-06-05T09:01:51.759Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;﻿Kirsch算子是R.Kirsch提出来一种边缘检测算法，它采用8个模板对图像上的每一个像素点进行卷积求导数，这8个模板代表8个方向，对图像上的8个特定边缘方向作出最大响应，运算中取最大值作为图像的边缘输出。&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/b9bf43ef7ce24050b03fd22c438d597b.png#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/b9951f6416954240a2cd2898d9e7b3be.png#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;br&gt;Kirsch算子特点&lt;br&gt;• 在计算边缘强度的同时可以得到边缘的方向&lt;br&gt;• 各方向间的夹角为45º&lt;/p&gt;
+&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;33&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; cv2 &lt;span class=&quot;keyword&quot;&gt;as&lt;/span&gt; cv&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; matplotlib.pyplot &lt;span class=&quot;keyword&quot;&gt;as&lt;/span&gt; plt&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; numpy &lt;span class=&quot;keyword&quot;&gt;as&lt;/span&gt; np&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;%matplotlib&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;#kirsch算子&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;#自定义卷积核，八个方向&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;m1 = np.array([[&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;], [-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;,&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;,-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;], [-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;,-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;,-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;]])&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;m2 = np.array([[-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;,&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;], [-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;,&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;,&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;], [-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;,-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;,-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;]])&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;m3 = np.array([[-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;,-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;,&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;], [-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;,&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;,&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;], [-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;,-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;,&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;]])&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;m4 = np.array([[-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;,-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;,-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;], [-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;,&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;,&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;], [-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;,&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;,&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;]])&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;m5 = np.array([[-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;, -&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;, -&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;], [-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;,&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;,-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;], [&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;,&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;,&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;]])&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;m6 = np.array([[-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;, -&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;, -&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;], [&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;,&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;,-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;], [&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;,&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;,-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;]])&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;m7 = np.array([[&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;, -&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;, -&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;], [&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;,&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;,-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;], [&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;,-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;,-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;]])&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;m8 = np.array([[&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;, -&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;], [&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;,&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;,-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;], [-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;,-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;,-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;]])&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;filterlist = [m1, m2, m3, m4, m5, m6, m7, m8]&lt;span class=&quot;comment&quot;&gt;#将各个方向的卷积核放到一起便于统一操作&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;filtered_list = np.zeros((&lt;span class=&quot;number&quot;&gt;8&lt;/span&gt;, img_clean.shape[&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;], img_clean.shape[&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;]))&lt;span class=&quot;comment&quot;&gt;#建立三维数组，第0维表示各个方向卷积后的值&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; k &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;range&lt;/span&gt;(&lt;span class=&quot;number&quot;&gt;8&lt;/span&gt;) :&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    out = cv.filter2D(img_clean, cv.CV_16S, filterlist[k])&lt;span class=&quot;comment&quot;&gt;#自定义卷积，其实里面的步骤跟Sobel算子是差不多的&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    filtered_list[k] = out&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;final = np.&lt;span class=&quot;built_in&quot;&gt;max&lt;/span&gt;(filtered_list, axis = &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;)&lt;span class=&quot;comment&quot;&gt;#取八个方向中的最大值，也就是取第0维的最大值作为图像该点，滤波之后的新的像素值&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;final[ np.where(final &amp;gt;= &lt;span class=&quot;number&quot;&gt;255&lt;/span&gt;)] = &lt;span class=&quot;number&quot;&gt;255&lt;/span&gt;&lt;span class=&quot;comment&quot;&gt;#令像素值大于255的点等于255&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;final[ np.where(final &amp;lt; &lt;span class=&quot;number&quot;&gt;255&lt;/span&gt;) ] = &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;comment&quot;&gt;#令像素值小于255的点等于0&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;fig = plt.figure(figsize = (&lt;span class=&quot;number&quot;&gt;10&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;))&lt;span class=&quot;comment&quot;&gt;#显示图像&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;fig.&lt;span class=&quot;built_in&quot;&gt;set&lt;/span&gt;(alpha = &lt;span class=&quot;number&quot;&gt;0.2&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;plt.subplot2grid((&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;), (&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;))&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;plt.imshow(img_clean, &lt;span class=&quot;string&quot;&gt;&amp;#x27;gray&amp;#x27;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;plt.subplot2grid((&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;), (&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;))&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;plt.imshow(final, &lt;span class=&quot;string&quot;&gt;&amp;#x27;gray&amp;#x27;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
+    
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="机器视觉" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%9C%BA%E5%99%A8%E8%A7%86%E8%A7%89/"/>
+    
+    
+    <category term="机器视觉" scheme="https://aishangcengloua.github.io/tags/%E6%9C%BA%E5%99%A8%E8%A7%86%E8%A7%89/"/>
+    
+    <category term="边缘检测" scheme="https://aishangcengloua.github.io/tags/%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>决策树练习</title>
+    <link href="https://aishangcengloua.github.io/2022/06/05/%E5%86%B3%E7%AD%96%E6%A0%91%E7%BB%83%E4%B9%A0/"/>
+    <id>https://aishangcengloua.github.io/2022/06/05/%E5%86%B3%E7%AD%96%E6%A0%91%E7%BB%83%E4%B9%A0/</id>
+    <published>2022-06-05T08:58:05.000Z</published>
+    <updated>2022-06-05T08:59:10.810Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;﻿数据预处理分析，最后面附有决策树算法的实现&lt;br&gt;原始数据：&lt;br&gt;&lt;a href=&quot;https://github.com/aishangcengloua/Data-Mining/blob/master/HomeWork1/Data.xlsx&quot;&gt;原数据地址&lt;/a&gt;&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/810c34d959d0490383d5dd87183a7659.png#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;br&gt;计算第一次决策如果&lt;br&gt;分别对在14天各个属性下是否进行施肥的统计情况且计算该属性的基尼指数，同一种属性不同表现的基尼指数表示为M，加权平均之后为节点的基尼指数，用N表示&lt;br&gt;天气：&lt;/p&gt;
+&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;#encoding = utf-8&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; pandas &lt;span class=&quot;keyword&quot;&gt;as&lt;/span&gt; pd&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Base_file = pd.read_excel(&lt;span class=&quot;string&quot;&gt;&amp;#x27;Data.xlsx&amp;#x27;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Base_file.head(&lt;span class=&quot;number&quot;&gt;15&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;#Base_file.head()&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Weather_Sunny = Base_file[Base_file[&lt;span class=&quot;string&quot;&gt;&amp;#x27;天气&amp;#x27;&lt;/span&gt;] == &lt;span class=&quot;string&quot;&gt;&amp;#x27;晴天&amp;#x27;&lt;/span&gt;][&lt;span class=&quot;string&quot;&gt;&amp;#x27;是否施肥&amp;#x27;&lt;/span&gt;].value_counts()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;#print(Weather_Sunny)[&amp;#x27;否&amp;#x27; &amp;#x27;否&amp;#x27; &amp;#x27;否&amp;#x27; &amp;#x27;是&amp;#x27; &amp;#x27;是&amp;#x27;]&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Weather_Rainy = Base_file[Base_file[&lt;span class=&quot;string&quot;&gt;&amp;#x27;天气&amp;#x27;&lt;/span&gt;] == &lt;span class=&quot;string&quot;&gt;&amp;#x27;雨天&amp;#x27;&lt;/span&gt;][&lt;span class=&quot;string&quot;&gt;&amp;#x27;是否施肥&amp;#x27;&lt;/span&gt;].value_counts()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Weather_Overcast = Base_file[Base_file[&lt;span class=&quot;string&quot;&gt;&amp;#x27;天气&amp;#x27;&lt;/span&gt;] == &lt;span class=&quot;string&quot;&gt;&amp;#x27;阴天&amp;#x27;&lt;/span&gt;][&lt;span class=&quot;string&quot;&gt;&amp;#x27;是否施肥&amp;#x27;&lt;/span&gt;].value_counts()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Weather_Overcast[&lt;span class=&quot;string&quot;&gt;&amp;#x27;否&amp;#x27;&lt;/span&gt;] = &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Weather_df = pd.DataFrame([&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    pd.Series([Weather_Sunny[&lt;span class=&quot;string&quot;&gt;&amp;#x27;是&amp;#x27;&lt;/span&gt;], Weather_Sunny[&lt;span class=&quot;string&quot;&gt;&amp;#x27;否&amp;#x27;&lt;/span&gt;]], index = [&lt;span class=&quot;string&quot;&gt;&amp;#x27;是&amp;#x27;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&amp;#x27;否&amp;#x27;&lt;/span&gt;]),&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    pd.Series([Weather_Rainy[&lt;span class=&quot;string&quot;&gt;&amp;#x27;是&amp;#x27;&lt;/span&gt;], Weather_Rainy[&lt;span class=&quot;string&quot;&gt;&amp;#x27;否&amp;#x27;&lt;/span&gt;]], index = [&lt;span class=&quot;string&quot;&gt;&amp;#x27;是&amp;#x27;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&amp;#x27;否&amp;#x27;&lt;/span&gt;]),&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    pd.Series([Weather_Overcast[&lt;span class=&quot;string&quot;&gt;&amp;#x27;是&amp;#x27;&lt;/span&gt;], Weather_Overcast[&lt;span class=&quot;string&quot;&gt;&amp;#x27;否&amp;#x27;&lt;/span&gt;]], index = [&lt;span class=&quot;string&quot;&gt;&amp;#x27;是&amp;#x27;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&amp;#x27;否&amp;#x27;&lt;/span&gt;])&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;], index=[&lt;span class=&quot;string&quot;&gt;&amp;#x27;晴天&amp;#x27;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&amp;#x27;雨天&amp;#x27;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&amp;#x27;阴天&amp;#x27;&lt;/span&gt;])&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Weather_df.head()&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
+    
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="传统算法" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/"/>
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="决策树" scheme="https://aishangcengloua.github.io/tags/%E5%86%B3%E7%AD%96%E6%A0%91/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>自监督学习</title>
+    <link href="https://aishangcengloua.github.io/2022/06/05/%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/"/>
+    <id>https://aishangcengloua.github.io/2022/06/05/%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/</id>
+    <published>2022-06-05T08:47:07.000Z</published>
+    <updated>2022-06-05T08:49:16.618Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;1-Transformer&quot;&gt;&lt;a href=&quot;#1-Transformer&quot; class=&quot;headerlink&quot; title=&quot;1    Transformer&quot;&gt;&lt;/a&gt;1    Transformer&lt;/h1&gt;&lt;p&gt;Transformer是Sequence-toSequence（Seq2Seq）的一个模型，我们之前在作一些实验的时候，当我们输入一个Sequence时，我们的输出也会是一个Sequence，而输入和输出结果的长度是一样的，当我们不知道输出结果是有多长时，我们便要机器自己决定要输出多长，这就会用到Seq2Seq，特别是在语音辨识及机器翻译中。&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/8420b887f89d4bfbbc3a69b3cabf76c7.png#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;br&gt;一般的Seq2Seq模型是由Encoder和Decoder组成，Encoder接受外界的输入，然后把输出的结果丢给Decoder，再由Decoder决定要输出的Sequence的大小&lt;img src=&quot;https://img-blog.csdnimg.cn/0c7feb608f9d448081eed81a79aaff31.png#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;br&gt;Seq2seq最早在14年的时候就有了，那时是长的很眉清目秀，后面就变得一言难尽了&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/2df919b70adc4d648668668bb89c45b8.png#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/6fd8e35d462b41578578a96462ed6cdc.png#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="深度学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="自监督学习" scheme="https://aishangcengloua.github.io/tags/%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="transformer" scheme="https://aishangcengloua.github.io/tags/transformer/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>循环神经网络（二）</title>
+    <link href="https://aishangcengloua.github.io/2022/06/05/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%BA%8C%EF%BC%89/"/>
+    <id>https://aishangcengloua.github.io/2022/06/05/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%BA%8C%EF%BC%89/</id>
+    <published>2022-06-05T08:39:43.000Z</published>
+    <updated>2022-06-05T08:46:17.515Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;1-RNN-的缺点&quot;&gt;&lt;a href=&quot;#1-RNN-的缺点&quot; class=&quot;headerlink&quot; title=&quot;1    RNN 的缺点&quot;&gt;&lt;/a&gt;1    RNN 的缺点&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;我在&lt;a href=&quot;https://blog.csdn.net/weixin_53598445/article/details/124615312&quot;&gt;上一篇博客&lt;/a&gt;中跟大家一步一步探索了 RNN 模型的网络结构，最后面也介绍了 RNN 的应用场景。但在实际应用中，标准 RNN 训练的优化算法面临一个很大的难题，就是长期依赖问题——由于网络结构的变深使得模型丧失了学习到先前信息的能力，通俗的说，标准的 RNN 虽然有了记忆，但很健忘，也即标准 RNN 只有短时记忆。循环神经网络在处理较长的句子时，往往只能够理解有限长度内的信 息，而对于位于较长范围类的有用信息往往不能够很好的利用起来。我们把这种现象叫做短时记忆。&lt;br&gt;&amp;emsp;&amp;emsp;针对标准 RNN 短时记忆的问题，最直接的想法就是延长这种短时记忆，使得 RNN 可以有效利用较大范围内的训练数据，从而提升性能。这时，一种基于 RNN 改进的新型网络模型——&lt;strong&gt;LSTM&lt;/strong&gt; 该登场了。同时在上篇博客的最后面谈到了 RNN 的梯度消失问题，LSTM 模型可以有效地解决这个问题。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="深度学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="深度学习" scheme="https://aishangcengloua.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="循环神经网络" scheme="https://aishangcengloua.github.io/tags/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>循环神经网络（一）</title>
+    <link href="https://aishangcengloua.github.io/2022/06/05/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%B8%80%EF%BC%89/"/>
+    <id>https://aishangcengloua.github.io/2022/06/05/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%B8%80%EF%BC%89/</id>
+    <published>2022-06-05T08:38:01.000Z</published>
+    <updated>2022-06-05T08:38:47.847Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;1-简介&quot;&gt;&lt;a href=&quot;#1-简介&quot; class=&quot;headerlink&quot; title=&quot;1    简介&quot;&gt;&lt;/a&gt;1    简介&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;在本系列文章中，我有跟大家分享过神经网络中两种经典层：&lt;strong&gt;卷积层(CNN)&lt;/strong&gt; 和 &lt;strong&gt;全连接层(FC)&lt;/strong&gt;，这两种层的输入数据分别是：特征向量和图像(张量)，在具体实现时输入的多样本之间是相互独立的，无联系关系。而且，卷积神经网络利用数据的局部相关性和权值共享的思想大大减少了网络的参数量，非常适合于图片这种具有 &lt;strong&gt;空间(Spatial)&lt;/strong&gt; 局部相关性的数据，但自然界的信号除了具有空间维度之外，还有一个 &lt;strong&gt;时间(Temporal)&lt;/strong&gt; 维度。具有时间维度的数据(也称作序列数据)有以下特点：&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="深度学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="深度学习" scheme="https://aishangcengloua.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="循环神经网络" scheme="https://aishangcengloua.github.io/tags/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>卷积神经网络（三）</title>
+    <link href="https://aishangcengloua.github.io/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%B8%89%EF%BC%89/"/>
+    <id>https://aishangcengloua.github.io/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%B8%89%EF%BC%89/</id>
+    <published>2022-06-05T08:34:46.000Z</published>
+    <updated>2022-06-05T08:37:02.778Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;卷积神经网络发展非常迅速，应用非常广阔，所以近几年的卷积神经网络得到了长足的发展，下图为卷积神经网络近几年发展的大致轨迹。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="深度学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="深度学习" scheme="https://aishangcengloua.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="卷积神经网络" scheme="https://aishangcengloua.github.io/tags/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>卷积神经网络（二）</title>
+    <link href="https://aishangcengloua.github.io/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%BA%8C%EF%BC%89/"/>
+    <id>https://aishangcengloua.github.io/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%BA%8C%EF%BC%89/</id>
+    <published>2022-06-05T08:26:33.000Z</published>
+    <updated>2022-06-05T08:33:35.828Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;1-池化层&quot;&gt;&lt;a href=&quot;#1-池化层&quot; class=&quot;headerlink&quot; title=&quot;1    池化层&quot;&gt;&lt;/a&gt;1    池化层&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;在上篇博客中，有跟大家分析过，在卷积层中没有 &lt;strong&gt;padding&lt;/strong&gt; 的情况下，可以通过调节步长参数 $\boldsymbol{s}$ 实现特征图的高宽成倍缩小，从而降低了网络的参数量。但是在实际上我们通常使用 &lt;strong&gt;Same卷积&lt;/strong&gt;，即输入和输出特征图的维度一样，这样一来将面临巨大的计算量挑战，而且容易产生过拟合的现象，因此我们需要一种专门的网络层可以实现尺寸缩减功能，它就是这里要介绍的 &lt;strong&gt;池化层&lt;/strong&gt;(pooling layer)，通常，池化操作也被称作 &lt;strong&gt;下采样&lt;/strong&gt;。&lt;br&gt;&amp;emsp;&amp;emsp;池化层同样基于局部相关性的思想，通过从局部相关的一组元素中进行采样或信息聚合，从而得到新的元素值。下面介绍两种池化方式：&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="深度学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="深度学习" scheme="https://aishangcengloua.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="卷积神经网络" scheme="https://aishangcengloua.github.io/tags/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>卷积神经网络（一）</title>
+    <link href="https://aishangcengloua.github.io/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%B8%80%EF%BC%89/"/>
+    <id>https://aishangcengloua.github.io/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%B8%80%EF%BC%89/</id>
+    <published>2022-06-05T08:22:46.000Z</published>
+    <updated>2022-06-05T08:33:22.612Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;1-简介&quot;&gt;&lt;a href=&quot;#1-简介&quot; class=&quot;headerlink&quot; title=&quot;1    简介&quot;&gt;&lt;/a&gt;1    简介&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;&lt;strong&gt;卷积网络&lt;/strong&gt;（convolutional network）(LeCun, 1989)，也叫做 &lt;strong&gt;卷积神经网络&lt;/strong&gt;（convolutional neural network, CNN），是一种专门用来处理具有类似网格结构的数据的神经网络。例如时间序列数据（可以认为是在时间轴上有规律地采样形成的一维网格）和图像数据（可以看作是二维的像素网格）。卷积网络在诸多应用领域都表现优异。“卷积神经网络’’ 一词表明该网络使用了 &lt;strong&gt;卷积&lt;/strong&gt;（convolution）这种数学运算。卷积是一种特殊的线性运算。卷积网络是指那些至少在网络的一层中使用卷积运算来替代一般的矩阵乘法运算的神经网络。&lt;br&gt;&amp;emsp;&amp;emsp;卷积网络为什么会出现？得先看看更早时期提出的 &lt;strong&gt;全连接网络&lt;/strong&gt;（Fully Connected Neural Network，FC）在处理类似图片数据时会出现的问题：&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="深度学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="深度学习" scheme="https://aishangcengloua.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="卷积神经网络" scheme="https://aishangcengloua.github.io/tags/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>前向传播</title>
+    <link href="https://aishangcengloua.github.io/2022/06/05/%E5%89%8D%E5%90%91%E4%BC%A0%E6%92%AD/"/>
+    <id>https://aishangcengloua.github.io/2022/06/05/%E5%89%8D%E5%90%91%E4%BC%A0%E6%92%AD/</id>
+    <published>2022-06-05T08:20:33.000Z</published>
+    <updated>2022-06-05T08:21:30.730Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;一、Learning-rate&quot;&gt;&lt;a href=&quot;#一、Learning-rate&quot; class=&quot;headerlink&quot; title=&quot;一、Learning rate&quot;&gt;&lt;/a&gt;一、Learning rate&lt;/h1&gt;&lt;h2 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h2&gt;</summary>
+    
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>机器学习任务</title>
+    <link href="https://aishangcengloua.github.io/2022/06/05/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BB%BB%E5%8A%A1/"/>
+    <id>https://aishangcengloua.github.io/2022/06/05/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BB%BB%E5%8A%A1/</id>
+    <published>2022-06-05T08:17:56.000Z</published>
+    <updated>2022-06-05T08:18:43.551Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;一、机器学习任务攻略&quot;&gt;&lt;a href=&quot;#一、机器学习任务攻略&quot; class=&quot;headerlink&quot; title=&quot;一、机器学习任务攻略&quot;&gt;&lt;/a&gt;一、机器学习任务攻略&lt;/h1&gt;&lt;h2 id=&quot;1-1-Framework-of-ML&quot;&gt;&lt;a href=&quot;#1-1-Framework-of-ML&quot; class=&quot;headerlink&quot; title=&quot;1.1 Framework of ML&quot;&gt;&lt;/a&gt;1.1 Framework of ML&lt;/h2&gt;</summary>
+    
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
     
   </entry>
   

@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="一、机器学习任务攻略1.1 Framework of ML">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器学习任务">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BB%BB%E5%8A%A1/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="一、机器学习任务攻略1.1 Framework of ML">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/fe38e307c8cc4583b1429e2ddb50f121.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/728166a8620e4c77871276b7949dcbff.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/d9d0bbbebada476fb6ed815b5c7ffbfd.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/091969533b60468e8be93969563b29a1.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/ad56387e9fb2422d9a9b7098bed4722d.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/d3bd1ecf77024e53b21edc839516b1b7.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/98f7bbfa3dd943bcad15edc36787c35d.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/e709d8efa02f4d139940caf0e27d6c28.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/bd247ec02e7642d2992d7cd19fe47027.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/3b8b0f61c2ee40dfb5f1518cd5a8d6b6.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/1564b47d4edb4778914f5d7175bd3d73.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/56cceab802cc4d93b098313d7c53a29d.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/cf025c9accf44c99bfb743418a7b9b5d.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/98b70267da1a402d9d966eb5d878d41f.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/f38512838eb842be82f213ad4557aabe.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/056c72263b5a4d2bb8483b56a787b92a.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/dfdd51cc86e743838559786628dcbf56.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/1c32aaf3bda34b058cd818e323cb639c.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/91949cf989944b53a2ce9d290e0a4d0c.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2941be02cc9e4db5ae7b0e54028b59a6.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/0d9369eca1ad471389b3fd91dc1d1430.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/028e4aa0dd214a7298b60a30dcb8d0ad.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/3038616128e843e6bf6037f537bba320.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/575bfa93f08d475d8e346d92c3992239.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/924a99ef89964f72a4700479a13f88b4.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/7f28ab5d30a54fb5858ddbc5cf5cd6fa.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/4ec31491daeb49c6bb65ae02b0b072fa.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/4a865146cedb4ad9a1df22327b4f4207.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2be951e89eed4036ac7c7ab29915a82f.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/9419e31cc1414edbb95afd1a247d221b.png#pic_center">
+<meta property="article:published_time" content="2022-06-05T08:17:56.000Z">
+<meta property="article:modified_time" content="2022-06-05T08:18:43.551Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="机器学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/fe38e307c8cc4583b1429e2ddb50f121.png">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BB%BB%E5%8A%A1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>机器学习任务 | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">19</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">24</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BB%BB%E5%8A%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          机器学习任务
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 16:17:56 / 修改时间：16:18:43" itemprop="dateCreated datePublished" datetime="2022-06-05T16:17:56+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BB%BB%E5%8A%A1/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BB%BB%E5%8A%A1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="一、机器学习任务攻略"><a href="#一、机器学习任务攻略" class="headerlink" title="一、机器学习任务攻略"></a>一、机器学习任务攻略</h1><h2 id="1-1-Framework-of-ML"><a href="#1-1-Framework-of-ML" class="headerlink" title="1.1 Framework of ML"></a>1.1 Framework of ML</h2><p>  神经网络一共包含三个模块：训练模块、验证模块、预测模块。其中训练和验证模块共用数据是Training data，但要注意的是要把Training data分成训练和验证数据。<br>训练步骤包括三个步骤：<br>  1、要先写出一个有未知参数的函数f（x），x为input，也叫做feature<br>  2、定义Loss函数，输入为一组参数，计算这组参数所造成的误差<br>  3、定义optimization，找到一组最为合适的参数θ*，使得Loss最小<br>预测部分是用训练好的θ对Testing data进行预测结果。</p>
+<h2 id="1-2-提高结果的准确性"><a href="#1-2-提高结果的准确性" class="headerlink" title="1.2 提高结果的准确性"></a>1.2 提高结果的准确性</h2><p>检查training data的Loss</p>
+<h3 id="1-2-1-Loss过大"><a href="#1-2-1-Loss过大" class="headerlink" title="1.2.1 Loss过大"></a>1.2.1 Loss过大</h3><p>显然在训练资料上效果并不是很好，这时要从两方面出发检查：<br>1.model bias的原因：<br>  model过于简单，导致在神经网络的函数集中没有可以让Loss变的足够小的函数，就像在海中捞针<br>  解决方法：重新设计model让其更加深，鲁棒性更强<br>  1.增加输入的feature，或者使用Deep Learning<br>  <img src="https://img-blog.csdnimg.cn/fe38e307c8cc4583b1429e2ddb50f121.png" alt="在这里插入图片描述"><br>  <img src="https://img-blog.csdnimg.cn/728166a8620e4c77871276b7949dcbff.png" alt="在这里插入图片描述"><br>2.optimization做的不好<br> 在训练过程中可能卡到一个局部最优点（local minima）的地方，虽然网络中存在一个最好的函数，但是你无法找到让Loss最小的一组参数θ*<br> <img src="https://img-blog.csdnimg.cn/d9d0bbbebada476fb6ed815b5c7ffbfd.png#pic_center" alt="在这里插入图片描述"><br> 如何区分是model bias还是optimization的问题<br> 当一个神经网络的层数比另外一个神经网络要大，但Loss值却更大，则是optimization的问题，因为越深的网络的鲁棒性会更大；此外则是model bias的问题<br> <img src="https://img-blog.csdnimg.cn/091969533b60468e8be93969563b29a1.png#pic_center" alt="在这里插入图片描述"></p>
+<h3 id="1-2-2-Loss足够小，但testing-data的Loss过大"><a href="#1-2-2-Loss足够小，但testing-data的Loss过大" class="headerlink" title="1.2.2 Loss足够小，但testing data的Loss过大"></a>1.2.2 Loss足够小，但testing data的Loss过大</h3><p>这里也要从两方面分析<br>1.over fitting<br>举一个极端的例子：<br>我们的testing data为：<br><img src="https://img-blog.csdnimg.cn/ad56387e9fb2422d9a9b7098bed4722d.png" alt="在这里插入图片描述"><br>通过training找出这样一个函数：<br><img src="https://img-blog.csdnimg.cn/d3bd1ecf77024e53b21edc839516b1b7.png#pic_center" alt="在这里插入图片描述"><br>当能够在训练资料中找到x的话就输出yi，否则就随机输出一个值。基于此，这个函数在training过程中的Loss为0，但是在test过程中就什么也没干，所以在testing过程中的Loss会很大，这就是over fitting。<br>在真实的实验过程中，往往是因为model的鲁棒性太强，导致在training后得到的模型有很大的“自由区”而不能很好的拟合testing数据<br><img src="https://img-blog.csdnimg.cn/98f7bbfa3dd943bcad15edc36787c35d.png#pic_center" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/e709d8efa02f4d139940caf0e27d6c28.png#pic_center" alt="在这里插入图片描述"><br>导致Loss过大<br>解决方法：<br>1.增加数据量（Data augmentation）<br><img src="https://img-blog.csdnimg.cn/bd247ec02e7642d2992d7cd19fe47027.png#pic_center" alt="在这里插入图片描述"></p>
+<p>2.限制model的鲁棒性<br>根据training的数据设定函数，少一些参数<br><img src="https://img-blog.csdnimg.cn/3b8b0f61c2ee40dfb5f1518cd5a8d6b6.png#pic_center" alt="在这里插入图片描述"><br>但要注意的是不能给model太多的限制，否则会导致model bias的问题<br>综上，我们可以得出model的复杂程度和Loss的一个非线性关系<br><img src="https://img-blog.csdnimg.cn/1564b47d4edb4778914f5d7175bd3d73.png#pic_center" alt="在这里插入图片描述"><br>当model越来越复杂时，虽然Training loss越来越小，但是可能会出现over fitting的问题，导致预测结果不准<br>我们在前面说过，我们有三大模块，训练、验证和预测，且将training data随机分成训练数据和验证数据，当我们在每一个epoch训练后得到的θ参数和loss，我们要将θ进行验证，如果验证组得到的loss更小，说明这组参数是较优的，将此loss替换训练得到的loss，最终找到一组最优解</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dev_mse = dev(model, dev_data)</span><br><span class="line"><span class="keyword">if</span> dev_mse &lt; min_mse :</span><br><span class="line">   	min_mse = dev_mse</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">dev</span>(<span class="params">model, dev_data</span>) :</span><br><span class="line">    model.<span class="built_in">eval</span>()</span><br><span class="line">    total_loss = []</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">input</span>, label <span class="keyword">in</span> dev_data :</span><br><span class="line">        output = model(<span class="built_in">input</span>)</span><br><span class="line">        total_loss.append(model.cal_loss(output, label))</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">sum</span>(total_loss) / <span class="built_in">len</span>(total_loss)</span><br></pre></td></tr></table></figure>
+<p>此外我们还可以用N折交叉验证的方法进行分数据和找θ*<br><img src="https://img-blog.csdnimg.cn/56cceab802cc4d93b098313d7c53a29d.png#pic_center" alt="在这里插入图片描述"><br>2.认为影响，这种问题不能怪model，机器是死的，这种问题一般来说叫做mismatch</p>
+<h1 id="二、局部最小值（local-minima）与鞍点（saddle-point）"><a href="#二、局部最小值（local-minima）与鞍点（saddle-point）" class="headerlink" title="二、局部最小值（local minima）与鞍点（saddle point）"></a>二、局部最小值（local minima）与鞍点（saddle point）</h1><p>当optimization失败时一般有两点原因：<br>1.loss值无法再小，此时已经找到了一组最优解θ*<br>2.gradient等于0<br><img src="https://img-blog.csdnimg.cn/cf025c9accf44c99bfb743418a7b9b5d.png#pic_center" alt="在这里插入图片描述">这里我们对gradient==0的情况进行分析，当gradient等于0时，这个点有三种情况：<br>处于local minima，此时loss处于局部最小，没办法走到其他地方<br><img src="https://img-blog.csdnimg.cn/98b70267da1a402d9d966eb5d878d41f.png#pic_center" alt="在这里插入图片描述"><br>值得注意的是，local minima也有好坏之分当minima处于尖端的时候，testing loss是十分大的，而在平缓区时，testing loss就没那么大<br><img src="https://img-blog.csdnimg.cn/f38512838eb842be82f213ad4557aabe.png#pic_center" alt="在这里插入图片描述"></p>
+<p>处于saddle point，此时loss并不是局部最小值，有别的地方可以走，这样就有机会到达全局最小点<br><img src="https://img-blog.csdnimg.cn/056c72263b5a4d2bb8483b56a787b92a.png#pic_center" alt="在这里插入图片描述"><br>Saddle Point vs Local Minima<br>他们两者之间谁更加常见呢？<br>如果在从二维空间去看的话Saddle Point就可能被认为是Local Minima<br><img src="https://img-blog.csdnimg.cn/dfdd51cc86e743838559786628dcbf56.png#pic_center" alt="在这里插入图片描述"><br>反过来假如我们从更高维度去看的话Local Minima却是Saddle Point<br><img src="https://img-blog.csdnimg.cn/1c32aaf3bda34b058cd818e323cb639c.png#pic_center" alt="在这里插入图片描述"><br>也就是说假如我们在某个维度没路可走的时候，我们可以提高维度来使其变成Saddle Point从而有路可走。这就是现在为什么神经网络如此复杂、参数众多的重要原因</p>
+<h1 id="三、Batch和momentum"><a href="#三、Batch和momentum" class="headerlink" title="三、Batch和momentum"></a>三、Batch和momentum</h1><h2 id="3-1-Batch"><a href="#3-1-Batch" class="headerlink" title="3.1 Batch"></a>3.1 Batch</h2><p>现在假如说有一笔N资料，我们可以把N笔资料一次性全部跑完再计算loss和更新一次参数θ，但是的话我们也可以将N笔资料分成许多个batch资料，我们每跑完一个batch资料就计算更新一次参数<br><img src="https://img-blog.csdnimg.cn/91949cf989944b53a2ce9d290e0a4d0c.png#pic_center" alt="在这里插入图片描述"><br>1 epoch等于把全部的batch都看一遍<br>为什么要用batch？<br>现在有20笔资料，我们分别看看用和不用batch的参数更新效果<br><img src="https://img-blog.csdnimg.cn/2941be02cc9e4db5ae7b0e54028b59a6.png#pic_center" alt="在这里插入图片描述"><br>可以看出没有用batch的model的蓄力时间比较长，但每走一步都比较稳；用了batch的model蓄力时间短，但每次走的时候方是十分乱的。但是如果考虑gpu的平行预算，没有用batch耗费的时间不一定比用了batch所花时间长。在MNIST机器学习任务（一共有六万笔资料）中：<br>跑每一个不同batch所用时间如下，（6000代表不用batch）<br><img src="https://img-blog.csdnimg.cn/0d9369eca1ad471389b3fd91dc1d1430.png#pic_center" alt="在这里插入图片描述"><br>我们再看跑完一个epoch和跑完一个batch所需时间对比：<br><img src="https://img-blog.csdnimg.cn/028e4aa0dd214a7298b60a30dcb8d0ad.png#pic_center" alt="在这里插入图片描述"><br>我们可以看出一个epoch大的batch花的时间反而是比较少的<br>但是与我们直觉不同的是，分了batch的任务最终预测的正确率是比没分batch是要高的<br><img src="https://img-blog.csdnimg.cn/3038616128e843e6bf6037f537bba320.png#pic_center" alt="在这里插入图片描述"><br>为什么分batch会带来更好的结果？<br>我们先来考虑Full batch的情况<br>我们沿着Loss函数来更新参数，当陷入一个local minima之后就停止更新参数<br><img src="https://img-blog.csdnimg.cn/575bfa93f08d475d8e346d92c3992239.png#pic_center" alt="在这里插入图片描述"><br>再考虑small batch时，当我们用θ1参数组来算gradient的时候，他的loss函数是L1当遇到gradient等于0时就卡住了，但不会停止更新函数，可以用下一个batch来train优化model<br><img src="https://img-blog.csdnimg.cn/924a99ef89964f72a4700479a13f88b4.png#pic_center" alt="在这里插入图片描述"><br>Small Batch VS Large Batch<br><img src="https://img-blog.csdnimg.cn/7f28ab5d30a54fb5858ddbc5cf5cd6fa.png#pic_center" alt="在这里插入图片描述"><br>正因他们有各自的优点，则Batch size变成一个hyper parameter（超参数）</p>
+<h2 id="3-2-Momentum"><a href="#3-2-Momentum" class="headerlink" title="3.2 Momentum"></a>3.2 Momentum</h2><p>momentum是一门可能可以对抗local minima的技术。他的概念可以想象成物理世界中的惯性，我们可以想象，当一个小球沿着loss函数走，当走到local minima时因为他有惯性而不会在minima处停下<br><img src="https://img-blog.csdnimg.cn/4ec31491daeb49c6bb65ae02b0b072fa.png#pic_center" alt="在这里插入图片描述"><br>对于普通的gradient descent，假设开始在θ0的点，计算该点gradient为g(0)，沿着gradient的反方向移动到θ1 =   θ0 - ng(0) 然后计算g(1)…..<br><img src="https://img-blog.csdnimg.cn/4a865146cedb4ad9a1df22327b4f4207.png#pic_center" alt="在这里插入图片描述"><br>结合momentum的gradient descent<br>我们在更新gradient时不单单沿着gradient的反方向，还要加上前一步(momentum)的方向进行更新，类似于物理中的力的合成，计算过程如下图：<br><img src="https://img-blog.csdnimg.cn/2be951e89eed4036ac7c7ab29915a82f.png#pic_center" alt="在这里插入图片描述"><br>当我们走到local minima和和saddle point时虽然gradient==0，但是由于我们还有前一步的momentum所以还会继续走下去<br><img src="https://img-blog.csdnimg.cn/9419e31cc1414edbb95afd1a247d221b.png#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="四、结语"><a href="#四、结语" class="headerlink" title="四、结语"></a>四、结语</h1><p>以上是我机器学习学习笔记的第二篇，如有不对之处，还望指出，与君共勉。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 机器学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%A6%82%E8%BF%B0/" rel="prev" title="机器学习概述">
+      <i class="fa fa-chevron-left"></i> 机器学习概述
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E5%89%8D%E5%90%91%E4%BC%A0%E6%92%AD/" rel="next" title="前向传播">
+      前向传播 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BB%BB%E5%8A%A1%E6%94%BB%E7%95%A5"><span class="nav-text">一、机器学习任务攻略</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-Framework-of-ML"><span class="nav-text">1.1 Framework of ML</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-%E6%8F%90%E9%AB%98%E7%BB%93%E6%9E%9C%E7%9A%84%E5%87%86%E7%A1%AE%E6%80%A7"><span class="nav-text">1.2 提高结果的准确性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-1-Loss%E8%BF%87%E5%A4%A7"><span class="nav-text">1.2.1 Loss过大</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-2-Loss%E8%B6%B3%E5%A4%9F%E5%B0%8F%EF%BC%8C%E4%BD%86testing-data%E7%9A%84Loss%E8%BF%87%E5%A4%A7"><span class="nav-text">1.2.2 Loss足够小，但testing data的Loss过大</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%B1%80%E9%83%A8%E6%9C%80%E5%B0%8F%E5%80%BC%EF%BC%88local-minima%EF%BC%89%E4%B8%8E%E9%9E%8D%E7%82%B9%EF%BC%88saddle-point%EF%BC%89"><span class="nav-text">二、局部最小值（local minima）与鞍点（saddle point）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81Batch%E5%92%8Cmomentum"><span class="nav-text">三、Batch和momentum</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-Batch"><span class="nav-text">3.1 Batch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-Momentum"><span class="nav-text">3.2 Momentum</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E7%BB%93%E8%AF%AD"><span class="nav-text">四、结语</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">61k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:41</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

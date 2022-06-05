@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1    RNN 的缺点&amp;emsp;&amp;emsp;我在上一篇博客中跟大家一步一步探索了 RNN 模型的网络结构，最后面也介绍了 RNN 的应用场景。但在实际应用中，标准 RNN 训练的优化算法面临一个很大的难题，就是长期依赖问题——由于网络结构的变深使得模型丧失了学习到先前信息的能力，通俗的说，标准的 RNN 虽然有了记忆，但很健忘，也即标准 RNN 只有短时记忆。循环神经网络在处理较长的句子时，往">
+<meta property="og:type" content="article">
+<meta property="og:title" content="循环神经网络（二）">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%BA%8C%EF%BC%89/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="1    RNN 的缺点&amp;emsp;&amp;emsp;我在上一篇博客中跟大家一步一步探索了 RNN 模型的网络结构，最后面也介绍了 RNN 的应用场景。但在实际应用中，标准 RNN 训练的优化算法面临一个很大的难题，就是长期依赖问题——由于网络结构的变深使得模型丧失了学习到先前信息的能力，通俗的说，标准的 RNN 虽然有了记忆，但很健忘，也即标准 RNN 只有短时记忆。循环神经网络在处理较长的句子时，往">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/6b26167dd50b4959a0454dcb9b6e4bda.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/9c06bb9b83374b9d86de18b5b36e763a.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/9cd23d7ac7384dabb0b211023da816d8.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2ee0d073b9a1440c94b350f5e7d4e00c.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/5c894335d30e4ec68c7be897d66a22fe.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/ba7bb0ffcfea4cf2b9506c2215e19292.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/5beb171ddbc049cdbf7f13e34a4e76a9.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/f649cb4bb6b54d9f985d00b7bbdaf6f4.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/3ea836757e7141239136e880957e18ce.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/49308e38251b42589857985c754dcd42.png#pic_center">
+<meta property="article:published_time" content="2022-06-05T08:39:43.000Z">
+<meta property="article:modified_time" content="2022-06-05T08:46:17.515Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="循环神经网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/6b26167dd50b4959a0454dcb9b6e4bda.png">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%BA%8C%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>循环神经网络（二） | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">19</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">24</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%BA%8C%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          循环神经网络（二）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 16:39:43 / 修改时间：16:46:17" itemprop="dateCreated datePublished" datetime="2022-06-05T16:39:43+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%BA%8C%EF%BC%89/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%BA%8C%EF%BC%89/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>6.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="1-RNN-的缺点"><a href="#1-RNN-的缺点" class="headerlink" title="1    RNN 的缺点"></a>1    RNN 的缺点</h1><p>&emsp;&emsp;我在<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_53598445/article/details/124615312">上一篇博客</a>中跟大家一步一步探索了 RNN 模型的网络结构，最后面也介绍了 RNN 的应用场景。但在实际应用中，标准 RNN 训练的优化算法面临一个很大的难题，就是长期依赖问题——由于网络结构的变深使得模型丧失了学习到先前信息的能力，通俗的说，标准的 RNN 虽然有了记忆，但很健忘，也即标准 RNN 只有短时记忆。循环神经网络在处理较长的句子时，往往只能够理解有限长度内的信 息，而对于位于较长范围类的有用信息往往不能够很好的利用起来。我们把这种现象叫做短时记忆。<br>&emsp;&emsp;针对标准 RNN 短时记忆的问题，最直接的想法就是延长这种短时记忆，使得 RNN 可以有效利用较大范围内的训练数据，从而提升性能。这时，一种基于 RNN 改进的新型网络模型——<strong>LSTM</strong> 该登场了。同时在上篇博客的最后面谈到了 RNN 的梯度消失问题，LSTM 模型可以有效地解决这个问题。</p>
+<h1 id="2-LSTM"><a href="#2-LSTM" class="headerlink" title="2    LSTM"></a>2    LSTM</h1><p>&emsp;&emsp;1997 年，瑞士人工智能科学家 Jürgen Schmidhuber 提出了 <strong>长短时记忆网络</strong>(Long Short-Term Memory，简称 LSTM)。LSTM 相对于基础的 RNN 网络来说，记忆能力更强，更擅长处理较长的序列信号数据，LSTM 提出后，被广泛应用在序列预测、自然语言处理等任务中，几乎取代了基础的 RNN 模型。<br>&emsp;&emsp;首先回顾一下基础的 RNN 网络结构：<br><img src="https://img-blog.csdnimg.cn/6b26167dd50b4959a0454dcb9b6e4bda.png" alt="在这里插入图片描述"></p>
+<p>上一个时间戳的状态向量 $\boldsymbol{h_{t-1}}$ 与当前时间戳的输入 $\boldsymbol{x_t}$ 经过线性变换后，通过激活函数 $\boldsymbol{tanh}$ 后得到新的状态向量 $\boldsymbol{h_{t}}$。相对于基础的 RNN，网络只有一个状态向量 $\boldsymbol{h_{t}}$，LSTM 新增了一个状态向量 $\boldsymbol{C_{t}}$，同时引入了 <strong>门控(Gate)机制</strong>，通过门控单元来控制信息的遗忘和刷新：<img src="https://img-blog.csdnimg.cn/9c06bb9b83374b9d86de18b5b36e763a.png" alt="在这里插入图片描述"></p>
+<p>&emsp;&emsp;在 LSTM Cell 中，有两个状态向量 $\boldsymbol{c}$ 和 $\boldsymbol{h}$，其中  $\boldsymbol{c}$ 作为 LSTM 的内部状态向量，可以理解为 LSTM 的 <strong>内存状态向量 Memory</strong>，而  $\boldsymbol{h}$ 表示 LSTM 的输出向量。相对于基础的 RNN 来说，LSTM 把内部 Memory 和输出分开为两个变量，同时利用三个门控：<strong>输入门</strong>(Input Gate)、<strong>遗忘门</strong>(Forget Gate)和<strong>输出门</strong>(Output Gate)来控制内部信息的流动。<br>&emsp;&emsp;门控机制可以理解为控制数据流通量的一种手段，类比于水阀门：当水阀门全部打开时，水流畅通无阻地通过；当水阀门全部关闭时，水流完全被隔断。在 LSTM 中，阀门开和程度利用门控值向量 $\boldsymbol{g}$ 表示：</p>
+<p><img src="https://img-blog.csdnimg.cn/9cd23d7ac7384dabb0b211023da816d8.png#pic_center" alt="在这里插入图片描述"></p>
+<p>上图中通过 $\boldsymbol{\sigma(g)}$ 激活函数将门控值压缩到 $\boldsymbol{[0, 1]}$ 之间，当 $\boldsymbol{\sigma(g) = 0}$ 时，门控全部关闭，输出 $\boldsymbol{o = 0}$；当 $\boldsymbol{\sigma(g) = 1}$ 时，门控全部打开，输出 $\boldsymbol{o = x}$。通过门控机制可以较好地控制数据的流量程度。</p>
+<hr>
+<p><strong><font color=red>注</font></strong>：到此您可以阅读完 GUR 的原理之后再回来阅读 LSTM，因 GRU 结构较为简单。</p>
+<hr>
+<h2 id="2-1-遗忘门"><a href="#2-1-遗忘门" class="headerlink" title="2.1    遗忘门"></a>2.1    遗忘门</h2><p>&emsp;&emsp;遗忘门作用于 LSTM 状态向量 $\boldsymbol{c}$，用于控制上一个时间戳的记忆 $\boldsymbol{c_{t - 1}}$ 对当前时间戳的影响。</p>
+<p><img src="https://img-blog.csdnimg.cn/2ee0d073b9a1440c94b350f5e7d4e00c.png#pic_center" alt="在这里插入图片描述"></p>
+<p>遗忘门的控制变量 $\boldsymbol{g_f}$ 计算过程如下：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{g_f = \sigma(W_f[h_{t- 1};x_t]+b_f)}</script><p>其中 $\boldsymbol{W_f}$ 和 $\boldsymbol{b_f}$ 为遗忘门的参数张量，可由反向传播算法自动优化，$\boldsymbol{\sigma}$ 为激活函数，一般使用 <strong>Sigmoid</strong> 函数。当 $\boldsymbol{g_f = 1}$ 时，遗忘门全部打开，LSTM 接受上一个状态 $\boldsymbol{c_{t-1}}$ 的所有信息 ；当 $\boldsymbol{g_f = 0}$ 时，遗忘门关闭，LSTM 直接忽略 $\boldsymbol{c_{t-1}}$ 的所有信息输出为 0 的向量。这也是遗忘门的名字由来。经过遗忘门后，LSTM 的状态向量 $\boldsymbol{c_t}$ 变为 $\boldsymbol{g_fc_{t-1}}$。</p>
+<h2 id="2-2-输入门"><a href="#2-2-输入门" class="headerlink" title="2.2    输入门"></a>2.2    输入门</h2><p>&emsp;&emsp;输入门用于控制 LSTM 对输入的接收程度。</p>
+<p><img src="https://img-blog.csdnimg.cn/5c894335d30e4ec68c7be897d66a22fe.png#pic_center" alt="在这里插入图片描述"></p>
+<p>首先通过对当前时间戳的输入 $\boldsymbol{x_t}$ 和上一个时间戳的输出 $\boldsymbol{h_{t - 1}}$ 做非线性变换得到新的输入向量  $\boldsymbol{\tilde{c_t}}$：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{\tilde{c_t} = tanh(W_c[h_{t -1};x_t] +b_c)}</script><p>其中 $\boldsymbol{W_c}$ 和 $\boldsymbol{b_c}$ 为输入门的参数，需要通过反向传播算法自动优化，$\boldsymbol{tanh}$ 为激活函数，用于将输入标准化到 $\boldsymbol{[-1,1]}$ 区间。$\boldsymbol{\tilde{c_t}}$ 并不会全部刷新进入 LSTM 的 Memory，而是通过输入门控制接受输入的量。输入门的控制变量同样来自于输入 $\boldsymbol{x_t}$ 和输出 $\boldsymbol{h_{t - 1}}$：</p>
+<script type="math/tex; mode=display">
+ \boldsymbol{g_i  = \sigma(W_i[h_{t - 1};x_t]+b_i)}</script><p> 其中 $\boldsymbol{W_i}$ 和 $\boldsymbol{b_i}$ 为输入门的参数，可由反向传播算法自动优化，$\boldsymbol{\sigma}$ 为激活函数，一般使用 <strong>Sigmoid</strong> 函数。输入门控制变量 $\boldsymbol{g_i}$ 决定了 LSTM 对当前时间戳的新输入 $\boldsymbol{\tilde{c_t}}$ 的接受程度：当 $\boldsymbol{g_i = 0}$ 时，LSTM 不接受任何的新输入 $\boldsymbol{\tilde{c_t}}$；当 $\boldsymbol{g_i = 1}$ 时，LSTM 全部接受新输入 $\boldsymbol{\tilde{c_t}}$。经过输入门之后，待写入 Memory 的向量为 $\boldsymbol{g_i\tilde{c_t}}$。<br> &emsp;&emsp;在遗忘门和输入门的控制下，LSTM 有选择地读取了上一个时间戳的记忆 $\boldsymbol{c_t}$ 和当前时间戳的新输入 $\boldsymbol{\tilde{c_t}}$，状态向量 $\boldsymbol{c_t}$ 的刷新方式为：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{c_t = g_i\tilde{c_t} + g_fc_{t-1}}</script><p>得到的新状态向量 $\boldsymbol{c_t}$ 即为当前时间戳的状态向量：<br><img src="https://img-blog.csdnimg.cn/ba7bb0ffcfea4cf2b9506c2215e19292.png#pic_center" alt="在这里插入图片描述"></p>
+<h2 id="2-3-输出门"><a href="#2-3-输出门" class="headerlink" title="2.3    输出门"></a>2.3    输出门</h2><p>&emsp;&emsp;LSTM 的内部状态向量 $\boldsymbol{c_t}$ 并不会直接用于输出，这一点和基础的 RNN 不一样。标准的 RNN 网络的状态向量 $\boldsymbol{h_t}$ 既用于记忆，又用于输出，所以基础的 RNN 可以理解为状态向量 $\boldsymbol{c_t}$ 和输出向量 $\boldsymbol{h_t}$ 是同一个对象。</p>
+<p><img src="https://img-blog.csdnimg.cn/5beb171ddbc049cdbf7f13e34a4e76a9.png#pic_center" alt="在这里插入图片描述"></p>
+<p>在 LSTM 内部，状态向量并不会全部输出，而是在输出门的作用下有选择地输出。输出门的门控变量 $\boldsymbol{g_o}$： </p>
+<script type="math/tex; mode=display">
+ \boldsymbol{g_o= \sigma(W_o[h_{t - 1};x_t]+b_o)}</script><p> 其中 $\boldsymbol{W_o}$ 和 $\boldsymbol{b_o}$ 为输出门的参数，可由反向传播算法自动优化，$\boldsymbol{\sigma}$ 为激活函数，一般使用 <strong>Sigmoid</strong> 函数。当 $\boldsymbol{g_o = 0}$ 时输出关闭，LSTM 的内部记忆完全被隔断，无法用作输出，此时输出为 0 的向量；当 $\boldsymbol{g_o = 1}$ 时，输出完全打开，LSTM 的状态向量 $\boldsymbol{c_t}$ 全部用于输出。LSTM 的输出为：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{h_t = g_o\cdot tanh(c_t)}</script><p>即内存向量 $\boldsymbol{c_t}$ 经过 <strong>tanh</strong> 激活函数后与输入门作用，得到 LSTM 的输出。由于 $\boldsymbol{ 𝒈_o ∈ [0,1]}$，$\boldsymbol{tanh(c_t) ∈ [-1,1]}$，因此 LSTM的输出 $\boldsymbol{h_t∈ [-1,1]}$。</p>
+<h2 id="2-4-小结"><a href="#2-4-小结" class="headerlink" title="2.4    小结"></a>2.4    小结</h2><p>&emsp;&emsp;LSTM 虽然状态向量和门控数量较多，计算流程相对复杂。但是由于每个门控功能清晰明确，每个状态的作用也比较好理解。LSTM 的核心公式记录如下：</p>
+<ul>
+<li>遗忘门：$\boldsymbol{g_f = \sigma(W_f[h_{t- 1};x_t]+b_f)}$；</li>
+<li>输入向量更新：$\boldsymbol{\tilde{c_t} = tanh(W_c[h_{t -1};x_t] +b_c)}$；</li>
+<li>输入门： $\boldsymbol{g_i  = \sigma(W_i[h_{t - 1};x_t]+b_i)}$；</li>
+<li>状态向量更新：$\boldsymbol{c_t = g_i\tilde{c_t} + g_fc_{t-1}}$；</li>
+<li>输出门：$\boldsymbol{g_o= \sigma(W_o[h_{t - 1};x_t]+b_o)}$；</li>
+<li>输出向量更新：$\boldsymbol{h_t = g_o\cdot tanh(c_t)}$。</li>
+</ul>
+<p>总的来说，可以总结三个门的输出值都是 $\boldsymbol{[0,1]}$ 之间，都是为了控制不同量的”多少”进入下一个 Cell。LSTM 有效地克服了传统 RNN 的一 些不足，比较好地解决了梯度消失、长期依赖等问题。不过，LSTM 也有一 些不足，如结构比较复杂、计算复杂度较高等问题。能否继续改进？</p>
+<h1 id="3-GRU"><a href="#3-GRU" class="headerlink" title="3    GRU"></a>3    GRU</h1><p>&emsp;&emsp;针对 LSTM 的缺点，我们尝试简化 LSTM 内部的计算流程，特别是减少门控数量。研究发现，遗忘门是 LSTM 中最重要的门控，甚至发现只有遗忘门的简化版网络在多个基准数据集上面优于标准 LSTM 网络。其中，<strong>门控循环网络</strong>(Gated Recurrent Unit，简称 GRU)是应用最广泛的 RNN 变种之一，GRU 对 LSTM 做了很多简化，比 LSTM 少一个 Gate，因此，计算效率更高，占用内存也相对较少(这也是一件非常有意思的事情，GRU 比 LSTM 提出的更晚，却更简单，且效率更高)。在实际使用中，GRU 和 LSTM差异不大，因此，GRU最近变得越来越流行。GRU 对 LSTM 做了两个大改动：</p>
+<ul>
+<li>将内部状态向量与输出合并为一个状态：$\boldsymbol{h_t}$；</li>
+<li>将输入门、遗忘门、输出门变为两个门：更新门(Update Gate)和重置门(Reset Gate)。</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/f649cb4bb6b54d9f985d00b7bbdaf6f4.png#pic_center" alt="在这里插入图片描述"></p>
+<h2 id="3-1-复位门"><a href="#3-1-复位门" class="headerlink" title="3.1    复位门"></a>3.1    复位门</h2><p>&emsp;&emsp;复位门用于控制上一个时间戳的状态 $\boldsymbol{h_{t - 1}}$ 进入 GRU 的量。</p>
+<p><img src="https://img-blog.csdnimg.cn/3ea836757e7141239136e880957e18ce.png#pic_center" alt="在这里插入图片描述"></p>
+<p>门控向量 $\boldsymbol{g_r}$ 由当前时间戳输入 $\boldsymbol{x_t}$ 和上一时间戳状态  $\boldsymbol{h_{t-1}}$ 变换得到，关系如下：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{g_r = \sigma(W_r[h_{t-1};x_t]+b_r)}</script><p>其中 $\boldsymbol{W_r}$ 和 $\boldsymbol{b_r}$ 为复位门的参数，可由反向传播算法自动优化，$\boldsymbol{\sigma}$ 为激活函数，一般使用 <strong>Sigmoid</strong> 函数。门口向量 $\boldsymbol{g_r}$ 只控制 $\boldsymbol{h_{t-1}}$ ，而不会控制输入  $\boldsymbol{x_t}$,也就是说，输入会全部进入状态向量中：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{\tilde{h_t} = tanh(W_h[g_rh_{t-1};x_t]+b_h)}</script><p>当 $\boldsymbol{g_r = 0}$ 时，新输入 $\boldsymbol{\tilde{h_t}}$ 全部来自于输入 $\boldsymbol{x_t}$，不接受 $\boldsymbol{h_{t-1}}$，此时相当于复位 $\boldsymbol{h_{t-1}}$。当 $\boldsymbol{g_r \not = 1}$ 时， $\boldsymbol{h_{t-1}}$ 和输入 $\boldsymbol{x_t}$ 共同产生新输入 $\boldsymbol{\tilde{h_t}}$。</p>
+<h2 id="3-2-更新门"><a href="#3-2-更新门" class="headerlink" title="3.2    更新门"></a>3.2    更新门</h2><p>&emsp;&emsp;更新门用控制上一时间戳状态 $\boldsymbol{h_{t-1}}$ 和新输入 $\boldsymbol{\tilde{h_t}}$ 对新状态向量 $\boldsymbol{h_{t}}$ 的影响程度。</p>
+<p><img src="https://img-blog.csdnimg.cn/49308e38251b42589857985c754dcd42.png#pic_center" alt="在这里插入图片描述"></p>
+<p>更新门控向量 $\boldsymbol{g_z}$ 计算如下：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{g_z = \sigma(W_z[h_{t-1};x_t] + b_z)}</script><p>其中 $\boldsymbol{W_z}$ 和 $\boldsymbol{b_z}$ 为更新门的参数，可由反向传播算法自动优化，$\boldsymbol{\sigma}$ 为激活函数，一般使用 <strong>Sigmoid</strong> 函数。$\boldsymbol{g_z}$ 用与控制新输入 $\boldsymbol{\tilde{h_t}}$ 信号， $\boldsymbol{1 - g_z}$ 用于控制状态 $\boldsymbol{h_{t-1}}$ 信号：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{h_t = g_z\tilde{h_t} + (1-g_z)h_{t-1}}</script><p>可以看到，$\boldsymbol{\tilde{h_t}}$ 和 $\boldsymbol{h_{t-1}}$ 对 $\boldsymbol{h_{t}}$ 的更新量处于相互竞争、此消彼长的状态。当更新门 $\boldsymbol{g_z = 0}$ 时，$\boldsymbol{h_{t}}$ 全部来自上一时间戳状态 $\boldsymbol{h_{t-1}}$；当更新门 $\boldsymbol{g_z =1}$ 时，$\boldsymbol{h_{t}}$ 全部来自新输入 $\boldsymbol{\tilde{h_t}}$。</p>
+<h2 id="3-3-小结"><a href="#3-3-小结" class="headerlink" title="3.3    小结"></a>3.3    小结</h2><p>&emsp;&emsp;GRU 的核心公式总结如下：</p>
+<ul>
+<li>复位门：$\boldsymbol{g_r = \sigma(W_r[h_{t-1};x_t]+b_r)}$；</li>
+<li>输入向量更新：$\boldsymbol{\tilde{h_t} = tanh(W_h[g_rh_{t-1};x_t]+b_h)}$；</li>
+<li>更新门：$\boldsymbol{g_z = \sigma(W_z[h_{t-1};x_t] + b_z)}$；</li>
+<li>状态向量更新：$\boldsymbol{h_t = g_z\tilde{h_t} + (1-g_z)h_{t-1}}$。</li>
+</ul>
+<p>能够发现，GRU 和 LSTM 的门控制向量的计算方式都一样，只不过 GRU 比 LSTM 更加简洁一些，只要按照 Cell 里面的结构一步一步进行推理，也是不难的。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 机器学习</a>
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
+              <a href="/tags/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"># 循环神经网络</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%B8%80%EF%BC%89/" rel="prev" title="循环神经网络（一）">
+      <i class="fa fa-chevron-left"></i> 循环神经网络（一）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/" rel="next" title="自监督学习">
+      自监督学习 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-RNN-%E7%9A%84%E7%BC%BA%E7%82%B9"><span class="nav-text">1    RNN 的缺点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-LSTM"><span class="nav-text">2    LSTM</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-%E9%81%97%E5%BF%98%E9%97%A8"><span class="nav-text">2.1    遗忘门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-%E8%BE%93%E5%85%A5%E9%97%A8"><span class="nav-text">2.2    输入门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-%E8%BE%93%E5%87%BA%E9%97%A8"><span class="nav-text">2.3    输出门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-%E5%B0%8F%E7%BB%93"><span class="nav-text">2.4    小结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-GRU"><span class="nav-text">3    GRU</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-%E5%A4%8D%E4%BD%8D%E9%97%A8"><span class="nav-text">3.1    复位门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-%E6%9B%B4%E6%96%B0%E9%97%A8"><span class="nav-text">3.2    更新门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-%E5%B0%8F%E7%BB%93"><span class="nav-text">3.3    小结</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">61k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:41</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

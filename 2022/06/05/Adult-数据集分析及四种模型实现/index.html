@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="一、数据集数据集介绍">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Adult 数据集分析及四种模型实现">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/Adult-%E6%95%B0%E6%8D%AE%E9%9B%86%E5%88%86%E6%9E%90%E5%8F%8A%E5%9B%9B%E7%A7%8D%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="一、数据集数据集介绍">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/f8c920dc998447a291c4f6636dedef53.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/f836e82e69cd4328a60298deab1d6b67.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/c01c6b52f812443e94e7cde5f41d2fcf.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2150770204c94f58a9806104e990b98f.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/ea9b9fcacbad4891b1a0a2027c344ac6.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/cf2d1072b2ad4d4ab88ce9eb8d06c96d.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/0206fafefe1543feb5a484bd6746363a.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/39f0c148721948ad873132c0f3fbf369.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/d002e268383d4b6d8548777969aaeba1.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/3e29faaf457b4a219b78bd23d824042b.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/e9b3bec32ed744faa009e8d4d8aa8b4f.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/3a6aa0d93f3c48199bbf24d418d7ac9e.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/c685ffc9d0bf4dc68c4e5acd0be849f6.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/e6a6b90390384671b67b8b757f0ef48d.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/d2d184c6574a456399f59b6c06b1c35b.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/5f31fb9f77b649888e08068c28dd3185.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/ad5ae5d78b784f469b6716623cec87c4.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/04f1e6373e304a5fa2adcdabeffa9f0e.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/925caff0520045e28c02d84f58e66179.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/140e5b770d7440bd8e4202e0d3ca4b0a.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/15755e762a0147079f488671b3569dee.png">
+<meta property="article:published_time" content="2022-06-05T09:38:07.000Z">
+<meta property="article:modified_time" content="2022-06-05T09:46:54.098Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="数据处理">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="深度学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/f8c920dc998447a291c4f6636dedef53.png">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/Adult-%E6%95%B0%E6%8D%AE%E9%9B%86%E5%88%86%E6%9E%90%E5%8F%8A%E5%9B%9B%E7%A7%8D%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Adult 数据集分析及四种模型实现 | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">19</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">24</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/Adult-%E6%95%B0%E6%8D%AE%E9%9B%86%E5%88%86%E6%9E%90%E5%8F%8A%E5%9B%9B%E7%A7%8D%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Adult 数据集分析及四种模型实现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 17:38:07 / 修改时间：17:46:54" itemprop="dateCreated datePublished" datetime="2022-06-05T17:38:07+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98/" itemprop="url" rel="index"><span itemprop="name">数据挖掘</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/Adult-%E6%95%B0%E6%8D%AE%E9%9B%86%E5%88%86%E6%9E%90%E5%8F%8A%E5%9B%9B%E7%A7%8D%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/Adult-%E6%95%B0%E6%8D%AE%E9%9B%86%E5%88%86%E6%9E%90%E5%8F%8A%E5%9B%9B%E7%A7%8D%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="一、数据集"><a href="#一、数据集" class="headerlink" title="一、数据集"></a>一、数据集</h1><h2 id="数据集介绍"><a href="#数据集介绍" class="headerlink" title="数据集介绍"></a>数据集介绍</h2><p>Adult数据集是一个经典的数据挖掘项目的的数据集，该数据从美国1994年人口普查数据库中抽取而来，因此也称作“人口普查收入”数据集，共包含48842条记录，年收入大于 50k 的占比23.93%年收入小于 50k 的占比76.07%，数据集已经划分为训练数据32561条和测试数据16281条。该数据集类变量为年收入是否超过 50k ，属性变量包括年龄、工种、学历、职业等14类重要信息，其中有8类属于类别离散型变量，另外6类属于数值连续型变量。该数据集是一个分类数据集，用来预测年收入是否超过50k。下载地址<a target="_blank" rel="noopener" href="https://archive.ics.uci.edu/ml/machine-learning-databases/adult/">点这里</a>。<br><img src="https://img-blog.csdnimg.cn/f8c920dc998447a291c4f6636dedef53.png" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/f836e82e69cd4328a60298deab1d6b67.png" alt="在这里插入图片描述"></p>
+<h2 id="数据集预处理及分析"><a href="#数据集预处理及分析" class="headerlink" title="数据集预处理及分析"></a>数据集预处理及分析</h2><p>因为是csv数据，所以主要采用pandas和numpy库来进行预处理，首先数据读取以及查看是否有缺失：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd </span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">df = pd.read_csv(<span class="string">&#x27;adult.csv&#x27;</span>, header = <span class="literal">None</span>, names = [<span class="string">&#x27;age&#x27;</span>, <span class="string">&#x27;workclass&#x27;</span>, <span class="string">&#x27;fnlwgt&#x27;</span>, <span class="string">&#x27;education&#x27;</span>, <span class="string">&#x27;education-num&#x27;</span>, <span class="string">&#x27;marital-status&#x27;</span>, <span class="string">&#x27;occupation&#x27;</span>, <span class="string">&#x27;relationship&#x27;</span>,  <span class="string">&#x27;race&#x27;</span>, <span class="string">&#x27;sex&#x27;</span>, <span class="string">&#x27;capital-gain&#x27;</span>, <span class="string">&#x27;capital-loss&#x27;</span>, <span class="string">&#x27;hours-per-week&#x27;</span>, <span class="string">&#x27;native-country&#x27;</span>, <span class="string">&#x27;income&#x27;</span>])</span><br><span class="line">df.head()</span><br><span class="line">df.info()</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/c01c6b52f812443e94e7cde5f41d2fcf.png" alt="在这里插入图片描述"><br>虽然上面查看数据是没有缺失值的，但其实是因为缺失值的是” ?”，而info()检测的是NaT或者Nan的缺失值。注意问号前面还有空格。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df.apply(<span class="keyword">lambda</span> x : np.<span class="built_in">sum</span>(x == <span class="string">&quot; ?&quot;</span>))</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/2150770204c94f58a9806104e990b98f.png" alt="在这里插入图片描述"><br>分别是居民的工作类型workclass（离散型）缺1836、职业occupation（离散型）缺1843和国籍native-country（离散型)缺583。离散值一般填充众数，但是在此之前要先将缺失值转化成nan或者NaT。同时因为收入可以分为两种类型，则将&gt;50K的替换成1，&lt;=50K的替换成0。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">df.replace(<span class="string">&quot; ?&quot;</span>, pd.NaT, inplace = <span class="literal">True</span>)</span><br><span class="line">df.replace(<span class="string">&quot; &gt;50K&quot;</span>, <span class="number">1</span>, inplace = <span class="literal">True</span>)</span><br><span class="line">df.replace(<span class="string">&quot; &lt;=50K&quot;</span>, <span class="number">0</span>, inplace = <span class="literal">True</span>)</span><br><span class="line">trans = &#123;<span class="string">&#x27;workclass&#x27;</span> : df[<span class="string">&#x27;workclass&#x27;</span>].mode()[<span class="number">0</span>], <span class="string">&#x27;occupation&#x27;</span> : df[<span class="string">&#x27;occupation&#x27;</span>].mode()[<span class="number">0</span>], <span class="string">&#x27;native-country&#x27;</span> : df[<span class="string">&#x27;native-country&#x27;</span>].mode()[<span class="number">0</span>]&#125;</span><br><span class="line">df.fillna(trans, inplace = <span class="literal">True</span>)</span><br><span class="line">df.describe()</span><br></pre></td></tr></table></figure>
+<center>
+
+<p><img src="https://img-blog.csdnimg.cn/ea9b9fcacbad4891b1a0a2027c344ac6.png" alt="在这里插入图片描述"><br>由上表可知，75%以上的人是没有资本收益和资本输出的，所以这两列是属于无关属性的，此外还包括序号列，应删除这三列。所以我们只需关注这三列之外的数据即可。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">df.drop(<span class="string">&#x27;fnlwgt&#x27;</span>, axis = <span class="number">1</span>, inplace = <span class="literal">True</span>)</span><br><span class="line">df.drop(<span class="string">&#x27;capital-gain&#x27;</span>, axis = <span class="number">1</span>, inplace = <span class="literal">True</span>)</span><br><span class="line">df.drop(<span class="string">&#x27;capital-loss&#x27;</span>, axis = <span class="number">1</span>, inplace = <span class="literal">True</span>)</span><br><span class="line">df.head()</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/cf2d1072b2ad4d4ab88ce9eb8d06c96d.png" alt="在这里插入图片描述"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line">plt.scatter(df[<span class="string">&quot;income&quot;</span>], df[<span class="string">&quot;age&quot;</span>])</span><br><span class="line">plt.grid(b = <span class="literal">True</span>, which = <span class="string">&quot;major&quot;</span>, axis = <span class="string">&#x27;y&#x27;</span>)</span><br><span class="line">plt.title(<span class="string">&quot;Income distribution by age (1 is &gt;50K)&quot;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/0206fafefe1543feb5a484bd6746363a.png" alt="在这里插入图片描述"><br>能看出对于中高年龄的人来说收入&gt;50K是比&lt;=50K的少。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">df[<span class="string">&quot;workclass&quot;</span>].value_counts()</span><br><span class="line"></span><br><span class="line">income_0 = df[<span class="string">&quot;workclass&quot;</span>][df[<span class="string">&quot;income&quot;</span>] == <span class="number">0</span>].value_counts()</span><br><span class="line">income_1 = df[<span class="string">&quot;workclass&quot;</span>][df[<span class="string">&quot;income&quot;</span>] == <span class="number">1</span>].value_counts()</span><br><span class="line">df1 = pd.DataFrame(&#123;<span class="string">&quot; &gt;50K&quot;</span> : income_1, <span class="string">&quot; &lt;=50K&quot;</span> : income_0&#125;)</span><br><span class="line">df1.plot(kind = <span class="string">&#x27;bar&#x27;</span>, stacked = <span class="literal">True</span>)</span><br><span class="line">plt.title(<span class="string">&quot;income distribution by Workclass&quot;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&quot;workclass&quot;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&quot;number of person&quot;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/39f0c148721948ad873132c0f3fbf369.png" alt="在这里插入图片描述"><br>观察工作类型对年收入的影响。工作类别为Private的人在两种年收入中都是最多的，但是&gt;50K和&lt;=50K的比例最高的是Self-emp-inc。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">df1 = df[<span class="string">&quot;hours-per-week&quot;</span>].groupby(df[<span class="string">&quot;workclass&quot;</span>]).agg([<span class="string">&#x27;mean&#x27;</span>,<span class="string">&#x27;max&#x27;</span>,<span class="string">&#x27;min&#x27;</span>])</span><br><span class="line">df1.sort_values(by = <span class="string">&#x27;mean&#x27;</span>, ascending = <span class="literal">False</span>)</span><br><span class="line">df1</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/d002e268383d4b6d8548777969aaeba1.png" alt="在这里插入图片描述"><br>用工作类别对每周工作时间进行分组，计算每组的均值，最大、小值，并且按均值进行排序。能看出工作类别是Federal-gov的人平均工作时间最长，但其的高收入占比并不是最高的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">income_0 = df[<span class="string">&quot;education&quot;</span>][df[<span class="string">&quot;income&quot;</span>] == <span class="number">0</span>].value_counts()</span><br><span class="line">income_1 = df[<span class="string">&quot;education&quot;</span>][df[<span class="string">&quot;income&quot;</span>] == <span class="number">1</span>].value_counts()</span><br><span class="line">df1 = pd.DataFrame(&#123;<span class="string">&quot; &gt;50K&quot;</span> : income_1, <span class="string">&quot; &lt;=50K&quot;</span> : income_0&#125;)</span><br><span class="line">df1.plot(kind = <span class="string">&#x27;bar&#x27;</span>, stacked = <span class="literal">True</span>)</span><br><span class="line">plt.title(<span class="string">&quot;income distribution by Workclass&quot;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&quot;education&quot;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&quot;number of person&quot;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/3e29faaf457b4a219b78bd23d824042b.png" alt="在这里插入图片描述"><br>统计受教育程度对年收入的影响，对于程度是Bachelors来说，两种收入的人数是比较接近的，收入比也是最大的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">income_0 = df[<span class="string">&quot;education-num&quot;</span>][df[<span class="string">&quot;income&quot;</span>] == <span class="number">0</span>]</span><br><span class="line">income_1 = df[<span class="string">&quot;education-num&quot;</span>][df[<span class="string">&quot;income&quot;</span>] == <span class="number">1</span>]</span><br><span class="line">df1 = pd.DataFrame(&#123;<span class="string">&#x27; &gt;50K&#x27;</span> : income_1, <span class="string">&#x27; &lt;=50K&#x27;</span> : income_0&#125;)</span><br><span class="line">df1.plot(kind = <span class="string">&#x27;kde&#x27;</span>)</span><br><span class="line">plt.title(<span class="string">&quot;education of income&quot;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&quot;education-num&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/e9b3bec32ed744faa009e8d4d8aa8b4f.png" alt="在这里插入图片描述"><br>统计受教育时间对收入的影响的概率密度图。大约在时间的中值的时段，收入&gt;50K的人是比&lt;=50K的概率要低一些，而在中值偏右的时段是相反的，在其余时段，两种收入大约是处于平衡的状态。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># fig, ([[ax1, ax2, ax3], [ax4, ax5, ax6]]) = plt.subplots(2, 3, figsize=(15, 10))</span></span><br><span class="line">fig = plt.figure(figsize = (<span class="number">15</span>, <span class="number">10</span>))</span><br><span class="line"></span><br><span class="line">ax1 = fig.add_subplot(<span class="number">231</span>) </span><br><span class="line">income_0 = df[df[<span class="string">&quot;race&quot;</span>] == <span class="string">&#x27; White&#x27;</span>][<span class="string">&quot;relationship&quot;</span>][df[<span class="string">&quot;income&quot;</span>] == <span class="number">0</span>].value_counts()</span><br><span class="line">income_1 = df[df[<span class="string">&quot;race&quot;</span>] == <span class="string">&#x27; White&#x27;</span>][<span class="string">&quot;relationship&quot;</span>][df[<span class="string">&quot;income&quot;</span>] == <span class="number">1</span>].value_counts()</span><br><span class="line">df1 = pd.DataFrame(&#123;<span class="string">&#x27; &gt;50K&#x27;</span> : income_1, <span class="string">&#x27; &lt;=50K&#x27;</span> : income_0&#125;)</span><br><span class="line">df1.plot(kind = <span class="string">&#x27;bar&#x27;</span>, ax = ax1)</span><br><span class="line">ax1.set_ylabel(<span class="string">&#x27;number of person&#x27;</span>)</span><br><span class="line">ax1.set_title(<span class="string">&#x27;income of relationship by race_White&#x27;</span>)</span><br><span class="line"></span><br><span class="line">ax2 = fig.add_subplot(<span class="number">232</span>) </span><br><span class="line">income_0 = df[df[<span class="string">&quot;race&quot;</span>] == <span class="string">&#x27; Black&#x27;</span>][<span class="string">&quot;relationship&quot;</span>][df[<span class="string">&quot;income&quot;</span>] == <span class="number">0</span>].value_counts()</span><br><span class="line">income_1 = df[df[<span class="string">&quot;race&quot;</span>] == <span class="string">&#x27; Black&#x27;</span>][<span class="string">&quot;relationship&quot;</span>][df[<span class="string">&quot;income&quot;</span>] == <span class="number">1</span>].value_counts()</span><br><span class="line">df2 = pd.DataFrame(&#123;<span class="string">&#x27; &gt;50K&#x27;</span> : income_1, <span class="string">&#x27; &lt;=50K&#x27;</span> : income_0&#125;)</span><br><span class="line">df2.plot(kind = <span class="string">&#x27;bar&#x27;</span>, ax = ax2)</span><br><span class="line">ax2.set_ylabel(<span class="string">&#x27;number of person&#x27;</span>)</span><br><span class="line">ax2.set_title(<span class="string">&#x27;income of relationship by race_Black&#x27;</span>)</span><br><span class="line"></span><br><span class="line">ax3 = fig.add_subplot(<span class="number">233</span>) </span><br><span class="line">income_0 = df[df[<span class="string">&quot;race&quot;</span>] == <span class="string">&#x27; Asian-Pac-Islander&#x27;</span>][<span class="string">&quot;relationship&quot;</span>][df[<span class="string">&quot;income&quot;</span>] == <span class="number">0</span>].value_counts()</span><br><span class="line">income_1 = df[df[<span class="string">&quot;race&quot;</span>] == <span class="string">&#x27; Asian-Pac-Islander&#x27;</span>][<span class="string">&quot;relationship&quot;</span>][df[<span class="string">&quot;income&quot;</span>] == <span class="number">1</span>].value_counts()</span><br><span class="line">df3 = pd.DataFrame(&#123;<span class="string">&#x27; &gt;50K&#x27;</span> : income_1, <span class="string">&#x27; &lt;=50K&#x27;</span> : income_0&#125;)</span><br><span class="line">df3.plot(kind = <span class="string">&#x27;bar&#x27;</span>, ax = ax3)</span><br><span class="line">ax3.set_ylabel(<span class="string">&#x27;number of person&#x27;</span>)</span><br><span class="line">ax3.set_title(<span class="string">&#x27;income of relationship by race_Asian-Pac-Islander&#x27;</span>)</span><br><span class="line"></span><br><span class="line">ax4 = fig.add_subplot(<span class="number">234</span>) </span><br><span class="line">income_0 = df[df[<span class="string">&quot;race&quot;</span>] == <span class="string">&#x27; Amer-Indian-Eskimo&#x27;</span>][<span class="string">&quot;relationship&quot;</span>][df[<span class="string">&quot;income&quot;</span>] == <span class="number">0</span>].value_counts()</span><br><span class="line">income_1 = df[df[<span class="string">&quot;race&quot;</span>] == <span class="string">&#x27; Amer-Indian-Eskimo&#x27;</span>][<span class="string">&quot;relationship&quot;</span>][df[<span class="string">&quot;income&quot;</span>] == <span class="number">1</span>].value_counts()</span><br><span class="line">df4 = pd.DataFrame(&#123;<span class="string">&#x27; &gt;50K&#x27;</span> : income_1, <span class="string">&#x27; &lt;=50K&#x27;</span> : income_0&#125;)</span><br><span class="line">df4.plot(kind = <span class="string">&#x27;bar&#x27;</span>, ax = ax4)</span><br><span class="line">ax4.set_ylabel(<span class="string">&#x27;number of person&#x27;</span>)</span><br><span class="line">ax4.set_title(<span class="string">&#x27;income of relationship by race_Amer-Indian-Eskimo&#x27;</span>)</span><br><span class="line"></span><br><span class="line">ax5 = fig.add_subplot(<span class="number">235</span>) </span><br><span class="line">income_0 = df[df[<span class="string">&quot;race&quot;</span>] == <span class="string">&#x27; Other&#x27;</span>][<span class="string">&quot;relationship&quot;</span>][df[<span class="string">&quot;income&quot;</span>] == <span class="number">0</span>].value_counts()</span><br><span class="line">income_1 = df[df[<span class="string">&quot;race&quot;</span>] == <span class="string">&#x27; Other&#x27;</span>][<span class="string">&quot;relationship&quot;</span>][df[<span class="string">&quot;income&quot;</span>] == <span class="number">1</span>].value_counts()</span><br><span class="line">df5 = pd.DataFrame(&#123;<span class="string">&#x27; &gt;50K&#x27;</span> : income_1, <span class="string">&#x27; &lt;=50K&#x27;</span> : income_0&#125;)</span><br><span class="line">df5.plot(kind = <span class="string">&#x27;bar&#x27;</span>, ax = ax5)</span><br><span class="line">ax5.set_ylabel(<span class="string">&#x27;number of person&#x27;</span>)</span><br><span class="line">ax5.set_title(<span class="string">&#x27;income of relationship by race_Other&#x27;</span>)</span><br><span class="line"></span><br><span class="line">plt.tight_layout()</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/3a6aa0d93f3c48199bbf24d418d7ac9e.png" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/c685ffc9d0bf4dc68c4e5acd0be849f6.png" alt="在这里插入图片描述"><br>这里主要是做了不同种族扮演的社会角色的收入状况。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># fig, ([[ax1, ax2, ax3], [ax4, ax5, ax6]]) = plt.subplots(2, 3, figsize=(10, 5))</span></span><br><span class="line">fig = plt.figure()</span><br><span class="line"></span><br><span class="line">ax1 = fig.add_subplot(<span class="number">121</span>) </span><br><span class="line">income_0 = df[df[<span class="string">&quot;sex&quot;</span>] == <span class="string">&#x27; Male&#x27;</span>][<span class="string">&quot;occupation&quot;</span>][df[<span class="string">&quot;income&quot;</span>] == <span class="number">0</span>].value_counts()</span><br><span class="line">income_1 = df[df[<span class="string">&quot;sex&quot;</span>] == <span class="string">&#x27; Male&#x27;</span>][<span class="string">&quot;occupation&quot;</span>][df[<span class="string">&quot;income&quot;</span>] == <span class="number">1</span>].value_counts()</span><br><span class="line">df1 = pd.DataFrame(&#123;<span class="string">&#x27; &gt;50K&#x27;</span> : income_1, <span class="string">&#x27; &lt;=50K&#x27;</span> : income_0&#125;)</span><br><span class="line">df1.plot(kind = <span class="string">&#x27;bar&#x27;</span>, ax = ax1)</span><br><span class="line">ax1.set_ylabel(<span class="string">&#x27;number of person&#x27;</span>)</span><br><span class="line">ax1.set_title(<span class="string">&#x27;income of occupation by sex_Male&#x27;</span>)</span><br><span class="line"></span><br><span class="line">ax2 = fig.add_subplot(<span class="number">122</span>) </span><br><span class="line">income_0 = df[df[<span class="string">&quot;sex&quot;</span>] == <span class="string">&#x27; Female&#x27;</span>][<span class="string">&quot;occupation&quot;</span>][df[<span class="string">&quot;income&quot;</span>] == <span class="number">0</span>].value_counts()</span><br><span class="line">income_1 = df[df[<span class="string">&quot;sex&quot;</span>] == <span class="string">&#x27; Female&#x27;</span>][<span class="string">&quot;occupation&quot;</span>][df[<span class="string">&quot;income&quot;</span>] == <span class="number">1</span>].value_counts()</span><br><span class="line">df2 = pd.DataFrame(&#123;<span class="string">&#x27; &gt;50K&#x27;</span> : income_1, <span class="string">&#x27; &lt;=50K&#x27;</span> : income_0&#125;)</span><br><span class="line">df2.plot(kind = <span class="string">&#x27;bar&#x27;</span>, ax = ax2)</span><br><span class="line">ax2.set_ylabel(<span class="string">&#x27;number of person&#x27;</span>)</span><br><span class="line">ax2.set_title(<span class="string">&#x27;income of occupation by sex_Female&#x27;</span>)</span><br><span class="line"></span><br><span class="line">plt.tight_layout()</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/e6a6b90390384671b67b8b757f0ef48d.png" alt="在这里插入图片描述"><br>这里主要是做了不同性别的职业的收入状况。在男性中，职业为Exec-managerial的人中，收入&gt;50K的人要比&lt;=50K的人要多，而这种情况在女性中刚好相反。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">df_object_col = [col <span class="keyword">for</span> col <span class="keyword">in</span> df.columns <span class="keyword">if</span> df[col].dtype.name == <span class="string">&#x27;object&#x27;</span>]</span><br><span class="line">df_int_col = [col <span class="keyword">for</span> col <span class="keyword">in</span> df.columns <span class="keyword">if</span> df[col].dtype.name != <span class="string">&#x27;object&#x27;</span> <span class="keyword">and</span> col != <span class="string">&#x27;income&#x27;</span>]</span><br><span class="line">target = df[<span class="string">&quot;income&quot;</span>]</span><br><span class="line">dataset = pd.concat([df[df_int_col], pd.get_dummies(df[df_object_col])], axis = <span class="number">1</span>)</span><br><span class="line">dataset.head()</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/d2d184c6574a456399f59b6c06b1c35b.png" alt="在这里插入图片描述"><br>先对数据类型进行统计，对非数值型的数据进行独热编码，再将两者进行拼接。最后将收入与其他数据分开分别作为标签和训练集或者测试集。</p>
+<h1 id="二、四种模型对上述数据集进行预测"><a href="#二、四种模型对上述数据集进行预测" class="headerlink" title="二、四种模型对上述数据集进行预测"></a>二、四种模型对上述数据集进行预测</h1><h2 id="深度学习"><a href="#深度学习" class="headerlink" title="深度学习"></a>深度学习</h2><p><em>导入相关包</em></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd </span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> os </span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">import</span> csv</span><br><span class="line"><span class="keyword">from</span> torch.utils.tensorboard <span class="keyword">import</span> SummaryWriter</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> Dataset, DataLoader</span><br></pre></td></tr></table></figure>
+<p>数据预处理，要注意的是训练集和测试集进行独热编码之后可能形状不一样，所以要将他们进行配对；再者是因为我们要给缺失某列的数据进行增加全为零的列，奇怪的是当从DataFrame类型转到Numpy类型时全为零的列会全部变成nan，所以还要重新nan的列转成零。否则在预测的过程网络的输出会全部为nan。本次实验将训练集进行2 : 8的数据划分，2份作为验证集。且要对数据集进行归一化，效果会好很多。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">add_missing_columns</span>(<span class="params">d, columns</span>) :</span><br><span class="line">    missing_col = <span class="built_in">set</span>(columns) - <span class="built_in">set</span>(d.columns)</span><br><span class="line">    <span class="keyword">for</span> col <span class="keyword">in</span> missing_col :</span><br><span class="line">        d[col] = <span class="number">0</span></span><br><span class="line">        </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fix_columns</span>(<span class="params">d, columns</span>):  </span><br><span class="line">    add_missing_columns(d, columns)</span><br><span class="line">    <span class="keyword">assert</span>(<span class="built_in">set</span>(columns) - <span class="built_in">set</span>(d.columns) == <span class="built_in">set</span>())</span><br><span class="line">    d = d[columns]</span><br><span class="line">    <span class="keyword">return</span> d</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">data_process</span>(<span class="params">df, model</span>) :</span><br><span class="line">    df.replace(<span class="string">&quot; ?&quot;</span>, pd.NaT, inplace = <span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">if</span> model == <span class="string">&#x27;train&#x27;</span> :</span><br><span class="line">        df.replace(<span class="string">&quot; &gt;50K&quot;</span>, <span class="number">1</span>, inplace = <span class="literal">True</span>)</span><br><span class="line">        df.replace(<span class="string">&quot; &lt;=50K&quot;</span>, <span class="number">0</span>, inplace = <span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">if</span> model == <span class="string">&#x27;test&#x27;</span>:</span><br><span class="line">        df.replace(<span class="string">&quot; &gt;50K.&quot;</span>, <span class="number">1</span>, inplace = <span class="literal">True</span>)</span><br><span class="line">        df.replace(<span class="string">&quot; &lt;=50K.&quot;</span>, <span class="number">0</span>, inplace = <span class="literal">True</span>)</span><br><span class="line">        </span><br><span class="line">    trans = &#123;<span class="string">&#x27;workclass&#x27;</span> : df[<span class="string">&#x27;workclass&#x27;</span>].mode()[<span class="number">0</span>], <span class="string">&#x27;occupation&#x27;</span> : df[<span class="string">&#x27;occupation&#x27;</span>].mode()[<span class="number">0</span>], <span class="string">&#x27;native-country&#x27;</span> : df[<span class="string">&#x27;native-country&#x27;</span>].mode()[<span class="number">0</span>]&#125;</span><br><span class="line">    df.fillna(trans, inplace = <span class="literal">True</span>)</span><br><span class="line">    df.drop(<span class="string">&#x27;fnlwgt&#x27;</span>, axis = <span class="number">1</span>, inplace = <span class="literal">True</span>)</span><br><span class="line">    df.drop(<span class="string">&#x27;capital-gain&#x27;</span>, axis = <span class="number">1</span>, inplace = <span class="literal">True</span>)</span><br><span class="line">    df.drop(<span class="string">&#x27;capital-loss&#x27;</span>, axis = <span class="number">1</span>, inplace = <span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">    df_object_col = [col <span class="keyword">for</span> col <span class="keyword">in</span> df.columns <span class="keyword">if</span> df[col].dtype.name == <span class="string">&#x27;object&#x27;</span>]</span><br><span class="line">    df_int_col = [col <span class="keyword">for</span> col <span class="keyword">in</span> df.columns <span class="keyword">if</span> df[col].dtype.name != <span class="string">&#x27;object&#x27;</span> <span class="keyword">and</span> col != <span class="string">&#x27;income&#x27;</span>]</span><br><span class="line">    target = df[<span class="string">&quot;income&quot;</span>]</span><br><span class="line">    dataset = pd.concat([df[df_int_col], pd.get_dummies(df[df_object_col])], axis = <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> target, dataset</span><br><span class="line">        </span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Adult_data</span>(<span class="title class_ inherited__">Dataset</span>) :</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, model</span>) :</span><br><span class="line">        <span class="built_in">super</span>(Adult_data, self).__init__()</span><br><span class="line">        self.model = model</span><br><span class="line">        </span><br><span class="line">        df_train = pd.read_csv(<span class="string">&#x27;adult.csv&#x27;</span>, header = <span class="literal">None</span>, names = [<span class="string">&#x27;age&#x27;</span>, <span class="string">&#x27;workclass&#x27;</span>, <span class="string">&#x27;fnlwgt&#x27;</span>, <span class="string">&#x27;education&#x27;</span>, <span class="string">&#x27;education-num&#x27;</span>, <span class="string">&#x27;marital-status&#x27;</span>, <span class="string">&#x27;occupation&#x27;</span>, <span class="string">&#x27;relationship&#x27;</span>,  <span class="string">&#x27;race&#x27;</span>, <span class="string">&#x27;sex&#x27;</span>, <span class="string">&#x27;capital-gain&#x27;</span>, <span class="string">&#x27;capital-loss&#x27;</span>, <span class="string">&#x27;hours-per-week&#x27;</span>, <span class="string">&#x27;native-country&#x27;</span>, <span class="string">&#x27;income&#x27;</span>])</span><br><span class="line">        df_test = pd.read_csv(<span class="string">&#x27;data.test&#x27;</span>, header = <span class="literal">None</span>, skiprows = <span class="number">1</span>, names = [<span class="string">&#x27;age&#x27;</span>, <span class="string">&#x27;workclass&#x27;</span>, <span class="string">&#x27;fnlwgt&#x27;</span>, <span class="string">&#x27;education&#x27;</span>, <span class="string">&#x27;education-num&#x27;</span>, <span class="string">&#x27;marital-status&#x27;</span>, <span class="string">&#x27;occupation&#x27;</span>, <span class="string">&#x27;relationship&#x27;</span>,  <span class="string">&#x27;race&#x27;</span>, <span class="string">&#x27;sex&#x27;</span>, <span class="string">&#x27;capital-gain&#x27;</span>, <span class="string">&#x27;capital-loss&#x27;</span>, <span class="string">&#x27;hours-per-week&#x27;</span>, <span class="string">&#x27;native-country&#x27;</span>, <span class="string">&#x27;income&#x27;</span>])</span><br><span class="line">        </span><br><span class="line">        train_target, train_dataset = data_process(df_train, <span class="string">&#x27;train&#x27;</span>)</span><br><span class="line">        test_target, test_dataset = data_process(df_test, <span class="string">&#x27;test&#x27;</span>)</span><br><span class="line">        </span><br><span class="line"><span class="comment">#         进行独热编码对齐</span></span><br><span class="line">        test_dataset = fix_columns(test_dataset, train_dataset.columns)</span><br><span class="line"><span class="comment">#         print(df[&quot;income&quot;])</span></span><br><span class="line">        train_dataset = train_dataset.apply(<span class="keyword">lambda</span> x : (x - x.mean()) / x.std())</span><br><span class="line">        test_dataset = test_dataset.apply(<span class="keyword">lambda</span> x : (x - x.mean()) / x.std())</span><br><span class="line"><span class="comment">#         print(train_dataset[&#x27;native-country_ Holand-Netherlands&#x27;])</span></span><br><span class="line">        </span><br><span class="line">        train_target, test_target = np.array(train_target), np.array(test_target)</span><br><span class="line">        train_dataset, test_dataset = np.array(train_dataset, dtype = np.float32), np.array(test_dataset, dtype = np.float32)</span><br><span class="line">        <span class="keyword">if</span> model == <span class="string">&#x27;test&#x27;</span> :</span><br><span class="line">            isnan = np.isnan(test_dataset)</span><br><span class="line">            test_dataset[np.where(isnan)] = <span class="number">0.0</span></span><br><span class="line"><span class="comment">#             print(test_dataset[ : , 75])</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> model == <span class="string">&#x27;test&#x27;</span>:</span><br><span class="line">            self.target = torch.tensor(test_target, dtype = torch.int64)</span><br><span class="line">            self.dataset = torch.FloatTensor(test_dataset)</span><br><span class="line">        <span class="keyword">else</span> :</span><br><span class="line"><span class="comment">#           前百分之八十的数据作为训练集，其余作为验证集</span></span><br><span class="line">            <span class="keyword">if</span> model == <span class="string">&#x27;train&#x27;</span> : </span><br><span class="line">                self.target = torch.tensor(train_target, dtype = torch.int64)[ : <span class="built_in">int</span>(<span class="built_in">len</span>(train_dataset) * <span class="number">0.8</span>)]</span><br><span class="line">                self.dataset = torch.FloatTensor(train_dataset)[ : <span class="built_in">int</span>(<span class="built_in">len</span>(train_target) * <span class="number">0.8</span>)]</span><br><span class="line">            <span class="keyword">else</span> :</span><br><span class="line">                self.target = torch.tensor(train_target, dtype = torch.int64)[<span class="built_in">int</span>(<span class="built_in">len</span>(train_target) * <span class="number">0.8</span>) : ] </span><br><span class="line">                self.dataset = torch.FloatTensor(train_dataset)[<span class="built_in">int</span>(<span class="built_in">len</span>(train_dataset) * <span class="number">0.8</span>) : ]</span><br><span class="line">        <span class="built_in">print</span>(self.dataset.shape, self.target.dtype)   </span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, item</span>) :</span><br><span class="line">        <span class="keyword">return</span> self.dataset[item], self.target[item]</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>) :</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">len</span>(self.dataset)</span><br><span class="line">    </span><br><span class="line">train_dataset = Adult_data(model = <span class="string">&#x27;train&#x27;</span>)</span><br><span class="line">val_dataset = Adult_data(model = <span class="string">&#x27;val&#x27;</span>)</span><br><span class="line">test_dataset = Adult_data(model = <span class="string">&#x27;test&#x27;</span>)</span><br><span class="line"></span><br><span class="line">train_loader = DataLoader(train_dataset, batch_size = <span class="number">64</span>, shuffle = <span class="literal">True</span>, drop_last = <span class="literal">False</span>)</span><br><span class="line">val_loader = DataLoader(val_dataset, batch_size = <span class="number">64</span>, shuffle = <span class="literal">False</span>, drop_last = <span class="literal">False</span>)</span><br><span class="line">test_loader = DataLoader(test_dataset, batch_size = <span class="number">64</span>, shuffle = <span class="literal">False</span>, drop_last = <span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+<p>构建网络，因为是简单的二分类，这里使用了两层感知机网络，后面做对结果进行softmax归一化。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Adult_Model</span>(nn.Module) :</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>) :</span><br><span class="line">        <span class="built_in">super</span>(Adult_Model, self).__init__()</span><br><span class="line">        self.net = nn.Sequential(nn.Linear(<span class="number">102</span>, <span class="number">64</span>), </span><br><span class="line">                                nn.ReLU(), </span><br><span class="line">                                nn.Linear(<span class="number">64</span>, <span class="number">32</span>), </span><br><span class="line">                                nn.ReLU(),</span><br><span class="line">                                nn.Linear(<span class="number">32</span>, <span class="number">2</span>)</span><br><span class="line">                                )</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>) :</span><br><span class="line">        out = self.net(x) </span><br><span class="line"><span class="comment">#         print(out)</span></span><br><span class="line">        <span class="keyword">return</span> F.softmax(out)</span><br></pre></td></tr></table></figure>
+<p>训练及验证，每经过一个epoch，就进行一次损失比较，当val_loss更小时，保存最好模型，直至迭代结束。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">device = torch.device(<span class="string">&#x27;cuda&#x27;</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&quot;cpu&quot;</span>)</span><br><span class="line">model = Adult_Model().to(device)</span><br><span class="line">optimizer = optim.SGD(model.parameters(), lr = <span class="number">0.001</span>, momentum = <span class="number">0.9</span>)</span><br><span class="line">criterion = nn.CrossEntropyLoss()</span><br><span class="line">max_epoch = <span class="number">30</span></span><br><span class="line">classes = [<span class="string">&#x27; &lt;=50K&#x27;</span>, <span class="string">&#x27; &gt;50K&#x27;</span>]</span><br><span class="line">mse_loss = <span class="number">1000000</span></span><br><span class="line">os.makedirs(<span class="string">&#x27;MyModels&#x27;</span>, exist_ok = <span class="literal">True</span>)</span><br><span class="line">writer = SummaryWriter(log_dir = <span class="string">&#x27;logs&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(max_epoch) :</span><br><span class="line">    </span><br><span class="line">    train_loss = <span class="number">0.0</span></span><br><span class="line">    train_acc = <span class="number">0.0</span></span><br><span class="line">    model.train()</span><br><span class="line">    <span class="keyword">for</span> x, label <span class="keyword">in</span> train_loader :</span><br><span class="line">        x, label = x.to(device), label.to(device)</span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        </span><br><span class="line">        out = model(x)</span><br><span class="line">        loss = criterion(out, label)</span><br><span class="line">        train_loss += loss.item()</span><br><span class="line">        loss.backward()</span><br><span class="line">        </span><br><span class="line">        _, pred = torch.<span class="built_in">max</span>(out, <span class="number">1</span>)</span><br><span class="line"><span class="comment">#         print(pred)</span></span><br><span class="line">        num_correct = (pred == label).<span class="built_in">sum</span>().item()</span><br><span class="line">        acc = num_correct / x.shape[<span class="number">0</span>]</span><br><span class="line">        train_acc += acc</span><br><span class="line">        optimizer.step()</span><br><span class="line">        </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;epoch : <span class="subst">&#123;epoch + <span class="number">1</span>&#125;</span>, train_loss : <span class="subst">&#123;train_loss / <span class="built_in">len</span>(train_loader.dataset)&#125;</span>, train_acc : <span class="subst">&#123;train_acc / <span class="built_in">len</span>(train_loader)&#125;</span>&#x27;</span>)</span><br><span class="line">    writer.add_scalar(<span class="string">&#x27;train_loss&#x27;</span>, train_loss / <span class="built_in">len</span>(train_loader.dataset), epoch)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">with</span> torch.no_grad() :</span><br><span class="line">        total_loss = []</span><br><span class="line">        model.<span class="built_in">eval</span>()</span><br><span class="line">        <span class="keyword">for</span> x, label <span class="keyword">in</span> val_loader :</span><br><span class="line">            x, label = x.to(device), label.to(device)</span><br><span class="line">            out = model(x)</span><br><span class="line">            loss = criterion(out, label)</span><br><span class="line">            total_loss.append(loss.item())</span><br><span class="line">        </span><br><span class="line">        val_loss = <span class="built_in">sum</span>(total_loss) / <span class="built_in">len</span>(total_loss)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> val_loss &lt; mse_loss :</span><br><span class="line">        mse_loss = val_loss </span><br><span class="line">        torch.save(model.state_dict(), <span class="string">&#x27;MyModels/Deeplearning_Model.pth&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">del</span> model</span><br></pre></td></tr></table></figure>
+<p>下载在训练过程保存的最好模型进行预测并保存结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">best_model = Adult_Model().to(device)</span><br><span class="line">ckpt = torch.load(<span class="string">&#x27;MyModels/Deeplearning_Model.pth&#x27;</span>, map_location=<span class="string">&#x27;cpu&#x27;</span>)</span><br><span class="line">best_model.load_state_dict(ckpt)</span><br><span class="line"></span><br><span class="line">test_loss = <span class="number">0.0</span></span><br><span class="line">test_acc = <span class="number">0.0</span></span><br><span class="line">best_model.<span class="built_in">eval</span>()</span><br><span class="line">result = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> x, label <span class="keyword">in</span> test_loader :</span><br><span class="line">    x, label = x.to(device), label.to(device)</span><br><span class="line">    </span><br><span class="line">    out = best_model(x)</span><br><span class="line">    loss = criterion(out, label)</span><br><span class="line">    test_loss += loss.item()</span><br><span class="line">    _, pred = torch.<span class="built_in">max</span>(out, dim = <span class="number">1</span>)</span><br><span class="line">    result.append(pred.detach())</span><br><span class="line">    num_correct = (pred == label).<span class="built_in">sum</span>().item()</span><br><span class="line">    acc = num_correct / x.shape[<span class="number">0</span>]</span><br><span class="line">    test_acc += acc</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;test_loss : <span class="subst">&#123;test_loss / <span class="built_in">len</span>(test_loader.dataset)&#125;</span>, test_acc : <span class="subst">&#123;test_acc / <span class="built_in">len</span>(test_loader)&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line">result = torch.cat(result, dim = <span class="number">0</span>).cpu().numpy()</span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;Predict/Deeplearing.csv&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, newline = <span class="string">&#x27;&#x27;</span>) <span class="keyword">as</span> file :</span><br><span class="line">    writer = csv.writer(file)</span><br><span class="line">    writer.writerow([<span class="string">&#x27;id&#x27;</span>, <span class="string">&#x27;pred_result&#x27;</span>])</span><br><span class="line">    <span class="keyword">for</span> i, pred <span class="keyword">in</span> <span class="built_in">enumerate</span>(result) :</span><br><span class="line">        writer.writerow([i, classes[pred]])</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/5f31fb9f77b649888e08068c28dd3185.png" alt="在这里插入图片描述"><br>正确率达到0.834还是蛮不错的。</p>
+<h2 id="决策树"><a href="#决策树" class="headerlink" title="决策树"></a>决策树</h2><p>数据处理，跟深度学习的过程基本一致，只是返回值不一样而已。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd </span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> csv</span><br><span class="line"><span class="keyword">import</span> graphviz</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> accuracy_score</span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> GridSearchCV</span><br><span class="line"><span class="keyword">from</span> sklearn.tree <span class="keyword">import</span> DecisionTreeClassifier, export_graphviz</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add_missing_columns</span>(<span class="params">d, columns</span>) :</span><br><span class="line">    missing_col = <span class="built_in">set</span>(columns) - <span class="built_in">set</span>(d.columns)</span><br><span class="line">    <span class="keyword">for</span> col <span class="keyword">in</span> missing_col :</span><br><span class="line">        d[col] = <span class="number">0</span></span><br><span class="line">        </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fix_columns</span>(<span class="params">d, columns</span>):  </span><br><span class="line">    add_missing_columns(d, columns)</span><br><span class="line">    <span class="keyword">assert</span>(<span class="built_in">set</span>(columns) - <span class="built_in">set</span>(d.columns) == <span class="built_in">set</span>())</span><br><span class="line">    d = d[columns]</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> d</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">data_process</span>(<span class="params">df, model</span>) :</span><br><span class="line">    df.replace(<span class="string">&quot; ?&quot;</span>, pd.NaT, inplace = <span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">if</span> model == <span class="string">&#x27;train&#x27;</span> :</span><br><span class="line">        df.replace(<span class="string">&quot; &gt;50K&quot;</span>, <span class="number">1</span>, inplace = <span class="literal">True</span>)</span><br><span class="line">        df.replace(<span class="string">&quot; &lt;=50K&quot;</span>, <span class="number">0</span>, inplace = <span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">if</span> model == <span class="string">&#x27;test&#x27;</span>:</span><br><span class="line">        df.replace(<span class="string">&quot; &gt;50K.&quot;</span>, <span class="number">1</span>, inplace = <span class="literal">True</span>)</span><br><span class="line">        df.replace(<span class="string">&quot; &lt;=50K.&quot;</span>, <span class="number">0</span>, inplace = <span class="literal">True</span>)</span><br><span class="line">    trans = &#123;<span class="string">&#x27;workclass&#x27;</span> : df[<span class="string">&#x27;workclass&#x27;</span>].mode()[<span class="number">0</span>], <span class="string">&#x27;occupation&#x27;</span> : df[<span class="string">&#x27;occupation&#x27;</span>].mode()[<span class="number">0</span>], <span class="string">&#x27;native-country&#x27;</span> : df[<span class="string">&#x27;native-country&#x27;</span>].mode()[<span class="number">0</span>]&#125;</span><br><span class="line">    df.fillna(trans, inplace = <span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">    df.drop(<span class="string">&#x27;fnlwgt&#x27;</span>, axis = <span class="number">1</span>, inplace = <span class="literal">True</span>)</span><br><span class="line">    df.drop(<span class="string">&#x27;capital-gain&#x27;</span>, axis = <span class="number">1</span>, inplace = <span class="literal">True</span>)</span><br><span class="line">    df.drop(<span class="string">&#x27;capital-loss&#x27;</span>, axis = <span class="number">1</span>, inplace = <span class="literal">True</span>)</span><br><span class="line"><span class="comment">#         print(df)</span></span><br><span class="line"></span><br><span class="line">    df_object_col = [col <span class="keyword">for</span> col <span class="keyword">in</span> df.columns <span class="keyword">if</span> df[col].dtype.name == <span class="string">&#x27;object&#x27;</span>]</span><br><span class="line">    df_int_col = [col <span class="keyword">for</span> col <span class="keyword">in</span> df.columns <span class="keyword">if</span> df[col].dtype.name != <span class="string">&#x27;object&#x27;</span> <span class="keyword">and</span> col != <span class="string">&#x27;income&#x27;</span>]</span><br><span class="line">    target = df[<span class="string">&quot;income&quot;</span>]</span><br><span class="line">    dataset = pd.concat([df[df_int_col], pd.get_dummies(df[df_object_col])], axis = <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> target, dataset</span><br><span class="line">        </span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Adult_data</span>() :</span><br><span class="line"></span><br><span class="line">    df_train = pd.read_csv(<span class="string">&#x27;adult.csv&#x27;</span>, header = <span class="literal">None</span>, names = [<span class="string">&#x27;age&#x27;</span>, <span class="string">&#x27;workclass&#x27;</span>, <span class="string">&#x27;fnlwgt&#x27;</span>, <span class="string">&#x27;education&#x27;</span>, <span class="string">&#x27;education-num&#x27;</span>, <span class="string">&#x27;marital-status&#x27;</span>, <span class="string">&#x27;occupation&#x27;</span>, <span class="string">&#x27;relationship&#x27;</span>,  <span class="string">&#x27;race&#x27;</span>, <span class="string">&#x27;sex&#x27;</span>, <span class="string">&#x27;capital-gain&#x27;</span>, <span class="string">&#x27;capital-loss&#x27;</span>, <span class="string">&#x27;hours-per-week&#x27;</span>, <span class="string">&#x27;native-country&#x27;</span>, <span class="string">&#x27;income&#x27;</span>])</span><br><span class="line">    df_test = pd.read_csv(<span class="string">&#x27;data.test&#x27;</span>, header = <span class="literal">None</span>, skiprows = <span class="number">1</span>, names = [<span class="string">&#x27;age&#x27;</span>, <span class="string">&#x27;workclass&#x27;</span>, <span class="string">&#x27;fnlwgt&#x27;</span>, <span class="string">&#x27;education&#x27;</span>, <span class="string">&#x27;education-num&#x27;</span>, <span class="string">&#x27;marital-status&#x27;</span>, <span class="string">&#x27;occupation&#x27;</span>, <span class="string">&#x27;relationship&#x27;</span>,  <span class="string">&#x27;race&#x27;</span>, <span class="string">&#x27;sex&#x27;</span>, <span class="string">&#x27;capital-gain&#x27;</span>, <span class="string">&#x27;capital-loss&#x27;</span>, <span class="string">&#x27;hours-per-week&#x27;</span>, <span class="string">&#x27;native-country&#x27;</span>, <span class="string">&#x27;income&#x27;</span>])</span><br><span class="line"></span><br><span class="line">    train_target, train_dataset = data_process(df_train, <span class="string">&#x27;train&#x27;</span>)</span><br><span class="line">    test_target, test_dataset = data_process(df_test, <span class="string">&#x27;test&#x27;</span>)</span><br><span class="line"><span class="comment">#         进行独热编码对齐</span></span><br><span class="line">    test_dataset = fix_columns(test_dataset, train_dataset.columns)</span><br><span class="line">    columns = train_dataset.columns</span><br><span class="line"><span class="comment">#         print(df[&quot;income&quot;])</span></span><br><span class="line"></span><br><span class="line">    train_target, test_target = np.array(train_target), np.array(test_target)</span><br><span class="line">    train_dataset, test_dataset = np.array(train_dataset), np.array(test_dataset)</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">return</span> train_dataset, train_target, test_dataset, test_target, columns</span><br><span class="line"></span><br><span class="line">train_dataset, train_target, test_dataset, test_target, columns = Adult_data()</span><br><span class="line"><span class="built_in">print</span>(train_dataset.shape, test_dataset.shape, train_target.shape, test_target.shape)</span><br></pre></td></tr></table></figure>
+<p>GridSearchCV 类可以用来对分类器的指定参数值进行详尽搜索，这里搜索最佳的决策树的深度。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># params = &#123;&#x27;max_depth&#x27; : range(1, 20)&#125;</span></span><br><span class="line"><span class="comment"># best_clf = GridSearchCV(DecisionTreeClassifier(criterion = &#x27;entropy&#x27;, random_state = 20), param_grid = params)</span></span><br><span class="line"><span class="comment"># best_clf = best_clf.fit(train_dataset, train_target)</span></span><br><span class="line"><span class="comment"># print(best_clf.best_params_)</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/ad5ae5d78b784f469b6716623cec87c4.png" alt="在这里插入图片描述"><br>用决策数进行分类，采用‘熵’作为决策基准，决策深度由上步骤得到8，分裂一个节点所需的样本数至少设为5，并保存预测结果。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># clf = DecisionTreeClassifier() score:0.7836742214851667</span></span><br><span class="line">classes = [<span class="string">&#x27; &lt;=50K&#x27;</span>, <span class="string">&#x27; &gt;50K&#x27;</span>]</span><br><span class="line">clf = DecisionTreeClassifier(criterion = <span class="string">&#x27;entropy&#x27;</span>, max_depth = <span class="number">8</span>, min_samples_split = <span class="number">5</span>)</span><br><span class="line">clf = clf.fit(train_dataset, train_target)</span><br><span class="line">pred = clf.predict(test_dataset)</span><br><span class="line"><span class="built_in">print</span>(pred)</span><br><span class="line">score = clf.score(test_dataset, test_target)</span><br><span class="line"><span class="comment"># pred = clf.predict_proba(test_dataset)</span></span><br><span class="line"><span class="built_in">print</span>(score)</span><br><span class="line"><span class="comment"># print(np.argmax(pred, axis = 1))</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;Predict/DecisionTree.csv&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, newline = <span class="string">&#x27;&#x27;</span>) <span class="keyword">as</span> file :</span><br><span class="line">    writer = csv.writer(file)</span><br><span class="line">    writer.writerow([<span class="string">&#x27;id&#x27;</span>, <span class="string">&#x27;result_pred&#x27;</span>])</span><br><span class="line">    <span class="keyword">for</span> i, result <span class="keyword">in</span> <span class="built_in">enumerate</span>(pred) :</span><br><span class="line">        writer.writerow([i, classes[result]])</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/04f1e6373e304a5fa2adcdabeffa9f0e.png" alt="在这里插入图片描述"><br>结果有0.835跟深度学习差不多，可视化决策树结构：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dot_data = export_graphviz(clf, out_file = <span class="literal">None</span>, feature_names = columns, class_names = classes, filled = <span class="literal">True</span>, rounded = <span class="literal">True</span>)</span><br><span class="line">graph = graphviz.Source(dot_data)</span><br><span class="line">graph</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/925caff0520045e28c02d84f58e66179.png" alt="在这里插入图片描述"></p>
+<h2 id="支持向量机"><a href="#支持向量机" class="headerlink" title="支持向量机"></a>支持向量机</h2><p>因数据处理方式与决策树相同，这里不再张贴，只粘贴模型部分。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> svm</span><br><span class="line">classes = [<span class="string">&#x27; &lt;=50K&#x27;</span>, <span class="string">&#x27; &gt;50K&#x27;</span>]</span><br><span class="line">clf = svm.SVC(kernel = <span class="string">&#x27;linear&#x27;</span>)</span><br><span class="line">clf = clf.fit(train_dataset, train_target)</span><br><span class="line">pred = clf.predict(test_dataset)</span><br><span class="line">score = clf.score(test_dataset, test_target)</span><br><span class="line"><span class="built_in">print</span>(score)</span><br><span class="line"><span class="built_in">print</span>(pred)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;Predict/SupportVectorMachine.csv&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, newline = <span class="string">&#x27;&#x27;</span>) <span class="keyword">as</span> file :</span><br><span class="line">    writer = csv.writer(file)</span><br><span class="line">    writer.writerow([<span class="string">&#x27;id&#x27;</span>, <span class="string">&#x27;result_pred&#x27;</span>])</span><br><span class="line">    <span class="keyword">for</span> i, result <span class="keyword">in</span> <span class="built_in">enumerate</span>(pred) :</span><br><span class="line">        writer.writerow([i, classes[result]])</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/140e5b770d7440bd8e4202e0d3ca4b0a.png" alt="在这里插入图片描述"></p>
+<h2 id="随机森林"><a href="#随机森林" class="headerlink" title="随机森林"></a>随机森林</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">classes = [<span class="string">&#x27; &lt;=50K&#x27;</span>, <span class="string">&#x27; &gt;50K&#x27;</span>]</span><br><span class="line">rf = RandomForestClassifier(n_estimators = <span class="number">100</span>, random_state = <span class="number">0</span>)</span><br><span class="line">rf = rf.fit(train_dataset, train_target)</span><br><span class="line">score = rf.score(test_dataset, test_target)</span><br><span class="line"><span class="built_in">print</span>(score)</span><br><span class="line"></span><br><span class="line">pred = rf.predict(test_dataset)</span><br><span class="line"><span class="built_in">print</span>(pred)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;Predict/RandomForest.csv&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, newline = <span class="string">&#x27;&#x27;</span>) <span class="keyword">as</span> file :</span><br><span class="line">    writer = csv.writer(file)</span><br><span class="line">    writer.writerow([<span class="string">&#x27;id&#x27;</span>, <span class="string">&#x27;result_pred&#x27;</span>])</span><br><span class="line">    <span class="keyword">for</span> i, result <span class="keyword">in</span> <span class="built_in">enumerate</span>(pred) :</span><br><span class="line">        writer.writerow([i, classes[result]])</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/15755e762a0147079f488671b3569dee.png" alt="在这里插入图片描述"></p>
+<h1 id="三、结果分析"><a href="#三、结果分析" class="headerlink" title="三、结果分析"></a>三、结果分析</h1><p>经过在Adult数据集的测试集的预测结果可知，深度学习模型、决策树、支持向量机和随机森林的正确率分别达到0.834、0.834、0.834和0.817，四种模型的正确率差不多。正确率并不是很高的原因可能有：<br>1、模型的鲁棒性不够。<br>2、数据集存在大量的离散类型数据，在经过独热编码之后，数据高度稀疏。<br>解决方法：<br>1、对模型再进行搜索性地调参，可以考虑增加模型复杂度，过程中需要注意过拟合。<br>2、不选择独热编码的方式对数据进行降维，可以考虑Embedding</p>
+<blockquote>
+<p>所有的代码都可以从我的 <a target="_blank" rel="noopener" href="https://github.com/aishangcengloua/Data-Mining/tree/master/Adult_predicted">Github仓库</a> 获取，欢迎您的start</p>
+</blockquote>
+<p>最后，如果您对Adult数据集的处理和模型实现有收获的话，还要麻烦给点个赞，不甚感激。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/" rel="tag"># 数据处理</a>
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 机器学习</a>
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/LSTM-%E9%A2%84%E6%B5%8B%E8%82%A1%E7%A5%A8/" rel="prev" title="LSTM 预测股票">
+      <i class="fa fa-chevron-left"></i> LSTM 预测股票
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="nav-text">一、数据集</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%9B%86%E4%BB%8B%E7%BB%8D"><span class="nav-text">数据集介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%9B%86%E9%A2%84%E5%A4%84%E7%90%86%E5%8F%8A%E5%88%86%E6%9E%90"><span class="nav-text">数据集预处理及分析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%9B%9B%E7%A7%8D%E6%A8%A1%E5%9E%8B%E5%AF%B9%E4%B8%8A%E8%BF%B0%E6%95%B0%E6%8D%AE%E9%9B%86%E8%BF%9B%E8%A1%8C%E9%A2%84%E6%B5%8B"><span class="nav-text">二、四种模型对上述数据集进行预测</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0"><span class="nav-text">深度学习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%B3%E7%AD%96%E6%A0%91"><span class="nav-text">决策树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA"><span class="nav-text">支持向量机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA%E6%A3%AE%E6%9E%97"><span class="nav-text">随机森林</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E7%BB%93%E6%9E%9C%E5%88%86%E6%9E%90"><span class="nav-text">三、结果分析</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">61k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:41</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

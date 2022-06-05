@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="数据预处理分析，最后面附有决策树算法的实现原始数据：原数据地址计算第一次决策如果分别对在14天各个属性下是否进行施肥的统计情况且计算该属性的基尼指数，同一种属性不同表现的基尼指数表示为M，加权平均之后为节点的基尼指数，用N表示天气： 1234567891011121314151617#encoding &#x3D; utf-8import pandas as pdBase_file &#x3D; pd.read_e">
+<meta property="og:type" content="article">
+<meta property="og:title" content="决策树练习">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/%E5%86%B3%E7%AD%96%E6%A0%91%E7%BB%83%E4%B9%A0/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="数据预处理分析，最后面附有决策树算法的实现原始数据：原数据地址计算第一次决策如果分别对在14天各个属性下是否进行施肥的统计情况且计算该属性的基尼指数，同一种属性不同表现的基尼指数表示为M，加权平均之后为节点的基尼指数，用N表示天气： 1234567891011121314151617#encoding &#x3D; utf-8import pandas as pdBase_file &#x3D; pd.read_e">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/810c34d959d0490383d5dd87183a7659.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/ff10b766deb94b239cab9d021788cf01.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/f05b14015fcf4abaadc25035109cde0a.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/92fcd8995d9c4f0398eea4ab5f9e21f1.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/af12704b2e4447faaa8e547b580d8ded.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/548dfadd9a1048e79cc824aa8cffbf2f.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/673df477a0364e0cb1838f047d1d0f50.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/18ffcc15e36b4ad997ae445099cb48bf.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/08ea7732db2b43aea8876d02fe17b5b0.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/4419fb6e26a24f6a8bcb0fd1ef0ffeb3.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/48783b2c05b943d18eca303e936829dd.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/291ad482ad4d4717aef3403865a56133.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/1554bd1f61ec4b1da67841305c95e111.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/38a2759681c844159c960655f0178c43.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/f4af06ecd7604f528bf833f5f17c9f96.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/e2205a76332e4092a40b97d5482a3620.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/04908ef755dd418f97ec0442752a6e8f.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/28bff67159c84a8ca00d84972e1ae892.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/7c9143d8b31a42b6be9b72fc65a6f6ce.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/dc5aea1458624abda02b14f7538c57b9.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/4c4883247d234b14a0660cf8a75baf70.png">
+<meta property="article:published_time" content="2022-06-05T08:58:05.000Z">
+<meta property="article:modified_time" content="2022-06-05T08:59:10.810Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="决策树">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/810c34d959d0490383d5dd87183a7659.png#pic_center">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/%E5%86%B3%E7%AD%96%E6%A0%91%E7%BB%83%E4%B9%A0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>决策树练习 | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">19</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">24</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E5%86%B3%E7%AD%96%E6%A0%91%E7%BB%83%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          决策树练习
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 16:58:05 / 修改时间：16:59:10" itemprop="dateCreated datePublished" datetime="2022-06-05T16:58:05+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">传统算法</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E5%86%B3%E7%AD%96%E6%A0%91%E7%BB%83%E4%B9%A0/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E5%86%B3%E7%AD%96%E6%A0%91%E7%BB%83%E4%B9%A0/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>1.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>﻿数据预处理分析，最后面附有决策树算法的实现<br>原始数据：<br><a target="_blank" rel="noopener" href="https://github.com/aishangcengloua/Data-Mining/blob/master/HomeWork1/Data.xlsx">原数据地址</a><br><img src="https://img-blog.csdnimg.cn/810c34d959d0490383d5dd87183a7659.png#pic_center" alt="在这里插入图片描述"><br>计算第一次决策如果<br>分别对在14天各个属性下是否进行施肥的统计情况且计算该属性的基尼指数，同一种属性不同表现的基尼指数表示为M，加权平均之后为节点的基尼指数，用N表示<br>天气：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#encoding = utf-8</span></span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line">Base_file = pd.read_excel(<span class="string">&#x27;Data.xlsx&#x27;</span>)</span><br><span class="line">Base_file.head(<span class="number">15</span>)</span><br><span class="line"><span class="comment">#Base_file.head()</span></span><br><span class="line">Weather_Sunny = Base_file[Base_file[<span class="string">&#x27;天气&#x27;</span>] == <span class="string">&#x27;晴天&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line"><span class="comment">#print(Weather_Sunny)[&#x27;否&#x27; &#x27;否&#x27; &#x27;否&#x27; &#x27;是&#x27; &#x27;是&#x27;]</span></span><br><span class="line">Weather_Rainy = Base_file[Base_file[<span class="string">&#x27;天气&#x27;</span>] == <span class="string">&#x27;雨天&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Weather_Overcast = Base_file[Base_file[<span class="string">&#x27;天气&#x27;</span>] == <span class="string">&#x27;阴天&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Weather_Overcast[<span class="string">&#x27;否&#x27;</span>] = <span class="number">0</span></span><br><span class="line">Weather_df = pd.DataFrame([</span><br><span class="line">    pd.Series([Weather_Sunny[<span class="string">&#x27;是&#x27;</span>], Weather_Sunny[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>]),</span><br><span class="line">    pd.Series([Weather_Rainy[<span class="string">&#x27;是&#x27;</span>], Weather_Rainy[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>]),</span><br><span class="line">    pd.Series([Weather_Overcast[<span class="string">&#x27;是&#x27;</span>], Weather_Overcast[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>])</span><br><span class="line">], index=[<span class="string">&#x27;晴天&#x27;</span>, <span class="string">&#x27;雨天&#x27;</span>, <span class="string">&#x27;阴天&#x27;</span>])</span><br><span class="line">Weather_df.head()</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/ff10b766deb94b239cab9d021788cf01.png" alt="在这里插入图片描述"><br>晴天：M1 = 2 <em> 2/5 </em> (1 - 2/5) = 0.444444445<br>雨天：M2 = 2 <em> 3/5 </em> (1 - 3/5) = 0.48<br>阴天：M3 = 0<br>N1 = 5/14 <em> M1 + 5/14 </em> M2 = 0.343<br>温度：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Hot = Base_file[Base_file[<span class="string">&#x27;温度&#x27;</span>] == <span class="string">&#x27;炎热&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Cool = Base_file[Base_file[<span class="string">&#x27;温度&#x27;</span>] == <span class="string">&#x27;温&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Cold = Base_file[Base_file[<span class="string">&#x27;温度&#x27;</span>] == <span class="string">&#x27;冷&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Temperature_df = pd.DataFrame([</span><br><span class="line">    pd.Series([Hot[<span class="string">&#x27;是&#x27;</span>], Hot[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>]),</span><br><span class="line">    pd.Series([Cool[<span class="string">&#x27;是&#x27;</span>], Cool[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>]),</span><br><span class="line">    pd.Series([Cold[<span class="string">&#x27;是&#x27;</span>], Cold[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>])</span><br><span class="line">], index = [<span class="string">&#x27;炎热&#x27;</span>, <span class="string">&#x27;温&#x27;</span>, <span class="string">&#x27;冷&#x27;</span>])</span><br><span class="line">Temperature_df.head()</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/f05b14015fcf4abaadc25035109cde0a.png" alt="在这里插入图片描述"><br>炎热：M1 = 2 <em> 2/4 </em> (1 - 2/4) = 0.5<br>温 ： M2 = 2 <em> 2/6 </em> (1 - 2/6) = 0.44444445<br>冷：  M3 = 2 <em> 3/4 </em> (1 - 3/4) = 0.375<br>N2 = 4/14 <em> M1 + 6/14 </em> M2 + 4/14 * M3 = 0.440</p>
+<p>湿度：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Humidity_high = Base_file[Base_file[<span class="string">&#x27;湿度&#x27;</span>] == <span class="string">&#x27;高&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Humidity_mid = Base_file[Base_file[<span class="string">&#x27;湿度&#x27;</span>] == <span class="string">&#x27;中&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Humidity_df = pd.DataFrame([</span><br><span class="line">    pd.Series([Humidity_high[<span class="string">&#x27;是&#x27;</span>], Humidity_high[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>]),</span><br><span class="line">    pd.Series([Humidity_mid[<span class="string">&#x27;是&#x27;</span>], Humidity_mid[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>])</span><br><span class="line">], index = [<span class="string">&#x27;高&#x27;</span>, <span class="string">&#x27;中&#x27;</span>])</span><br><span class="line">Humidity_df.head()</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/92fcd8995d9c4f0398eea4ab5f9e21f1.png" alt="在这里插入图片描述"><br>高：M1 = 2 <em> 3/4 </em> (1 - 3/4) = 0.375<br>中：M2 = 2 <em> 6/7 </em> (1 - 6/7) = 0.245<br>N3 = 1/2 <em> M1 + 1/2 </em> M2 = 0.310</p>
+<p>风力：</p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Wind_strong = Base_file[Base_file[<span class="string">&#x27;风力&#x27;</span>] == <span class="string">&#x27;强风&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Wind_weak = Base_file[Base_file[<span class="string">&#x27;风力&#x27;</span>] == <span class="string">&#x27;弱风&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Wind_df = pd.DataFrame([</span><br><span class="line">    pd.Series([Wind_strong[<span class="string">&#x27;是&#x27;</span>], Wind_strong[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>]),</span><br><span class="line">    pd.Series([Wind_weak[<span class="string">&#x27;是&#x27;</span>], Wind_weak[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>])</span><br><span class="line">], index = [<span class="string">&#x27;强风&#x27;</span>, <span class="string">&#x27;弱风&#x27;</span>])</span><br><span class="line">Wind_df.head()</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/af12704b2e4447faaa8e547b580d8ded.png" alt="在这里插入图片描述"><br>强风：M1 = 2 <em> 3/6 </em> (1 - 3/6) = 0.5<br>弱风：M2 = 2 <em> 6/8 </em> (1 - 6/8) = 0.375<br>N4 = 6/14 <em> M1 + 8/14 </em> M2 = 0.429<br>因为N2 &gt; N4 &gt; N1 &gt; N3，所以第一次决策应根据湿度来分类：<br><img src="https://img-blog.csdnimg.cn/548dfadd9a1048e79cc824aa8cffbf2f.png#pic_center" alt="在这里插入图片描述"><br>因为此次分类之后，然未出现叶子节点，所以需要分别对第二排的两个节点进行分类，过程与第一次决策类似，计算各个属性下是否进行施肥的统计情况且计算该属性的基尼指数<br>左右节点的数据分别如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Base_file = pd.read_excel(<span class="string">&#x27;Data.xlsx&#x27;</span>)</span><br><span class="line">Base_file.head(<span class="number">15</span>)</span><br><span class="line">Temperature_df_high = Base_file[Base_file[<span class="string">&#x27;湿度&#x27;</span>] == <span class="string">&#x27;高&#x27;</span>]</span><br><span class="line">Temperature_df_high.head(<span class="number">14</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/673df477a0364e0cb1838f047d1d0f50.png#pic_center" alt="在这里插入图片描述"></p>
+<p>先对左边节点分析：<br>天气：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Weather_Sunny = Temperature_df_high[Temperature_df_high[<span class="string">&#x27;天气&#x27;</span>] == <span class="string">&#x27;晴天&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Weather_Sunny[<span class="string">&#x27;是&#x27;</span>] = <span class="number">0</span></span><br><span class="line"><span class="comment">#print(Weather_Sunny)[&#x27;否&#x27; &#x27;否&#x27; &#x27;否&#x27; &#x27;是&#x27; &#x27;是&#x27;]</span></span><br><span class="line">Weather_Rainy = Temperature_df_high[Temperature_df_high[<span class="string">&#x27;天气&#x27;</span>] == <span class="string">&#x27;雨天&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Weather_Overcast = Temperature_df_high[Temperature_df_high[<span class="string">&#x27;天气&#x27;</span>] == <span class="string">&#x27;阴天&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Weather_Overcast[<span class="string">&#x27;否&#x27;</span>] = <span class="number">0</span></span><br><span class="line">Weather_df = pd.DataFrame([</span><br><span class="line">    pd.Series([Weather_Sunny[<span class="string">&#x27;是&#x27;</span>], Weather_Sunny[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>]),</span><br><span class="line">    pd.Series([Weather_Rainy[<span class="string">&#x27;是&#x27;</span>], Weather_Rainy[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>]),</span><br><span class="line">    pd.Series([Weather_Overcast[<span class="string">&#x27;是&#x27;</span>], Weather_Overcast[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>])</span><br><span class="line">], index=[<span class="string">&#x27;晴天&#x27;</span>, <span class="string">&#x27;雨天&#x27;</span>, <span class="string">&#x27;阴天&#x27;</span>])</span><br><span class="line">Weather_df.head()</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/18ffcc15e36b4ad997ae445099cb48bf.png" alt="在这里插入图片描述"><br>晴天：M1 = 0<br>雨天：M2 = 0.5<br>阴天：M3 = 0<br>N1 = 2/7 * M2 = 0.143<br>温度：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Hot = Temperature_df_high[Temperature_df_high[<span class="string">&#x27;温度&#x27;</span>] == <span class="string">&#x27;炎热&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Cool = Temperature_df_high[Temperature_df_high[<span class="string">&#x27;温度&#x27;</span>] == <span class="string">&#x27;温&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Cold = Temperature_df_high[Temperature_df_high[<span class="string">&#x27;温度&#x27;</span>] == <span class="string">&#x27;冷&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Cold[<span class="string">&#x27;是&#x27;</span>] = <span class="number">0</span></span><br><span class="line">Cold[<span class="string">&#x27;否&#x27;</span>] = <span class="number">0</span></span><br><span class="line">Temperature_df = pd.DataFrame([</span><br><span class="line">    pd.Series([Hot[<span class="string">&#x27;是&#x27;</span>], Hot[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>]),</span><br><span class="line">    pd.Series([Cool[<span class="string">&#x27;是&#x27;</span>], Cool[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>]),</span><br><span class="line">    pd.Series([Cold[<span class="string">&#x27;是&#x27;</span>], Cold[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>])</span><br><span class="line">], index = [<span class="string">&#x27;炎热&#x27;</span>, <span class="string">&#x27;温&#x27;</span>, <span class="string">&#x27;冷&#x27;</span>])</span><br><span class="line">Temperature_df.head()</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/08ea7732db2b43aea8876d02fe17b5b0.png" alt="在这里插入图片描述"><br>炎热：M1 = 0.44444444445<br>温：  M2 = 0.5<br>冷：  M3 = 0<br>N2 = 3/7 <em> M1 + 4/7 </em> M3 = 0.476</p>
+<p>风力：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Wind_strong = Temperature_df_high[Temperature_df_high[<span class="string">&#x27;风力&#x27;</span>] == <span class="string">&#x27;强风&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Wind_weak = Temperature_df_high[Temperature_df_high[<span class="string">&#x27;风力&#x27;</span>] == <span class="string">&#x27;弱风&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Wind_df = pd.DataFrame([</span><br><span class="line">    pd.Series([Wind_strong[<span class="string">&#x27;是&#x27;</span>], Wind_strong[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>]),</span><br><span class="line">    pd.Series([Wind_weak[<span class="string">&#x27;是&#x27;</span>], Wind_weak[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>])</span><br><span class="line">], index = [<span class="string">&#x27;强风&#x27;</span>, <span class="string">&#x27;弱风&#x27;</span>])</span><br><span class="line">Wind_df.head()</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/4419fb6e26a24f6a8bcb0fd1ef0ffeb3.png" alt="在这里插入图片描述"><br>强风：M1 = 0.44444444445<br>弱风：M2 =0.5<br>N3 = 3/7 <em> M1 + 4/7 </em> M2 = 0.476</p>
+<p>N1 &gt; N2 = N3<br>所以左边的节点来说应该根据天气情况来分类<br>对右边节点分析：<br>天气：</p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Weather_Sunny = Temperature_df_mid[Temperature_df_mid[<span class="string">&#x27;天气&#x27;</span>] == <span class="string">&#x27;晴天&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Weather_Sunny[<span class="string">&#x27;否&#x27;</span>] = <span class="number">0</span></span><br><span class="line">Weather_Rainy = Temperature_df_mid[Temperature_df_mid[<span class="string">&#x27;天气&#x27;</span>] == <span class="string">&#x27;雨天&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Weather_Overcast = Temperature_df_mid[Temperature_df_mid[<span class="string">&#x27;天气&#x27;</span>] == <span class="string">&#x27;阴天&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Weather_Overcast[<span class="string">&#x27;否&#x27;</span>] = <span class="number">0</span></span><br><span class="line">Weather_df = pd.DataFrame([</span><br><span class="line">    pd.Series([Weather_Sunny[<span class="string">&#x27;是&#x27;</span>], Weather_Sunny[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>]),</span><br><span class="line">    pd.Series([Weather_Rainy[<span class="string">&#x27;是&#x27;</span>], Weather_Rainy[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>]),</span><br><span class="line">    pd.Series([Weather_Overcast[<span class="string">&#x27;是&#x27;</span>], Weather_Overcast[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>])</span><br><span class="line">], index=[<span class="string">&#x27;晴天&#x27;</span>, <span class="string">&#x27;雨天&#x27;</span>, <span class="string">&#x27;阴天&#x27;</span>])</span><br><span class="line">Weather_df.head()</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/48783b2c05b943d18eca303e936829dd.png" alt="在这里插入图片描述"><br>晴天：M1 = 0<br>雨天：M2 = 0.444444444445<br>阴天：M3 = 0<br>N1 = 3/7 * M2 = 0.190</p>
+<p>温度：</p>
+  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Hot = Temperature_df_mid[Temperature_df_mid[<span class="string">&#x27;温度&#x27;</span>] == <span class="string">&#x27;炎热&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Hot[<span class="string">&#x27;否&#x27;</span>] = <span class="number">0</span></span><br><span class="line">Cool = Temperature_df_mid[Temperature_df_mid[<span class="string">&#x27;温度&#x27;</span>] == <span class="string">&#x27;温&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Cool[<span class="string">&#x27;否&#x27;</span>] = <span class="number">0</span></span><br><span class="line">Cold = Temperature_df_mid[Temperature_df_mid[<span class="string">&#x27;温度&#x27;</span>] == <span class="string">&#x27;冷&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line"></span><br><span class="line">Temperature_df = pd.DataFrame([</span><br><span class="line">    pd.Series([Hot[<span class="string">&#x27;是&#x27;</span>], Hot[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>]),</span><br><span class="line">    pd.Series([Cool[<span class="string">&#x27;是&#x27;</span>], Cool[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>]),</span><br><span class="line">    pd.Series([Cold[<span class="string">&#x27;是&#x27;</span>], Cold[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>])</span><br><span class="line">], index = [<span class="string">&#x27;炎热&#x27;</span>, <span class="string">&#x27;温&#x27;</span>, <span class="string">&#x27;冷&#x27;</span>])</span><br><span class="line">Temperature_df.head()</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/291ad482ad4d4717aef3403865a56133.png" alt="在这里插入图片描述"><br>炎热：M1 = 0<br>温：  M2 = 0<br>冷：  M3 = 2 <em> 3/4 </em> (1 - 3/4) = 0.375<br>N2 = 3/7 * M3 = 0.214</p>
+<p>风力：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Wind_strong = Temperature_df_mid[Temperature_df_mid[<span class="string">&#x27;风力&#x27;</span>] == <span class="string">&#x27;强风&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Wind_weak = Temperature_df_mid[Temperature_df_mid[<span class="string">&#x27;风力&#x27;</span>] == <span class="string">&#x27;弱风&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Wind_weak[<span class="string">&#x27;否&#x27;</span>] = <span class="number">0</span></span><br><span class="line">Wind_df = pd.DataFrame([</span><br><span class="line">    pd.Series([Wind_strong[<span class="string">&#x27;是&#x27;</span>], Wind_strong[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>]),</span><br><span class="line">    pd.Series([Wind_weak[<span class="string">&#x27;是&#x27;</span>], Wind_weak[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>])</span><br><span class="line">], index = [<span class="string">&#x27;强风&#x27;</span>, <span class="string">&#x27;弱风&#x27;</span>])</span><br><span class="line">Wind_df.head()</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/1554bd1f61ec4b1da67841305c95e111.png" alt="在这里插入图片描述"><br>强风：M1 = 2 <em> 2/3 </em> (1 - 2/3) = 0.44444445<br>弱风：M2 = 0<br>N3 = 3/7 * M2 = 0.190</p>
+<p>N1 = N3 &gt; N2<br>这里可以有两种分类决策方法，这里选择使用天气属性对右边节点进行分类，结合对左边节点的分析，对第二层的分类如下：<br><img src="https://img-blog.csdnimg.cn/38a2759681c844159c960655f0178c43.png#pic_center" alt="在这里插入图片描述"><br>经过第二次分类之后，出现了叶子节点，只剩下两个节点需要继续分类，且只剩下温度和风力两个属性，下面是第二次分类之后的左右两个节点数据：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Weather_df_Rainy1 = Base_file[Base_file[<span class="string">&#x27;湿度&#x27;</span>] == <span class="string">&#x27;高&#x27;</span>][Base_file[<span class="string">&#x27;天气&#x27;</span>] == <span class="string">&#x27;雨天&#x27;</span>]</span><br><span class="line">Weather_df_Rainy1.head()</span><br><span class="line">Weather_df_Rainy2 = Base_file[Base_file[<span class="string">&#x27;湿度&#x27;</span>] == <span class="string">&#x27;中&#x27;</span>][Base_file[<span class="string">&#x27;天气&#x27;</span>] == <span class="string">&#x27;雨天&#x27;</span>]</span><br><span class="line">Weather_df_Rainy2.head()</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/f4af06ecd7604f528bf833f5f17c9f96.png" alt="在这里插入图片描述"><br>对于左边节点：<br>温度：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Hot = Weather_df_Rainy1[Weather_df_Rainy1[<span class="string">&#x27;温度&#x27;</span>] == <span class="string">&#x27;炎热&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Hot[<span class="string">&#x27;是&#x27;</span>] = <span class="number">0</span></span><br><span class="line">Hot[<span class="string">&#x27;否&#x27;</span>] = <span class="number">0</span></span><br><span class="line">Cool = Weather_df_Rainy1[Weather_df_Rainy1[<span class="string">&#x27;温度&#x27;</span>] == <span class="string">&#x27;温&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Cold = Weather_df_Rainy1[Weather_df_Rainy1[<span class="string">&#x27;温度&#x27;</span>] == <span class="string">&#x27;冷&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Cold[<span class="string">&#x27;是&#x27;</span>] = <span class="number">0</span></span><br><span class="line">Cold[<span class="string">&#x27;否&#x27;</span>] = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">Temperature_df = pd.DataFrame([</span><br><span class="line">    pd.Series([Hot[<span class="string">&#x27;是&#x27;</span>], Hot[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>]),</span><br><span class="line">    pd.Series([Cool[<span class="string">&#x27;是&#x27;</span>], Cool[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>]),</span><br><span class="line">    pd.Series([Cold[<span class="string">&#x27;是&#x27;</span>], Cold[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>])</span><br><span class="line">], index = [<span class="string">&#x27;炎热&#x27;</span>, <span class="string">&#x27;温&#x27;</span>, <span class="string">&#x27;冷&#x27;</span>])</span><br><span class="line">Temperature_df.head()</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/e2205a76332e4092a40b97d5482a3620.png" alt="在这里插入图片描述"><br>炎热：M1 = 0<br>温：  M2 = 2 <em> 1/2 </em> (1 – 1/2) = 0.5<br>冷：  M3 = 0<br>N1 = M2 = 0.5</p>
+<p>风力：</p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Hot = Weather_df_Rainy1[Weather_df_Rainy1[<span class="string">&#x27;温度&#x27;</span>] == <span class="string">&#x27;炎热&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Hot[<span class="string">&#x27;是&#x27;</span>] = <span class="number">0</span></span><br><span class="line">Hot[<span class="string">&#x27;否&#x27;</span>] = <span class="number">0</span></span><br><span class="line">Cool = Weather_df_Rainy1[Weather_df_Rainy1[<span class="string">&#x27;温度&#x27;</span>] == <span class="string">&#x27;温&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Cold = Weather_df_Rainy1[Weather_df_Rainy1[<span class="string">&#x27;温度&#x27;</span>] == <span class="string">&#x27;冷&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Cold[<span class="string">&#x27;是&#x27;</span>] = <span class="number">0</span></span><br><span class="line">Cold[<span class="string">&#x27;否&#x27;</span>] = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">Temperature_df = pd.DataFrame([</span><br><span class="line">    pd.Series([Hot[<span class="string">&#x27;是&#x27;</span>], Hot[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>]),</span><br><span class="line">    pd.Series([Cool[<span class="string">&#x27;是&#x27;</span>], Cool[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>]),</span><br><span class="line">    pd.Series([Cold[<span class="string">&#x27;是&#x27;</span>], Cold[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>])</span><br><span class="line">], index = [<span class="string">&#x27;炎热&#x27;</span>, <span class="string">&#x27;温&#x27;</span>, <span class="string">&#x27;冷&#x27;</span>])</span><br><span class="line">Temperature_df.head()</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/04908ef755dd418f97ec0442752a6e8f.png" alt="在这里插入图片描述"><br>强风：M1 = 0<br>弱风：M2 = 0<br>N2 = 0</p>
+<p>N1 &gt; N2<br>所以左边的节点应用风力属性继续往后分类<br>对右边节点分析：<br>温度：</p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"> Hot = Weather_df_Rainy2[Weather_df_Rainy2[<span class="string">&#x27;温度&#x27;</span>] == <span class="string">&#x27;炎热&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Hot[<span class="string">&#x27;是&#x27;</span>] = <span class="number">0</span></span><br><span class="line">Hot[<span class="string">&#x27;否&#x27;</span>] = <span class="number">0</span></span><br><span class="line">Cool = Weather_df_Rainy2[Weather_df_Rainy2[<span class="string">&#x27;温度&#x27;</span>] == <span class="string">&#x27;温&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Cool[<span class="string">&#x27;否&#x27;</span>] = <span class="number">0</span></span><br><span class="line">Cold = Weather_df_Rainy2[Weather_df_Rainy2[<span class="string">&#x27;温度&#x27;</span>] == <span class="string">&#x27;冷&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Temperature_df = pd.DataFrame([</span><br><span class="line">    pd.Series([Hot[<span class="string">&#x27;是&#x27;</span>], Hot[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>]),</span><br><span class="line">    pd.Series([Cool[<span class="string">&#x27;是&#x27;</span>], Cool[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>]),</span><br><span class="line">    pd.Series([Cold[<span class="string">&#x27;是&#x27;</span>], Cold[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>])</span><br><span class="line">], index = [<span class="string">&#x27;炎热&#x27;</span>, <span class="string">&#x27;温&#x27;</span>, <span class="string">&#x27;冷&#x27;</span>])</span><br><span class="line">Temperature_df.head()</span><br></pre></td></tr></table></figure>
+<p> <img src="https://img-blog.csdnimg.cn/28bff67159c84a8ca00d84972e1ae892.png" alt="在这里插入图片描述"><br>炎热：M1 = 0<br>温：  M2 = 0<br>冷：  M3 = 2 <em> 1/2 </em> (1 – 1/2) = 0.5<br>N1 = M3 = 0.5</p>
+<p>风力：</p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"> Wind_strong = Weather_df_Rainy2[Weather_df_Rainy2[<span class="string">&#x27;风力&#x27;</span>] == <span class="string">&#x27;强风&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Wind_strong[<span class="string">&#x27;是&#x27;</span>] = <span class="number">0</span></span><br><span class="line">Wind_weak = Weather_df_Rainy2[Weather_df_Rainy2[<span class="string">&#x27;风力&#x27;</span>] == <span class="string">&#x27;弱风&#x27;</span>][<span class="string">&#x27;是否施肥&#x27;</span>].value_counts()</span><br><span class="line">Wind_weak[<span class="string">&#x27;否&#x27;</span>] = <span class="number">0</span></span><br><span class="line">Wind_df = pd.DataFrame([</span><br><span class="line">    pd.Series([Wind_strong[<span class="string">&#x27;是&#x27;</span>], Wind_strong[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>]),</span><br><span class="line">    pd.Series([Wind_weak[<span class="string">&#x27;是&#x27;</span>], Wind_weak[<span class="string">&#x27;否&#x27;</span>]], index = [<span class="string">&#x27;是&#x27;</span>, <span class="string">&#x27;否&#x27;</span>])</span><br><span class="line">], index = [<span class="string">&#x27;强风&#x27;</span>, <span class="string">&#x27;弱风&#x27;</span>])</span><br><span class="line">Wind_df.head()</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/7c9143d8b31a42b6be9b72fc65a6f6ce.png" alt="在这里插入图片描述"><br>强风：M1 = 0<br>弱风：M2 = 0<br>N2 = 0</p>
+<p>N1 &gt; N2<br>所以右边边的节点应用风力属性继续往后分类，决策图如下：<br><img src="https://img-blog.csdnimg.cn/dc5aea1458624abda02b14f7538c57b9.png#pic_center" alt="在这里插入图片描述"></p>
+<p>可以看出第二次分类再经过风力的分类之后，此时决策树最后一排的节点全部变为了叶子节点，说明至此，分类完成。<br>算法实现：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#encoding = utf-8</span></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> operator</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">CalcGiNiIndex</span>(<span class="params">DataSet</span>) :</span><br><span class="line">    Num_length = <span class="built_in">len</span>(DataSet)</span><br><span class="line">    labelcounts = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> feature <span class="keyword">in</span> DataSet :</span><br><span class="line">        currentlabel = feature[-<span class="number">1</span>]</span><br><span class="line">        <span class="comment">#用字典统计类别及其数目</span></span><br><span class="line">        <span class="keyword">if</span> currentlabel <span class="keyword">not</span> <span class="keyword">in</span> labelcounts.keys() :</span><br><span class="line">            labelcounts[currentlabel] = <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span> :</span><br><span class="line">            labelcounts[currentlabel] += <span class="number">1</span></span><br><span class="line">    GiNi_index = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> key <span class="keyword">in</span> labelcounts.keys() :</span><br><span class="line">        <span class="comment">#二分类求基尼指数：GiNi = 2 * p * （1 - p）</span></span><br><span class="line">        GiNi_index = <span class="number">2</span> * (<span class="built_in">float</span>(labelcounts[key]) / Num_length) * (<span class="number">1</span> - <span class="built_in">float</span>(labelcounts[key]) / Num_length)</span><br><span class="line">    <span class="keyword">return</span> GiNi_index</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">createDataSet</span>() :</span><br><span class="line">    DataSet = [[<span class="string">&#x27;晴天&#x27;</span>, <span class="string">&#x27;炎热&#x27;</span>, <span class="string">&#x27;高&#x27;</span>, <span class="string">&#x27;弱风&#x27;</span>, <span class="string">&#x27;否&#x27;</span>],</span><br><span class="line">                 [<span class="string">&#x27;晴天&#x27;</span>, <span class="string">&#x27;炎热&#x27;</span>, <span class="string">&#x27;高&#x27;</span>, <span class="string">&#x27;强风&#x27;</span>, <span class="string">&#x27;否&#x27;</span>],</span><br><span class="line">                 [<span class="string">&#x27;阴天&#x27;</span>, <span class="string">&#x27;炎热&#x27;</span>, <span class="string">&#x27;高&#x27;</span>, <span class="string">&#x27;弱风&#x27;</span>, <span class="string">&#x27;是&#x27;</span>],</span><br><span class="line">                 [<span class="string">&#x27;雨天&#x27;</span>, <span class="string">&#x27;温&#x27;</span>, <span class="string">&#x27;高&#x27;</span>, <span class="string">&#x27;弱风&#x27;</span>, <span class="string">&#x27;是&#x27;</span>],</span><br><span class="line">                 [<span class="string">&#x27;雨天&#x27;</span>, <span class="string">&#x27;冷&#x27;</span>, <span class="string">&#x27;中&#x27;</span>, <span class="string">&#x27;弱风&#x27;</span>, <span class="string">&#x27;是&#x27;</span>],</span><br><span class="line">                 [<span class="string">&#x27;雨天&#x27;</span>, <span class="string">&#x27;冷&#x27;</span>, <span class="string">&#x27;中&#x27;</span>, <span class="string">&#x27;强风&#x27;</span>, <span class="string">&#x27;否&#x27;</span>],</span><br><span class="line">                 [<span class="string">&#x27;阴天&#x27;</span>, <span class="string">&#x27;冷&#x27;</span>, <span class="string">&#x27;中&#x27;</span>, <span class="string">&#x27;强风&#x27;</span>, <span class="string">&#x27;是&#x27;</span>],</span><br><span class="line">                 [<span class="string">&#x27;晴天&#x27;</span>, <span class="string">&#x27;温&#x27;</span>, <span class="string">&#x27;高&#x27;</span>, <span class="string">&#x27;弱风&#x27;</span>, <span class="string">&#x27;否&#x27;</span>],</span><br><span class="line">                 [<span class="string">&#x27;晴天&#x27;</span>, <span class="string">&#x27;冷&#x27;</span>, <span class="string">&#x27;中&#x27;</span>, <span class="string">&#x27;弱风&#x27;</span>, <span class="string">&#x27;是&#x27;</span>],</span><br><span class="line">                 [<span class="string">&#x27;雨天&#x27;</span>, <span class="string">&#x27;温&#x27;</span>, <span class="string">&#x27;中&#x27;</span>, <span class="string">&#x27;弱风&#x27;</span>, <span class="string">&#x27;是&#x27;</span>],</span><br><span class="line">                 [<span class="string">&#x27;晴天&#x27;</span>, <span class="string">&#x27;温&#x27;</span>, <span class="string">&#x27;中&#x27;</span>, <span class="string">&#x27;强风&#x27;</span>, <span class="string">&#x27;是&#x27;</span>],</span><br><span class="line">                 [<span class="string">&#x27;阴天&#x27;</span>, <span class="string">&#x27;温&#x27;</span>, <span class="string">&#x27;高&#x27;</span>, <span class="string">&#x27;强风&#x27;</span>, <span class="string">&#x27;是&#x27;</span>],</span><br><span class="line">                 [<span class="string">&#x27;阴天&#x27;</span>, <span class="string">&#x27;炎热&#x27;</span>, <span class="string">&#x27;中&#x27;</span>, <span class="string">&#x27;弱风&#x27;</span>, <span class="string">&#x27;是&#x27;</span>],</span><br><span class="line">                 [<span class="string">&#x27;雨天&#x27;</span>, <span class="string">&#x27;温&#x27;</span>, <span class="string">&#x27;高&#x27;</span>, <span class="string">&#x27;强风&#x27;</span>, <span class="string">&#x27;否&#x27;</span>]]</span><br><span class="line"><span class="comment">#     file = pd.read_excel(&#x27;Data.xlsx&#x27;)</span></span><br><span class="line"><span class="comment">#     DataSet = file.iloc[ : , 1 : ]</span></span><br><span class="line"><span class="comment">#     DataSet = np.array(DataSet)</span></span><br><span class="line">    labels = [<span class="string">&#x27;天气&#x27;</span>, <span class="string">&#x27;温度&#x27;</span>, <span class="string">&#x27;湿度&#x27;</span>, <span class="string">&#x27;风力&#x27;</span>]</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> DataSet, labels</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">splitDataSet</span>(<span class="params">DataSet, axis, value</span>): </span><br><span class="line">    <span class="comment">#计算以某个特征分类后剩下的数据量。</span></span><br><span class="line">    <span class="comment">#axis表示第i个特征，value表示在改特征的情况下的具体表现，如天气特征有雨天。阴天等。</span></span><br><span class="line">    retDataSet = []</span><br><span class="line">    <span class="comment">#创建一个新列表，准备提取数据</span></span><br><span class="line">    <span class="keyword">for</span> featVec <span class="keyword">in</span> DataSet :</span><br><span class="line">        <span class="comment">#剔除在数据集中需要被分类的特征的列行</span></span><br><span class="line">        <span class="keyword">if</span> featVec[axis] == value :</span><br><span class="line">            reducedFeatVec = featVec[ : axis]</span><br><span class="line">            reducedFeatVec.extend(featVec[axis + <span class="number">1</span> : ])</span><br><span class="line">            retDataSet.append(reducedFeatVec)</span><br><span class="line">    <span class="keyword">return</span> retDataSet</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">ChooseBestFeatureToSplit</span>(<span class="params">DataSet</span>) :</span><br><span class="line">    <span class="comment">#计算父亲节点的GiNi指数</span></span><br><span class="line">    FatherGiNi = CalcGiNiIndex(DataSet)</span><br><span class="line">    BestIoFoGain = <span class="number">0</span></span><br><span class="line">    BestFeature = -<span class="number">1</span></span><br><span class="line">    numFeature = <span class="built_in">len</span>(DataSet[<span class="number">0</span>]) - <span class="number">1</span></span><br><span class="line">    <span class="comment">#去掉最后一列</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(numFeature) :</span><br><span class="line">        <span class="comment">#每个特征下的具体表现形式</span></span><br><span class="line">        featList = [example[i] <span class="keyword">for</span> example <span class="keyword">in</span> DataSet]</span><br><span class="line">        uniqueVals = <span class="built_in">set</span>(featList)<span class="comment">#去重复</span></span><br><span class="line">        newGiNi = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> value <span class="keyword">in</span> uniqueVals :</span><br><span class="line">            <span class="comment">#计算每一种表现形式GiNi指数的权重和</span></span><br><span class="line">            subData = splitDataSet(DataSet, i, value)</span><br><span class="line">            prob = <span class="built_in">len</span>(subData) / <span class="built_in">float</span>(<span class="built_in">len</span>(DataSet))</span><br><span class="line">            newGiNi += prob * CalcGiNiIndex(subData)</span><br><span class="line">        infogain = FatherGiNi - newGiNi<span class="comment">#计算信息增益</span></span><br><span class="line">        <span class="keyword">if</span> infogain &gt; BestIoFoGain :</span><br><span class="line">            <span class="comment">#比较信息增益的大小，更新最佳分类的特征</span></span><br><span class="line">            BestIoFoGain = infogain</span><br><span class="line">            BestFeature = i</span><br><span class="line">    <span class="keyword">return</span> BestFeature</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">majorityCnt</span>(<span class="params">classList</span>):    <span class="comment">#按分类后类别数量排序，比如：最后分类为2yes1no，则判定为yes；</span></span><br><span class="line">    classCount=&#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> vote <span class="keyword">in</span> classList:</span><br><span class="line">        <span class="keyword">if</span> vote <span class="keyword">not</span> <span class="keyword">in</span> classCount.keys():</span><br><span class="line">            classCount[vote]=<span class="number">0</span></span><br><span class="line">        classCount[vote]+=<span class="number">1</span></span><br><span class="line">    <span class="comment">#字典逆序排序</span></span><br><span class="line">    sortedClassCount = <span class="built_in">sorted</span>(classCount.items(), key = <span class="keyword">lambda</span> x : x[<span class="number">1</span>], reverse=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> sortedClassCount[<span class="number">0</span>][<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">createTree</span>(<span class="params">DataSet, labels</span>) :</span><br><span class="line">    ConditionList = [example[-<span class="number">1</span>] <span class="keyword">for</span> example <span class="keyword">in</span> DataSet]</span><br><span class="line">    <span class="comment">#list.count(element) 方法用于统计某个元素在列表中出现的次数。</span></span><br><span class="line">    <span class="keyword">if</span> ConditionList.count(ConditionList[<span class="number">0</span>]) == <span class="built_in">len</span>(ConditionList) :<span class="comment">#yes or no</span></span><br><span class="line">        <span class="keyword">return</span> ConditionList[<span class="number">0</span>]</span><br><span class="line">    <span class="comment">#dataSet[0]取矩阵第一行，dataSet[0][0]取矩阵第一行第一列元素</span></span><br><span class="line">    <span class="comment">#递归终止条件2：使用完所有特征，则返回最后出现次数最多的那个标签</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>( DataSet[<span class="number">0</span>] ) == <span class="number">1</span>:   </span><br><span class="line">        <span class="keyword">return</span> majorityCnt(classList)</span><br><span class="line">    </span><br><span class="line">     <span class="comment">#以上两个终止条件都不满足，开始选择最优特征划分，已经有了一个方框，准备往方框中写入判断问题</span></span><br><span class="line">    BestFeature = ChooseBestFeatureToSplit(DataSet)</span><br><span class="line">    BestFeatLabel = labels[BestFeature]</span><br><span class="line">    mytree = &#123;BestFeatLabel : &#123;&#125;&#125;</span><br><span class="line">    <span class="comment">#用过了该特征，将该特征从所有特征列表中删除</span></span><br><span class="line">    <span class="keyword">del</span> (labels[BestFeature])</span><br><span class="line">    featValues = [example[BestFeature] <span class="keyword">for</span> example <span class="keyword">in</span> DataSet]</span><br><span class="line">    uniqueVals = <span class="built_in">set</span>(featValues)</span><br><span class="line">    <span class="keyword">for</span> value <span class="keyword">in</span> uniqueVals:</span><br><span class="line">        subLabels = labels[ : ]</span><br><span class="line">        splitdata = splitDataSet(DataSet, BestFeature, value)</span><br><span class="line">        <span class="comment">#递归</span></span><br><span class="line">        mytree[BestFeatLabel][value] = createTree(splitdata, subLabels)</span><br><span class="line">    <span class="keyword">return</span> mytree</span><br><span class="line"></span><br><span class="line">DataSet, labels = createDataSet()<span class="comment"># 创造示列数据</span></span><br><span class="line"><span class="built_in">print</span>(createTree(DataSet, labels))<span class="comment"># 输出决策树模型结果</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/4c4883247d234b14a0660cf8a75baf70.png" alt="在这里插入图片描述"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 机器学习</a>
+              <a href="/tags/%E5%86%B3%E7%AD%96%E6%A0%91/" rel="tag"># 决策树</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/" rel="prev" title="自监督学习">
+      <i class="fa fa-chevron-left"></i> 自监督学习
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E3%80%90OpenCv%E3%80%91kirsch-%E7%AE%97%E5%AD%90%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B/" rel="next" title="【OpenCv】kirsch 算子边缘检测">
+      【OpenCv】kirsch 算子边缘检测 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">61k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:41</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

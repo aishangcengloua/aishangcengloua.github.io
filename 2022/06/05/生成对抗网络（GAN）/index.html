@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言&amp;emsp;&amp;emsp;在生成对抗网络(Generative Adversarial Network，简称 GAN)发明之前，变分自编码器(VAE)被认为是理论完备，实现简单，使用神经网络训练起来很稳定，生成的图片逼近度也较高，但是人眼还是可以很轻易地分辨出真实图片与机器生成的图片。但在2014年GAN被提出之后，在之后的几年里面里迅速发展，生成的图片越来越逼真。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="生成对抗网络（GAN）">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/%E7%94%9F%E6%88%90%E5%AF%B9%E6%8A%97%E7%BD%91%E7%BB%9C%EF%BC%88GAN%EF%BC%89/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="前言&amp;emsp;&amp;emsp;在生成对抗网络(Generative Adversarial Network，简称 GAN)发明之前，变分自编码器(VAE)被认为是理论完备，实现简单，使用神经网络训练起来很稳定，生成的图片逼近度也较高，但是人眼还是可以很轻易地分辨出真实图片与机器生成的图片。但在2014年GAN被提出之后，在之后的几年里面里迅速发展，生成的图片越来越逼真。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/f0a07617c2ce41ada27a39cfbcf0b1f6.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/f74001c39bfa414ea921a2420f4f96f8.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/e986cb9be6344b68889460f74812b572.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/73d5853d0a524cddb3e665e367b22d1d.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/c0b19fec09f74f4890fae16f63799ac0.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/550fc7f16cf543a8b1f2c449fce08d90.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/9baccb14957b4738b4a1232a959761b7.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/0c4e02351e04459da5825f9d60edce2e.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/9774d234ecff4d1e978ef7046ac875dc.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/46f8a03977c44c909c48c030a38e18ff.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/73987cbfaf8c46d48437cabfe0d417bd.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/3790f4c34ea848deab7c737aca0c482b.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/c5a1b78cb4ff4ca3a9cf7a02cee1a6b5.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/e07f02b2a62c4121a3c9508964bf8645.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/8e844bf24dda4184b3c7f68404dc2cc3.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/9b041640e36b4c8d9adf7825ed0b09f1.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/5e90c21b8b094029a3871a8d40e57433.png#pic_center">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/4ec023cd50bc4123a2c2d3031746937b.png#pic_center">
+<meta property="article:published_time" content="2022-06-05T09:14:07.000Z">
+<meta property="article:modified_time" content="2022-06-05T09:15:02.637Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="PyTorch">
+<meta property="article:tag" content="生成对抗网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/f0a07617c2ce41ada27a39cfbcf0b1f6.png#pic_center">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/05/%E7%94%9F%E6%88%90%E5%AF%B9%E6%8A%97%E7%BD%91%E7%BB%9C%EF%BC%88GAN%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>生成对抗网络（GAN） | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">19</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">24</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/05/%E7%94%9F%E6%88%90%E5%AF%B9%E6%8A%97%E7%BD%91%E7%BB%9C%EF%BC%88GAN%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          生成对抗网络（GAN）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-05 17:14:07 / 修改时间：17:15:02" itemprop="dateCreated datePublished" datetime="2022-06-05T17:14:07+08:00">2022-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/05/%E7%94%9F%E6%88%90%E5%AF%B9%E6%8A%97%E7%BD%91%E7%BB%9C%EF%BC%88GAN%EF%BC%89/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/05/%E7%94%9F%E6%88%90%E5%AF%B9%E6%8A%97%E7%BD%91%E7%BB%9C%EF%BC%88GAN%EF%BC%89/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>3.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;&emsp;在生成对抗网络(Generative Adversarial Network，简称 GAN)发明之前，变分自编码器(VAE)被认为是理论完备，实现简单，使用神经网络训练起来很稳定，生成的图片逼近度也较高，但是人眼还是可以很轻易地分辨出真实图片与机器生成的图片。但在2014年GAN被提出之后，在之后的几年里面里迅速发展，生成的图片越来越逼真。</p>
+<h1 id="1-GAN"><a href="#1-GAN" class="headerlink" title="1    GAN"></a>1    GAN</h1><h2 id="1-1-相关介绍"><a href="#1-1-相关介绍" class="headerlink" title="1.1    相关介绍"></a>1.1    相关介绍</h2><p>&emsp;&emsp;GAN模型的核心思想就是博弈思想，是生成器(造假者)和判别器(鉴别者)之间的博弈，在提出GAN的原始论文中，作者举了货币制造的例子。即像一台验钞机和一台制造假币的机器之间的博弈，两者不断博弈，博弈的结果假币越来越像真币，直到验钞机无法识别一张货币是假币还是真币为止。</p>
+<h2 id="1-2-原理"><a href="#1-2-原理" class="headerlink" title="1.2    原理"></a>1.2    原理</h2><h3 id="1-2-1-网络架构"><a href="#1-2-1-网络架构" class="headerlink" title="1.2.1    网络架构"></a>1.2.1    网络架构</h3><p>&emsp;&emsp;生成对抗网络包含了两个子网络：生成网络(Generator，简称 G)和判别网络(Discriminator，简称 D)，其中生成网络 G 负责学习样本的真实分布，判别网络 D 负责将生成网络采样的样本与真实样本区分开来。<br>&emsp;&emsp;<strong>生成网络G(𝒛)</strong> ：生成网络 G 和自编码器的 Decoder 功能类似，从先验分布$p_z$(∙)采样获得潜在空间点向量，经过网络生成图片样本$\bar{x}$~$𝑝_𝑔(x|z)$。<img src="https://img-blog.csdnimg.cn/f0a07617c2ce41ada27a39cfbcf0b1f6.png#pic_center" alt="在这里插入图片描述"><br>&emsp;&emsp;生成器的网络($𝑝_𝑔(x|z)$)可以由深度神经网络来参数化，如：卷积网络和转置卷积网络。下图中从均匀分布$𝑝𝒛$(∙)中采样出隐藏变量$z$，经过多层转置卷积层网络参数化的$𝑝_𝑔(x|z)$分布中采样出样本$x_f$，从输入输出层面来看，生成器 G 的功能是将隐向量𝒛通过神经网络转换为样本向量$x_f$，下标𝑓代表假样本(Fake samples)。<img src="https://img-blog.csdnimg.cn/f74001c39bfa414ea921a2420f4f96f8.png#pic_center" alt="在这里插入图片描述"><br>&emsp;&emsp;<strong>判别网络D(𝒙)</strong>：判别网络和普通的二分类网络功能类似，网络的输入数据集由采样自真实数据分布$p_𝑟$(∙)的样本$x_𝑟$ ~ $𝑝_𝑟$(∙)和采样自生成网络的假样本$x_𝑓$ ~ $𝑝_𝑔(x|z)$组成。判别网络输出为$x$属于真实样本的概率𝑃($x$为真|$x$)，我们把所有真实样本$x_r$的标签标注为真(1)，所有生成网络产生的样本，所有生成网络产生的样本$x_f$标注为假(0)，通过最小化判别网络 D 的预测值与标签之间的误差来优化判别网络参数。<img src="https://img-blog.csdnimg.cn/e986cb9be6344b68889460f74812b572.png#pic_center" alt="在这里插入图片描述"></p>
+<h3 id="1-2-2-网络训练"><a href="#1-2-2-网络训练" class="headerlink" title="1.2.2    网络训练"></a>1.2.2    网络训练</h3><p>&emsp;&emsp;GAN 博弈学习的思想体现在在它的训练方式上，由于生成器 G 和判别器 D 的优化目标不一样，不能和之前的网络模型的训练一样，只采用一个损失函数。所以我们要分别对生成器和判别器进行训练。<br>&emsp;&emsp;<strong>判别网络D(𝒙)</strong>：它的目标是能够很好地分辨出真样本$x_r$与假样本$x_f$。则其损失函数既要考虑识别真图像能力，又要考虑识别假图像能力，而不能只考虑一方面，故判别器的损失函数为两者的和。因此 D 的分类问题是二分类问题，以图片生成来说，交叉熵损失函数定义为：<img src="https://img-blog.csdnimg.cn/73d5853d0a524cddb3e665e367b22d1d.png#pic_center" alt="在这里插入图片描述"><br>因此判别网络 D 的优化目标是：<br><img src="https://img-blog.csdnimg.cn/c0b19fec09f74f4890fae16f63799ac0.png#pic_center" alt="在这里插入图片描述"><br>将最小化转成最大化的问题并写成期望的形式：<br><img src="https://img-blog.csdnimg.cn/550fc7f16cf543a8b1f2c449fce08d90.png#pic_center" alt="在这里插入图片描述"><br>&emsp;&emsp;具体代码如下：D表示判别器、G为生成器、real_labels、fake_labels分别表示真图像标签、假图像标签。images是真图像，z是从潜在空间随机采样的向量，通过生成器得到假图像。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义判断器对真图像的损失函数 </span></span><br><span class="line">outputs = D(images)</span><br><span class="line">d_loss_real = criterion(outputs, real_labels) </span><br><span class="line">real_score = outputs </span><br><span class="line"><span class="comment"># 定义判别器对假图像（即由潜在空间点生成的图像）的损失函数 </span></span><br><span class="line">z = torch.randn(batch_size, latent_size).to(device) </span><br><span class="line">fake_images = G(z) </span><br><span class="line">outputs = D(fake_images) </span><br><span class="line">d_loss_fake = criterion(outputs, fake_labels) </span><br><span class="line">fake_score = outputs </span><br><span class="line"><span class="comment"># 得到判别器总的损失函数 </span></span><br><span class="line">d_loss = d_loss_real + d_loss_fake</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;<strong>生成网络G(𝒛)</strong> ：我们希望$x_f$ = 𝐺(𝒛)能够很好地骗过判别网络 D，假样本$x_f$在判别网络的输出越接近真实的标签越好。也就是说，在训练生成网络时，希望判别网络的输出𝐷(𝐺(𝒛))越逼近 1 越好，最小化𝐷(𝐺(𝒛))与 1 之间的交叉熵损失函数：<img src="https://img-blog.csdnimg.cn/9baccb14957b4738b4a1232a959761b7.png#pic_center" alt="在这里插入图片描述"><br>将最小化转成最大化的问题并写成期望的形式：<img src="https://img-blog.csdnimg.cn/0c4e02351e04459da5825f9d60edce2e.png#pic_center" alt="在这里插入图片描述"><br>等价成：<br><img src="https://img-blog.csdnimg.cn/9774d234ecff4d1e978ef7046ac875dc.png#pic_center" alt="在这里插入图片描述"><br>其中𝜙为生成网络 G 的参数集，可以利用梯度下降算法来优化参数𝜙。具体代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">z = torch.randn(batch_size, latent_size).to(device) </span><br><span class="line">fake_images = G(z) </span><br><span class="line">outputs = D(fake_images) </span><br><span class="line">g_loss = criterion(outputs, real_labels)</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;通过对生成器和判别器的损失函数的求解，GAN的架构如下：<br><img src="https://img-blog.csdnimg.cn/46f8a03977c44c909c48c030a38e18ff.png#pic_center" alt="在这里插入图片描述"><br>算法流程为：<br><img src="https://img-blog.csdnimg.cn/73987cbfaf8c46d48437cabfe0d417bd.png#pic_center" alt="在这里插入图片描述"></p>
+<h2 id="1-3-用GAN生成图像"><a href="#1-3-用GAN生成图像" class="headerlink" title="1.3    用GAN生成图像"></a>1.3    用GAN生成图像</h2><p>&emsp;&emsp;本次实验为了方便，我使用的是 MNIST 手写数字数据集，下面进行每部分的代码实现。</p>
+<h3 id="1-3-1-判别器"><a href="#1-3-1-判别器" class="headerlink" title="1.3.1    判别器"></a>1.3.1    判别器</h3><p>&emsp;&emsp;定义判别器网络结构，这里使用LeakyReLU为激活函数，输出一个节点 并经过Sigmoid后输出，用于真假二分类。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Discriminator</span>(nn.Module) :</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>) :</span><br><span class="line">        <span class="built_in">super</span>(Discriminator, self).__init__()</span><br><span class="line">        self.D = nn.Sequential(nn.Linear(IMAGE_SIZE, HIDDEN_SIZE),</span><br><span class="line">                               nn.LeakyReLU(<span class="number">0.2</span>),</span><br><span class="line">                               nn.Linear(HIDDEN_SIZE, HIDDEN_SIZE),</span><br><span class="line">                               nn.LeakyReLU(<span class="number">0.2</span>),</span><br><span class="line">                               nn.Linear(HIDDEN_SIZE, <span class="number">1</span>),</span><br><span class="line">                               nn.Sigmoid())</span><br></pre></td></tr></table></figure>
+<h3 id="1-3-2-生成器"><a href="#1-3-2-生成器" class="headerlink" title="1.3.2    生成器"></a>1.3.2    生成器</h3><p>&emsp;&emsp;生成器与AVE的生成器类似，不同的地方是输出为nn.tanh，使用nn.tanh 将使数据分布在[-1,1]之间。其输入是潜在空间的向量z，输出维度与真图像相同。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Generator</span>(nn.Module) :</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(Generator, self).__init__()</span><br><span class="line">        self.G = nn.Sequential(nn.Linear(Z_SIZE, HIDDEN_SIZE),</span><br><span class="line">                               nn.ReLU(),</span><br><span class="line">                               nn.Linear(HIDDEN_SIZE, HIDDEN_SIZE),</span><br><span class="line">                               nn.ReLU(),</span><br><span class="line">                               nn.Linear(HIDDEN_SIZE, IMAGE_SIZE),</span><br><span class="line">                               nn.Tanh())</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, z</span>) :</span><br><span class="line">        <span class="keyword">return</span> self.G(z)</span><br></pre></td></tr></table></figure>
+<h3 id="1-3-3-训练模型"><a href="#1-3-3-训练模型" class="headerlink" title="1.3.3    训练模型"></a>1.3.3    训练模型</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(MAX_EPOCH) :</span><br><span class="line">    <span class="keyword">for</span> i, (images, labels) <span class="keyword">in</span> <span class="built_in">enumerate</span>(Dataloader) :</span><br><span class="line"></span><br><span class="line">        images = images.reshape(BATCH_SIZE, -<span class="number">1</span>).cuda()</span><br><span class="line">        <span class="comment">#真样本与生成样本的标签设置</span></span><br><span class="line">        real_labels = torch.ones(BATCH_SIZE, <span class="number">1</span>).cuda()</span><br><span class="line">        fake_labels = torch.zeros(BATCH_SIZE, <span class="number">1</span>).cuda()</span><br><span class="line">        <span class="comment">#训练判别器</span></span><br><span class="line">        d_optimizer.zero_grad()</span><br><span class="line">        g_optimizer.zero_grad()</span><br><span class="line">        out = D(images)</span><br><span class="line">        real_score = out</span><br><span class="line">        d_loss_real = criterion(out, real_labels)</span><br><span class="line"></span><br><span class="line">        z = torch.randn(BATCH_SIZE, Z_SIZE).cuda()</span><br><span class="line">        fake_images = G(z)</span><br><span class="line">        out = D(fake_images)</span><br><span class="line">        fake_score = out</span><br><span class="line">        d_loss_fake = criterion(out, fake_labels)</span><br><span class="line"></span><br><span class="line">        d_loss = d_loss_fake + d_loss_real</span><br><span class="line"></span><br><span class="line">        d_loss.backward()</span><br><span class="line">        d_optimizer.step()</span><br><span class="line"></span><br><span class="line">        <span class="comment">#训练生成器</span></span><br><span class="line">        d_optimizer.zero_grad()</span><br><span class="line">        g_optimizer.zero_grad()</span><br><span class="line">        z = torch.randn(BATCH_SIZE, Z_SIZE).cuda()</span><br><span class="line">        fake_images = G(z)</span><br><span class="line">        out = D(fake_images)</span><br><span class="line">        g_loss = criterion(out, real_labels)</span><br><span class="line"></span><br><span class="line">        g_loss.backward()</span><br><span class="line">        g_optimizer.step()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (i + <span class="number">1</span>) % <span class="number">200</span> == <span class="number">0</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;Epoch [&#123;&#125;/&#123;&#125;], Step [&#123;&#125;/&#123;&#125;], d_loss: &#123;:.4f&#125;, g_loss: &#123;:.4f&#125;, D(x): &#123;:.2f&#125;, D(G(z)): &#123;:.2f&#125;&#x27;</span></span><br><span class="line">                  .<span class="built_in">format</span>(epoch, MAX_EPOCH, i + <span class="number">1</span>, <span class="built_in">len</span>(Dataloader), d_loss.item(), g_loss.item(),</span><br><span class="line">                          real_score.mean().item(), fake_score.mean().item()))</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 保存真图片</span></span><br><span class="line">        <span class="keyword">if</span> (epoch + <span class="number">1</span>) == <span class="number">1</span>:</span><br><span class="line">            images = images.reshape(images.size(<span class="number">0</span>), <span class="number">1</span>, <span class="number">28</span>, <span class="number">28</span>)</span><br><span class="line">            save_image(denorm(images), os.path.join(sample_dir, <span class="string">&#x27;real_images.png&#x27;</span>))</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 保存假图片</span></span><br><span class="line">        fake_images = fake_images.reshape(fake_images.size(<span class="number">0</span>), <span class="number">1</span>, <span class="number">28</span>, <span class="number">28</span>)</span><br><span class="line">        save_image(denorm(fake_images), os.path.join(sample_dir, <span class="string">&#x27;fake_images-&#123;&#125;.png&#x27;</span>.<span class="built_in">format</span>(epoch + <span class="number">1</span>)))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 保存模型</span></span><br><span class="line">    torch.save(G.state_dict(), <span class="string">&#x27;G.ckpt&#x27;</span>)</span><br><span class="line">    torch.save(D.state_dict(), <span class="string">&#x27;D.ckpt&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;效果，分别展示epoch为1、100、200时生成的图片，其中当epoch为200时噪声就已经很少了，但是对数字的分布结构并不能很好的描述出来。<br><img src="https://img-blog.csdnimg.cn/3790f4c34ea848deab7c737aca0c482b.png#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="2-GAN变种"><a href="#2-GAN变种" class="headerlink" title="2    GAN变种"></a>2    GAN变种</h1><h2 id="2-1-CGAN"><a href="#2-1-CGAN" class="headerlink" title="2.1    CGAN"></a>2.1    CGAN</h2><p>&emsp;&emsp;AVE和GAN都能基于潜在空间的随机向量z生成新图片，GAN生成的图 像比AVE的更清晰，质量更好些。不过它们生成的都是随机的，无法预先控制你要生成的哪类或哪个数。我们希望 生成某个数字，生成某个主题或类别的图像，实现按需生成的目的，这样的应用应该非常广泛。CGAN正是针对这类问题而提出的。</p>
+<h3 id="2-1-1-原理"><a href="#2-1-1-原理" class="headerlink" title="2.1.1    原理"></a>2.1.1    原理</h3><p>&emsp;&emsp;在GAN这种完全无监督的方式加上一个标签或一点监督信息，使整个网络就可看成半监督模型。其基本架构与GAN类似，只要添加一个条件y即可，y就是加入的监督信息，比如说MNIST数据集可以提供某个数字的标签 信息，人脸生成可以提供性别、是否微笑、年龄等信息，带某个主题的图像 等标签信息。<br><img src="https://img-blog.csdnimg.cn/c5a1b78cb4ff4ca3a9cf7a02cee1a6b5.png#pic_center" alt="在这里插入图片描述"><br>&emsp;&emsp;对生成器输入一个从潜在空间随机采样的一个向量z及一个条件y，生成 一个符合该条件的图像G(z/y)。对判别器来说，输入一张图像x和条件y，输 出该图像在该条件下的概率D(x/y)。</p>
+<h3 id="2-1-2-PyTorch实现"><a href="#2-1-2-PyTorch实现" class="headerlink" title="2.1.2    PyTorch实现"></a>2.1.2    PyTorch实现</h3><p>&emsp;&emsp;CGAN实现采用的数据集依然是 MNIST 手写数字数据集，其实现过程与原始的GAN的相差不大，主要差异时是标注信息的添加。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> datasets</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader</span><br><span class="line"><span class="keyword">from</span> torchvision.utils <span class="keyword">import</span> save_image</span><br><span class="line"><span class="keyword">from</span> torch.utils.tensorboard <span class="keyword">import</span> SummaryWriter</span><br><span class="line"><span class="keyword">from</span> torchvision.utils <span class="keyword">import</span> make_grid</span><br><span class="line"></span><br><span class="line"><span class="comment">#设置超参数</span></span><br><span class="line">MAX_EPOCH = <span class="number">50</span></span><br><span class="line">LR_RATE = <span class="number">0.0001</span></span><br><span class="line">BATCH_SIZE = <span class="number">100</span></span><br><span class="line"></span><br><span class="line">writer = SummaryWriter(log_dir = <span class="string">&#x27;logs&#x27;</span>)</span><br><span class="line">sample_dir = <span class="string">&#x27;samples_CGAN&#x27;</span></span><br><span class="line">os.makedirs(sample_dir, exist_ok = <span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">Dataset = datasets.MNIST(root = <span class="string">&#x27;data&#x27;</span>,</span><br><span class="line">                         download = <span class="literal">False</span>,</span><br><span class="line">                         train = <span class="literal">True</span>,</span><br><span class="line">                         transform = transforms.Compose([transforms.ToTensor(),</span><br><span class="line">                                                         transforms.Normalize([<span class="number">0.5</span>], [<span class="number">0.5</span>])]))</span><br><span class="line"></span><br><span class="line">Dataloader = DataLoader(Dataset, batch_size = BATCH_SIZE, shuffle = <span class="literal">True</span>, drop_last = <span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#生成器</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Generator</span>(nn.Module) :</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(Generator, self).__init__()</span><br><span class="line">        self.embedding = nn.Embedding(<span class="number">10</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">        self.G = nn.Sequential(nn.Linear(<span class="number">110</span>, <span class="number">256</span>),</span><br><span class="line">                               nn.LeakyReLU(<span class="number">0.2</span>),</span><br><span class="line">                               nn.Linear(<span class="number">256</span>, <span class="number">512</span>),</span><br><span class="line">                               nn.LeakyReLU(<span class="number">0.2</span>),</span><br><span class="line">                               nn.Linear(<span class="number">512</span>, <span class="number">1024</span>),</span><br><span class="line">                               nn.LeakyReLU(<span class="number">0.2</span>),</span><br><span class="line">                               nn.Linear(<span class="number">1024</span>, <span class="number">784</span>),</span><br><span class="line">                               nn.Tanh())</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, z, labels</span>) :</span><br><span class="line">        y = self.embedding(labels)</span><br><span class="line">        x = torch.cat([z, y], dim = <span class="number">1</span>)</span><br><span class="line">        out = self.G(x)</span><br><span class="line">        <span class="keyword">return</span> out.view(z.size(<span class="number">0</span>), <span class="number">28</span>, <span class="number">28</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#判别器</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Discriminator</span>(nn.Module) :</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>) :</span><br><span class="line">        <span class="built_in">super</span>(Discriminator, self).__init__()</span><br><span class="line">        self.embedding = nn.Embedding(<span class="number">10</span>, <span class="number">10</span>)</span><br><span class="line">        self.D = nn.Sequential(nn.Linear(<span class="number">794</span>, <span class="number">1024</span>),</span><br><span class="line">                               nn.LeakyReLU(<span class="number">0.2</span>),</span><br><span class="line">                               nn.Dropout(<span class="number">0.4</span>),</span><br><span class="line">                               nn.Linear(<span class="number">1024</span>, <span class="number">512</span>),</span><br><span class="line">                               nn.LeakyReLU(<span class="number">0.2</span>),</span><br><span class="line">                               nn.Dropout(<span class="number">0.4</span>),</span><br><span class="line">                               nn.Linear(<span class="number">512</span>, <span class="number">256</span>),</span><br><span class="line">                               nn.LeakyReLU(<span class="number">0.2</span>),</span><br><span class="line">                               nn.Dropout(<span class="number">0.4</span>),</span><br><span class="line">                               nn.Linear(<span class="number">256</span>, <span class="number">1</span>),</span><br><span class="line">                               nn.Sigmoid())</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x, labels</span>):</span><br><span class="line">        x = x.view(x.size(<span class="number">0</span>), -<span class="number">1</span>)</span><br><span class="line">        y = self.embedding(labels)</span><br><span class="line">        x = torch.cat([x, y], dim = <span class="number">1</span>)</span><br><span class="line">        out = self.D(x)</span><br><span class="line">        <span class="keyword">return</span> out</span><br><span class="line"></span><br><span class="line"><span class="comment">#Clamp函数x限制在区间[min, max]内</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">denorm</span>(<span class="params">x</span>):</span><br><span class="line">    out = (x + <span class="number">1</span>) / <span class="number">2</span></span><br><span class="line">    <span class="keyword">return</span> out.clamp(<span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">D = Discriminator().cuda()</span><br><span class="line">G = Generator().cuda()</span><br><span class="line">d_optimizer = optim.Adam(D.parameters(), lr = LR_RATE)</span><br><span class="line">g_optimizer = optim.Adam(G.parameters(), lr = LR_RATE)</span><br><span class="line">criterion = nn.BCELoss()</span><br><span class="line"></span><br><span class="line"><span class="comment">#训练</span></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(MAX_EPOCH) :</span><br><span class="line">    <span class="keyword">for</span> i, (images, labels) <span class="keyword">in</span> <span class="built_in">enumerate</span>(Dataloader) :</span><br><span class="line">        step = epoch * <span class="built_in">len</span>(Dataloader) + i + <span class="number">1</span></span><br><span class="line">        images, labels = images.reshape(BATCH_SIZE, -<span class="number">1</span>).cuda(), labels.cuda()</span><br><span class="line">        real_labels = torch.ones(BATCH_SIZE, <span class="number">1</span>).cuda()</span><br><span class="line"></span><br><span class="line">        d_optimizer.zero_grad()</span><br><span class="line">        g_optimizer.zero_grad()</span><br><span class="line">        out = D(images, labels)</span><br><span class="line">        real_score = out</span><br><span class="line">        d_loss_real = criterion(out, real_labels)</span><br><span class="line"></span><br><span class="line">        z = torch.randn(BATCH_SIZE, <span class="number">100</span>).cuda()</span><br><span class="line">        fake_labels = torch.randint(<span class="number">0</span>, <span class="number">10</span>, (BATCH_SIZE, )).cuda()</span><br><span class="line"></span><br><span class="line">        fake_images = G(z, fake_labels)</span><br><span class="line">        out = D(fake_images, fake_labels)</span><br><span class="line">        fake_score = out</span><br><span class="line">        d_loss_fake = criterion(out, torch.zeros(BATCH_SIZE, <span class="number">1</span>).cuda())</span><br><span class="line"></span><br><span class="line">        d_loss = d_loss_fake + d_loss_real</span><br><span class="line"></span><br><span class="line">        d_loss.backward()</span><br><span class="line">        d_optimizer.step()</span><br><span class="line"></span><br><span class="line">        d_optimizer.zero_grad()</span><br><span class="line">        g_optimizer.zero_grad()</span><br><span class="line">        z = torch.randn(BATCH_SIZE, <span class="number">100</span>).cuda()</span><br><span class="line">        fake_images = G(z, fake_labels)</span><br><span class="line">        out = D(fake_images, fake_labels)</span><br><span class="line">        g_loss = criterion(out, real_labels)</span><br><span class="line"></span><br><span class="line">        g_loss.backward()</span><br><span class="line">        g_optimizer.step()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (i + <span class="number">1</span>) % <span class="number">200</span> == <span class="number">0</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;Epoch [&#123;&#125;/&#123;&#125;], Step [&#123;&#125;/&#123;&#125;], d_loss: &#123;:.4f&#125;, g_loss: &#123;:.4f&#125;, D(x): &#123;:.2f&#125;, D(G(z)): &#123;:.2f&#125;&#x27;</span></span><br><span class="line">                  .<span class="built_in">format</span>(epoch, MAX_EPOCH, i + <span class="number">1</span>, <span class="built_in">len</span>(Dataloader), d_loss.item(), g_loss.item(),</span><br><span class="line">                          real_score.mean().item(), fake_score.mean().item()))</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 保存真图片</span></span><br><span class="line">        <span class="keyword">if</span> (epoch + <span class="number">1</span>) == <span class="number">1</span>:</span><br><span class="line">            images = images.reshape(images.size(<span class="number">0</span>), <span class="number">1</span>, <span class="number">28</span>, <span class="number">28</span>)</span><br><span class="line">            save_image(denorm(images), os.path.join(sample_dir, <span class="string">&#x27;real_images.png&#x27;</span>))</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 保存假图片</span></span><br><span class="line">        fake_images = fake_images.reshape(fake_images.size(<span class="number">0</span>), <span class="number">1</span>, <span class="number">28</span>, <span class="number">28</span>)</span><br><span class="line">        save_image(denorm(fake_images), os.path.join(sample_dir, <span class="string">&#x27;fake_images-&#123;&#125;.png&#x27;</span>.<span class="built_in">format</span>(epoch + <span class="number">1</span>)))</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 可视化损失值</span></span><br><span class="line">        writer.add_scalars(<span class="string">&#x27;scalars&#x27;</span>, &#123;<span class="string">&#x27;d_loss&#x27;</span>: d_loss.item(), <span class="string">&#x27;g_loss&#x27;</span>: g_loss.item()&#125;, step)</span><br><span class="line">    <span class="comment"># 保存模型</span></span><br><span class="line">    torch.save(G.state_dict(), <span class="string">&#x27;G.ckpt&#x27;</span>)</span><br><span class="line">    torch.save(D.state_dict(), <span class="string">&#x27;D.ckpt&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#利用网格（10×10）的形式显示指定条件下生成的图像。</span></span><br><span class="line">z = torch.randn(<span class="number">100</span>, <span class="number">100</span>).cuda()</span><br><span class="line">labels = torch.LongTensor([i <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>) <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)]).cuda()</span><br><span class="line">images = G(z, labels).unsqueeze(<span class="number">1</span>)</span><br><span class="line">grid = make_grid(images, nrow = <span class="number">10</span>, normalize = <span class="literal">True</span>)</span><br><span class="line">fig, ax = plt.subplots(figsize = (<span class="number">10</span>, <span class="number">10</span>))</span><br><span class="line">ax.imshow(grid.permute(<span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>).detach().cpu().numpy(), cmap = <span class="string">&#x27;binary&#x27;</span>)</span><br><span class="line">ax.axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line">plt.show()</span><br><span class="line"></span><br><span class="line"><span class="comment">#可视化指定单个数字条件下生成的数字</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_digit</span>(<span class="params">generator, digit</span>) :</span><br><span class="line">    z = torch.randn(<span class="number">1</span>, <span class="number">100</span>).cuda()</span><br><span class="line">    label = torch.LongTensor([digit]).cuda()</span><br><span class="line">    img = generator(z, label).detach().cpu()</span><br><span class="line">    img = <span class="number">0.5</span> * img + <span class="number">0.5</span></span><br><span class="line">    <span class="keyword">return</span> transforms.ToPILImage()(img)</span><br><span class="line">generate_digit(G, <span class="number">8</span>)</span><br></pre></td></tr></table></figure>
+<p>利用网格（10×10）的形式显示指定条件下生成的图像：<br><img src="https://img-blog.csdnimg.cn/e07f02b2a62c4121a3c9508964bf8645.png#pic_center" alt="在这里插入图片描述"><br>可视化指定单个数字条件下生成的数字：<br><img src="https://img-blog.csdnimg.cn/8e844bf24dda4184b3c7f68404dc2cc3.png#pic_center" alt="在这里插入图片描述"><br>可视化生成器和判别器损失值如下 ：<br><img src="https://img-blog.csdnimg.cn/9b041640e36b4c8d9adf7825ed0b09f1.png#pic_center" alt="在这里插入图片描述"><br>由上图可知，CGAN的训练过程不像一般神经网络的过程，它是判别 器和生成器互相竞争的过程，最后两者达成一个平衡。</p>
+<h2 id="2-2-DCGAN"><a href="#2-2-DCGAN" class="headerlink" title="2.2    DCGAN"></a>2.2    DCGAN</h2><p>&emsp;&emsp;在前面中无论是原始的GAN还是CGAN我们建立的网络都是基于全连接网络构建的，这样的网络由于图片的维度较高，网络参数量巨大，不能很好地学习到图片地特征，导致训练效果不佳。DCGAN提出了使用转置卷积层实现的生成网络，普通卷积层来实现的判别网络，大大地降低了网络参数量，同时图片的生成效果也大幅提升，展现了 GAN 模型在图片生成效果上超越 VAE 模型的潜质。注：虽然使用卷积网络会大大降低参数量，但是所需要的样本数要更多一些。<br><img src="https://img-blog.csdnimg.cn/5e90c21b8b094029a3871a8d40e57433.png#pic_center" alt="加粗样式"></p>
+<h2 id="2-3-CycleGAN"><a href="#2-3-CycleGAN" class="headerlink" title="2.3    CycleGAN"></a>2.3    CycleGAN</h2><p>CycleGAN 是一种无监督方式，主要用于图片风格相互转换的。CycleGAN 基本的思想是，如果由图片 A 转换到图片 B，再从图片 B 转换到A′，那么A′应该和 A 是同一张图片。因此除了设立标准的 GAN 损失项外，CycleGAN 还增设了循环一致性损失(Cycle Consistency Loss)，来保证A′尽可能与 A 逼近。<img src="https://img-blog.csdnimg.cn/4ec023cd50bc4123a2c2d3031746937b.png#pic_center" alt="在这里插入图片描述"></p>
+<h2 id="2-4-WGAN"><a href="#2-4-WGAN" class="headerlink" title="2.4    WGAN"></a>2.4    WGAN</h2><p>&emsp;&emsp;GAN 的训练问题一直被诟病，很容易出现训练不收敛和模式崩塌的现象。WGAN 从理论层面分析了原始的 GAN 使用 JS 散度存在的缺陷，并提出了可以使用 Wasserstein 距 离来解决这个问题。在 WGAN-GP 中，作者提出了通过添加梯度惩罚项，从工程层面很好的实现了 WGAN 算法，并且实验性证实了 WGAN 训练稳定的优点。</p>
+<h1 id="3-训练GAN的技巧"><a href="#3-训练GAN的技巧" class="headerlink" title="3    训练GAN的技巧"></a>3    训练GAN的技巧</h1><ul>
+<li>批量加载和批规范化，有利于提升训练过程中博弈的稳定性。</li>
+<li>使用tanh激活函数作为生成器最后一层，将图像数据规范在-1和1之间，一般不用sigmoid。</li>
+<li>选用Leaky ReLU作为生成器和判别器的激活函数，有利于改善梯度的稀疏性，稀疏的梯度会妨碍GAN的训练。 </li>
+<li>使用卷积层时，考虑卷积核的大小能被步幅整除，否则，可能导致生成的图像中存在棋盘状伪影。</li>
+</ul>
+<p>全部代码可以参考<a target="_blank" rel="noopener" href="https://github.com/aishangcengloua/MLData/tree/master/PyTorch/GenerateNetwork">此处</a><br><strong>参考</strong></p>
+<ul>
+<li><strong>《Python深度学习基于PyTorch》</strong></li>
+<li><strong>《TensorFlow深度学习》</strong></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
+              <a href="/tags/PyTorch/" rel="tag"># PyTorch</a>
+              <a href="/tags/%E7%94%9F%E6%88%90%E5%AF%B9%E6%8A%97%E7%BD%91%E7%BB%9C/" rel="tag"># 生成对抗网络</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8/" rel="prev" title="自编码器">
+      <i class="fa fa-chevron-left"></i> 自编码器
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E5%AF%B9%E5%90%AB%E6%9C%89%E5%A5%87%E5%BC%82%E5%80%BC%E5%92%8C%E9%AB%98%E6%96%AF%E5%99%AA%E5%A3%B0%E7%9A%84%E6%95%B0%E6%8D%AE%E8%BF%9B%E8%A1%8C%E5%A4%84%E7%90%86/" rel="next" title="对含有奇异值和高斯噪声的数据进行处理">
+      对含有奇异值和高斯噪声的数据进行处理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1-GAN"><span class="nav-text">1    GAN</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-%E7%9B%B8%E5%85%B3%E4%BB%8B%E7%BB%8D"><span class="nav-text">1.1    相关介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-%E5%8E%9F%E7%90%86"><span class="nav-text">1.2    原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-1-%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84"><span class="nav-text">1.2.1    网络架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-2-%E7%BD%91%E7%BB%9C%E8%AE%AD%E7%BB%83"><span class="nav-text">1.2.2    网络训练</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-%E7%94%A8GAN%E7%94%9F%E6%88%90%E5%9B%BE%E5%83%8F"><span class="nav-text">1.3    用GAN生成图像</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-1-%E5%88%A4%E5%88%AB%E5%99%A8"><span class="nav-text">1.3.1    判别器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-2-%E7%94%9F%E6%88%90%E5%99%A8"><span class="nav-text">1.3.2    生成器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-3-%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B"><span class="nav-text">1.3.3    训练模型</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-GAN%E5%8F%98%E7%A7%8D"><span class="nav-text">2    GAN变种</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-CGAN"><span class="nav-text">2.1    CGAN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-1-%E5%8E%9F%E7%90%86"><span class="nav-text">2.1.1    原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-2-PyTorch%E5%AE%9E%E7%8E%B0"><span class="nav-text">2.1.2    PyTorch实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-DCGAN"><span class="nav-text">2.2    DCGAN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-CycleGAN"><span class="nav-text">2.3    CycleGAN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-WGAN"><span class="nav-text">2.4    WGAN</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E8%AE%AD%E7%BB%83GAN%E7%9A%84%E6%8A%80%E5%B7%A7"><span class="nav-text">3    训练GAN的技巧</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">61k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:41</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
