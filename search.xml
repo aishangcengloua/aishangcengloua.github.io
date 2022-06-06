@@ -907,8 +907,8 @@ c(n, m) + h(m) \geq h(n)</script><p>如果 <code>h(n)</code> 是一致的，那�
         <category>深度学习</category>
       </categories>
       <tags>
-        <tag>机器学习</tag>
         <tag>深度学习</tag>
+        <tag>机器学习</tag>
       </tags>
   </entry>
   <entry>
@@ -954,8 +954,8 @@ f'(x) = \begin{cases} 1 ,& x \geq 0 \\ \alpha, &x < 0 \end{cases}</script><p>其
         <category>深度学习</category>
       </categories>
       <tags>
-        <tag>机器学习</tag>
         <tag>深度学习</tag>
+        <tag>机器学习</tag>
       </tags>
   </entry>
   <entry>
@@ -1983,9 +1983,9 @@ b = y - rsin\theta</script><ul>
         <category>数据挖掘</category>
       </categories>
       <tags>
+        <tag>深度学习</tag>
         <tag>数据处理</tag>
         <tag>机器学习</tag>
-        <tag>深度学习</tag>
       </tags>
   </entry>
   <entry>
@@ -2552,8 +2552,8 @@ b = y - rsin\theta</script><ul>
         <category>深度学习</category>
       </categories>
       <tags>
-        <tag>机器学习</tag>
         <tag>深度学习</tag>
+        <tag>机器学习</tag>
         <tag>循环神经网络</tag>
       </tags>
   </entry>
@@ -2645,8 +2645,8 @@ b = y - rsin\theta</script><ul>
         <category>深度学习</category>
       </categories>
       <tags>
-        <tag>机器学习</tag>
         <tag>深度学习</tag>
+        <tag>机器学习</tag>
         <tag>循环神经网络</tag>
       </tags>
   </entry>
@@ -2732,8 +2732,8 @@ b = y - rsin\theta</script><ul>
         <category>深度学习</category>
       </categories>
       <tags>
-        <tag>机器学习</tag>
         <tag>深度学习</tag>
+        <tag>机器学习</tag>
         <tag>卷积神经网络</tag>
       </tags>
   </entry>
@@ -2796,8 +2796,8 @@ b = y - rsin\theta</script><ul>
         <category>深度学习</category>
       </categories>
       <tags>
-        <tag>机器学习</tag>
         <tag>深度学习</tag>
+        <tag>机器学习</tag>
         <tag>卷积神经网络</tag>
       </tags>
   </entry>
@@ -2895,8 +2895,8 @@ w_{00} & w_{01} & w_{02} \\
         <category>深度学习</category>
       </categories>
       <tags>
-        <tag>机器学习</tag>
         <tag>深度学习</tag>
+        <tag>机器学习</tag>
         <tag>卷积神经网络</tag>
       </tags>
   </entry>
