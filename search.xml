@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Bayesian based text classification</title>
+    <title>Text Classification Based On Bayes</title>
     <url>/2022/06/07/Bayesian-based-text-classification/</url>
     <content><![CDATA[<p>
     <font size="6"><font color=red><strong>Statement:</strong></font></font>
@@ -659,9 +659,9 @@ c(n, m) + h(m) \geq h(n)</script><p>如果 <code>h(n)</code> 是一致的，那�
       </categories>
       <tags>
         <tag>Python</tag>
-        <tag>图</tag>
         <tag>A*</tag>
         <tag>启发式函数</tag>
+        <tag>图</tag>
       </tags>
   </entry>
   <entry>
@@ -931,8 +931,8 @@ c(n, m) + h(m) \geq h(n)</script><p>如果 <code>h(n)</code> 是一致的，那�
       </categories>
       <tags>
         <tag>Python</tag>
-        <tag>Dijkstra</tag>
         <tag>图</tag>
+        <tag>Dijkstra</tag>
       </tags>
   </entry>
   <entry>
@@ -1200,8 +1200,8 @@ f'(x) = \begin{cases} 1 ,& x \geq 0 \\ \alpha, &x < 0 \end{cases}</script><p>其
         <category>数据结构与算法</category>
       </categories>
       <tags>
-        <tag>Python</tag>
         <tag>二叉树</tag>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -2157,8 +2157,8 @@ b = y - rsin\theta</script><ul>
       </categories>
       <tags>
         <tag>深度学习</tag>
-        <tag>LSTM</tag>
         <tag>PyTorch</tag>
+        <tag>LSTM</tag>
       </tags>
   </entry>
   <entry>

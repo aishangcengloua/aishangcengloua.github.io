@@ -6,7 +6,7 @@
   <link href="https://aishangcengloua.github.io/atom.xml" rel="self"/>
   
   <link href="https://aishangcengloua.github.io/"/>
-  <updated>2022-06-07T13:06:21.229Z</updated>
+  <updated>2022-06-07T13:39:50.015Z</updated>
   <id>https://aishangcengloua.github.io/</id>
   
   <author>
@@ -17,11 +17,11 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>Bayesian based text classification</title>
+    <title>Text Classification Based On Bayes</title>
     <link href="https://aishangcengloua.github.io/2022/06/07/Bayesian-based-text-classification/"/>
     <id>https://aishangcengloua.github.io/2022/06/07/Bayesian-based-text-classification/</id>
     <published>2022-06-07T12:40:09.000Z</published>
-    <updated>2022-06-07T13:06:21.229Z</updated>
+    <updated>2022-06-07T13:39:50.015Z</updated>
     
     
     <summary type="html">&lt;p&gt;
@@ -164,11 +164,11 @@
     
     <category term="Python" scheme="https://aishangcengloua.github.io/tags/Python/"/>
     
-    <category term="图" scheme="https://aishangcengloua.github.io/tags/%E5%9B%BE/"/>
-    
     <category term="A*" scheme="https://aishangcengloua.github.io/tags/A/"/>
     
     <category term="启发式函数" scheme="https://aishangcengloua.github.io/tags/%E5%90%AF%E5%8F%91%E5%BC%8F%E5%87%BD%E6%95%B0/"/>
+    
+    <category term="图" scheme="https://aishangcengloua.github.io/tags/%E5%9B%BE/"/>
     
   </entry>
   
@@ -261,9 +261,9 @@
     
     <category term="Python" scheme="https://aishangcengloua.github.io/tags/Python/"/>
     
-    <category term="Dijkstra" scheme="https://aishangcengloua.github.io/tags/Dijkstra/"/>
-    
     <category term="图" scheme="https://aishangcengloua.github.io/tags/%E5%9B%BE/"/>
+    
+    <category term="Dijkstra" scheme="https://aishangcengloua.github.io/tags/Dijkstra/"/>
     
   </entry>
   
@@ -415,9 +415,9 @@
     <category term="数据结构与算法" scheme="https://aishangcengloua.github.io/categories/Python/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
     
     
-    <category term="Python" scheme="https://aishangcengloua.github.io/tags/Python/"/>
-    
     <category term="二叉树" scheme="https://aishangcengloua.github.io/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/"/>
+    
+    <category term="Python" scheme="https://aishangcengloua.github.io/tags/Python/"/>
     
   </entry>
   
