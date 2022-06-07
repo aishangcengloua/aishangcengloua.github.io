@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Statement:        Here are some very important announcements: The content of this blog is from the Python experiment of probability theory and mathematical statistics at the School of Electronic">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bayesian based text classification">
+<meta property="og:url" content="https://aishangcengloua.github.io/2022/06/07/Bayesian-based-text-classification/index.html">
+<meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
+<meta property="og:description" content="Statement:        Here are some very important announcements: The content of this blog is from the Python experiment of probability theory and mathematical statistics at the School of Electronic">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-06-07T12:40:09.000Z">
+<meta property="article:modified_time" content="2022-06-07T13:06:21.229Z">
+<meta property="article:author" content="Z.H.Chen">
+<meta property="article:tag" content="Bayes">
+<meta property="article:tag" content="text classification">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://aishangcengloua.github.io/2022/06/07/Bayesian-based-text-classification/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Bayesian based text classification | Z.H.Chen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Z.H.Chen's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z.H.Chen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">58</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">59</span></a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aishangcengloua.github.io/2022/06/07/Bayesian-based-text-classification/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+      <meta itemprop="name" content="Z.H.Chen">
+      <meta itemprop="description" content="你好啊！欢迎来到我的博客世界！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z.H.Chen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Bayesian based text classification
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-07 20:40:09 / 修改时间：21:06:21" itemprop="dateCreated datePublished" datetime="2022-06-07T20:40:09+08:00">2022-06-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">传统算法</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/07/Bayesian-based-text-classification/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/07/Bayesian-based-text-classification/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>15k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>25 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>
+    <font size="6"><font color=red><strong>Statement:</strong></font></font>
+</p>
+
+<p>
+    <font size="5"><strong>Here are some very important announcements: The content of this blog is from the Python experiment of probability theory and mathematical statistics at the School of Electronic and Information Engineering, Shenzhen University. If you happen to be completing this experiment, please only use this blog as a reference, please do not copy it directly. If this blog violates your rights, please contact me to delete it.</strong></font></font>
+</p>
+
+<p><strong>DataSet：</strong><a target="_blank" rel="noopener" href="https://www2.aueb.gr/users/ion/data/enron-spam/"><strong>https://www2.aueb.gr/users/ion/data/enron-spam/</strong></a></p>
+<h2 id="1-Experimental-Purposes"><a href="#1-Experimental-Purposes" class="headerlink" title="1. Experimental Purposes"></a>1. Experimental Purposes</h2><ul>
+<li>Familiar with the Bayes theorem.</li>
+<li>Understand the implementation of the Bayes theorem in python.</li>
+<li>Know how to use Naive Bayes for a practical task, e.g., text classification.</li>
+</ul>
+<h2 id="2-Background-Information"><a href="#2-Background-Information" class="headerlink" title="2. Background Information"></a>2. Background Information</h2><p>The challenge of text classification is to attach labels to bodies of text, e.g., tax document, medical form, etc. based on the text itself. For example, think of your spam folder in your email. How does your email provider know that a particular message is spam or “ham” (not spam)? We’ll take a look at one natural language processing technique for text classification called Naive Bayes. </p>
+<h3 id="2-1-Samples-and-the-Sampling-Distribution"><a href="#2-1-Samples-and-the-Sampling-Distribution" class="headerlink" title="2.1 Samples and the Sampling Distribution"></a>2.1 Samples and the Sampling Distribution</h3><p>Before we derive the algorithm, we need to discuss the fundamental rule that Naive Bayes uses: Bayes Theorem:</p>
+<script type="math/tex; mode=display">p(A|B) = \displaystyle\frac{p(B|A)p(A)}{p(B)}</script><p>where $A$ and $B$ are events and $p(\cdot)$ is a probability.</p>
+<p>Let’s take a second to break this down. On the left, we have the probability of an event $A$ happening given that event $B$ happens. We say this is equal to the probability of event $B$ happening given event $A$ times the probability that event $A$ happens overall. All of that is divided by the probability that event $B$ happens overall. An example of this might help shed some light on why this is an ingenious theorem.</p>
+<p>The classic example used to illustrate Bayes Theorem involves medical testing. Let’s suppose that we were getting tested for the flu. When we get a medical test, there are really 4 cases to consider when we get the results back:</p>
+<ul>
+<li><strong>True Positive</strong>: The test says we have the flu and we actually have the flu</li>
+<li><strong>True Negative</strong>: The test says we don’t have the flu and we actually don’t have the flu</li>
+<li><strong>False Positive</strong>: The test says we have the flu and we actually don’t have the flu</li>
+<li><strong>False Negative</strong>: The test says we don’t have the flu and we actually do have the flu</li>
+</ul>
+<p>Suppose we also know some information about the flu and our testing methodology: we know our test can correctly detect that a person has the flu 99.5% of the time (i.e., $p(\text{tested+}|\text{Flu})=0.995$)  and correctly detect that a person does not have the flu 99.5% of the time (i.e., $p(\text{tested-}|\text{No Flu})=0.995$). These correspond to the <strong>true positive rate</strong> and <strong>true negative rate</strong>. We also know that this specific type of flu is rare and only affects 1% of people. Given this information, we can compute the probability that any randomly selected person will have this specific type of the flu. Specifically, we want to compute the probability that the person has the specific type of flu, given that the person tested positive for it, i.e., event $A=\text{Flu}$ and $B=\text{tested+}$.</p>
+<p>Let’s just substitute the problem specifics into Bayes Theorem.</p>
+<script type="math/tex; mode=display">p(\text{Flu}|\text{tested+}) = \displaystyle\frac{p(\text{tested+}|\text{Flu})p(\text{Flu})}{p(\text{tested+})}</script><p>Now let’s try to figure out specific values for the quantities on the right-hand side. The first quantity is $p(\text{tested+}|\text{Flu})$. This is the probability that someone tests positive given that they have the flu. In other words, this is the true positive rate: the probability that our test can correctly detect that a person has the flu! This number is 99.5% or 0.995 The next quantity in the numerator is $p(\text{Flu})$. This is called the <strong>prior probability</strong>. In other words, it is the probability that any random person has the flu. We know from our problem that this number is 1%, or 0.01. Let’s substitute in those values in the numerator.</p>
+<script type="math/tex; mode=display">
+p(\text{Flu}|\text{tested+}) = \displaystyle\frac{0.995 \cdot 0.01}{p(\text{tested+})}</script><p>Now we have to deal with the denominator: $p(\text{tested+})$. This is the probability that our test returns positive overall. We can’t quite use the information given in the problem as directly as before however. But first, why do we even need $p(\text{tested+})$? Recall that probabilities have to be between 0 and 1. Based on the above equation, if we left out the denominator, then we wouldn’t have a valid probability!</p>
+<p>Anyways, when can our test return positive? Well there are two cases: either our test returns positive and the person actually has the flu (true positive) or our test returns positive and our person does not have the flu (false positive). We can’t quite simply sum both of these cases to be the denominator. We have to weight them by their respective probabilities, i.e., the probability that any person has the flu overall and the probability that any person does not have the flu overall. Let’s expand the denominator.</p>
+<script type="math/tex; mode=display">p(\text{Flu}|\text{tested+}) = \displaystyle\frac{0.995 \cdot 0.01}{p(\text{tested+}|\text{Flu})p(\text{Flu})+p(\text{tested+}|\text{No Flu})p(\text{No Flu})}</script><p>Now let’s reason about these values. $p(\text{+}|\text{Flu})p(\text{Flu})$ is something we’ve seen before: it’s the numerator! Now let’s look at the next quantity: $p(\text{+}|\text{No Flu})p(\text{No Flu})$. We can compute the first term by taking the complement of the true negative: $p(\text{+}|\text{No Flu})=1-p(\text{-}|\text{No Flu})=0.005$. And $p(\text{No Flu})=1-p(\text{Flu})=0.99$ since they are complimentary events. So now we can plug in all of our values and get a result.</p>
+<script type="math/tex; mode=display">p(\text{Flu}|\text{tested+}) = \displaystyle\frac{0.995 \cdot 0.01}{0.995 \cdot 0.01+0.005 \cdot 0.99}= 0.6678</script><p>This result is a little surprising! This is saying, despite our test’s accuracy, knowing someone tested positive means that there’s only a 67% chance that they actually have the flu! Hopefully, this example illustrated how to use Bayes Theorem.</p>
+<h3 id="2-2-Deriving-Naive-Bayes"><a href="#2-2-Deriving-Naive-Bayes" class="headerlink" title="2.2 Deriving Naive Bayes"></a>2.2 Deriving Naive Bayes</h3><p>Now let’s convert the Bayes Theorem notation into something slightly more machine learning-oriented.</p>
+<script type="math/tex; mode=display">p(H|E) = \displaystyle\frac{p(E|H)p(H)}{p(E)}</script><p>where $H$ is the hypothesis and $E$ is the evidence. Now this might make more sense in the context of text classification: the probability that our hypothesis is correct given the evidence to support it is equal to the probability of observing that evidence given our hypothesis times the prior probability of the hypothesis divided by the probability of observing that evidence overall.</p>
+<p>Let’s break this down again like we did for the original Bayes Theorem, except we’ll use the context of the text classification problem we’re trying to solve: spam detection. Our hypothesis $H$ is something like “this text is spam” and the evidence $E$ is the text of the email. So to restate, we’re trying to find the probability that our email is spam given the text in the email. The numerator is then the probability that that we find these words in a spam email times the probability that any email is spam. The denominator is a bit tricky: it’s the probability that we observe those words overall.</p>
+<p>There’s something a bit off with this formulation though: the evidence needs to be represented as multiple pieces of evidence: the words $w_1,\dots,w_n$. No problem! We can do that and Bayes Theorem still holds. We can also change hypothesis $H$ to a class $\text{Spam}$.</p>
+<script type="math/tex; mode=display">p(\text{Spam}|w_1,\dots,w_n) = \displaystyle\frac{p(w_1,\dots,w_n|\text{Spam})p(\text{Spam})}{p(w_1,\dots,w_n)}</script><p>We can use a conditional probability formula to expand out the numerator.</p>
+<script type="math/tex; mode=display">p(\text{Spam}|w_1,\dots,w_n) = \displaystyle\frac{p(w_1|w_2,\dots,w_n,\text{Spam})p(w_2|w_3,\dots,w_n,\text{Spam})\dots p(w_{n-1}|w_n,\text{Spam})p(\text{Spam})}{p(w_1,\dots,w_n)}</script><p>Not only does this look messy, it’s also quite messy to compute! Let’s think about the first term: $p(w_1|w_2,\dots,w_n,\text{Spam})$. This is the probability of finding the first word, given all of the other words and given that the email is spam. This is really difficult to compute if we have a lot of words!</p>
+<h3 id="2-3-Naive-Bayes-Assumption"><a href="#2-3-Naive-Bayes-Assumption" class="headerlink" title="2.3 Naive Bayes Assumption"></a>2.3 Naive Bayes Assumption</h3><p>To help us with that equation, we can make an assumption called the <strong>Naive Bayes assumption</strong> to help us with the math, and eventually the code. <strong>The assumption is that each word is independent of all other words.</strong> <em>In reality</em>, this is not always true! Knowing what words come before/after do influence the next/previous word! However, making this assumption greatly simplifies the math and, in practice, works well! This assumption is why this technique is called Naive Bayes. So after making that assumption, we can break down the numerator into the following.</p>
+<script type="math/tex; mode=display">p(\text{Spam}|w_1,\dots,w_n) = \displaystyle\frac{p(w_1|\text{Spam})p(w_2|\text{Spam})\dots p(w_n|\text{Spam})p(\text{Spam})}{p(w_1,\dots,w_n)}</script><p>This looks better! Now we can interpret a term $p(w_1|\text{Spam})$ to mean the probability of finding word $w_1$ in a spam email. We can use a notational shorthand to symbolize product $(\Pi)$.</p>
+<script type="math/tex; mode=display">p(\text{Spam}|w_1,\dots,w_n) = \displaystyle\frac{p(\text{Spam})\displaystyle\prod_{i=1}^np(w_i|\text{Spam})}{p(w_1,\dots,w_n)}</script><p>This is the Naive Bayes formulation! This returns the probability that an email message is spam given the words in that email. For text classification, however, we need an actually label, not a probability, so we may simply say that an email is spam if $p(\text{Spam}|w_1,\dots,w_n)$ is greater than 50%. If not, then it is not spam. In other words, we choose “spam” or “ham” based on which one of these two classes has the higher probability! Actually, we don’t need probabilities at all. We can forget about the denominator since its only purpose is to scale the numerator.</p>
+<script type="math/tex; mode=display">p(\text{Spam}|w_1,\dots,w_n) \propto p(\text{Spam})\displaystyle\prod_{i=1}^np(w_i|\text{Spam})</script><p>(where $\propto$ signifies proportional to) That’s one extra thing we don’t have to compute! In this instance, we pick whichever class has the higher score since this is not a true probability anymore.</p>
+<h3 id="2-4-Numerical-Stability"><a href="#2-4-Numerical-Stability" class="headerlink" title="2.4 Numerical Stability"></a>2.4 Numerical Stability</h3><p>There’s one extra thing we’re going to do to help us with <strong>numerical stability</strong>. If we look at the numerator, we see we’re multiplying many probabilities together. If we do that, we could end up with <em>really</em> small numbers, and our computer might round down to zero! To prevent this, we’re going to look at the <strong>log probability</strong> by taking the log of each side. Using some properties of logarithms, we can manipulate our Naive Bayes formulation.</p>
+<script type="math/tex; mode=display">\begin{align*} \log p(\text{Spam}|w_1,\dots,w_n) &\propto \log p(\text{Spam})\displaystyle\prod_{i=1}^np(w_i|\text{Spam})\tag{1}\\ \log p(\text{Spam}|w_1,\dots,w_n) &\propto \log p(\text{Spam}) + \log \displaystyle\prod_{i=1}^np(w_i|\text{Spam})\tag{2}\\ \log p(\text{Spam}|w_1,\dots,w_n) &\propto \log p(\text{Spam}) + \displaystyle\sum_{i=1}^n \log p(w_i|\text{Spam}) \tag{3} \end{align*}</script><p>Now we’re dealing with additions of log probabilities instead of <em>multiplying</em> many probabilities together! Since log has really nice properties (monotonicity being the key one), we can still take the highest score to be our prediction, i.e., we don’t have to “undo” the log!</p>
+<h2 id="3-Experimental-Requirements"><a href="#3-Experimental-Requirements" class="headerlink" title="3. Experimental Requirements"></a>3. Experimental Requirements</h2><h3 id="3-1-Dataset"><a href="#3-1-Dataset" class="headerlink" title="3.1 Dataset"></a>3.1 Dataset</h3><p>We’ll be using the Enron email dataset for our training data. This is real email data from the Enron Corporation after the company collapsed. We have downloaded the dataset for you. Put this enron folder in the same directory as your source code so we can find the dataset!</p>
+<font size=4><strong><font color=red>A WORD OF WARNING!</font>: Since this dataset is a real dataset of emails, it contains real spam messages. Your anti-virus may prune some these emails because they are spam. You may need to turn off these protection temporarily.</strong></font>
+
+<h3 id="3-2-Naive-Bayes-for-Text-Classification"><a href="#3-2-Naive-Bayes-for-Text-Classification" class="headerlink" title="3.2 Naive Bayes for Text Classification"></a>3.2 Naive Bayes for Text Classification</h3><p>Here is the dataset-loading code:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"><span class="keyword">import</span> math</span><br><span class="line">DATA_DIR = <span class="string">&#x27;enron&#x27;</span></span><br><span class="line">target_names = [<span class="string">&#x27;ham&#x27;</span>, <span class="string">&#x27;spam&#x27;</span>]</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_data</span>(<span class="params">DATA_DIR</span>):</span><br><span class="line">    subfolders = [<span class="string">&#x27;enron%d&#x27;</span> % i <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">7</span>)]</span><br><span class="line">    data = []</span><br><span class="line">    target = []</span><br><span class="line">    <span class="keyword">for</span> subfolder <span class="keyword">in</span> subfolders:</span><br><span class="line">        <span class="comment"># spam</span></span><br><span class="line">        spam_files = os.listdir(os.path.join(DATA_DIR, subfolder, <span class="string">&#x27;spam&#x27;</span>))</span><br><span class="line">        <span class="keyword">for</span> spam_file <span class="keyword">in</span> spam_files:</span><br><span class="line">            <span class="keyword">with</span> <span class="built_in">open</span>(os.path.join(DATA_DIR, subfolder, <span class="string">&#x27;spam&#x27;</span>, spam_file), encoding=<span class="string">&quot;latin-1&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">                data.append(f.read())</span><br><span class="line">                target.append(<span class="number">1</span>)</span><br><span class="line">        <span class="comment"># ham</span></span><br><span class="line">        ham_files = os.listdir(os.path.join(DATA_DIR, subfolder, <span class="string">&#x27;ham&#x27;</span>))</span><br><span class="line">        <span class="keyword">for</span> ham_file <span class="keyword">in</span> ham_files:</span><br><span class="line">            <span class="keyword">with</span> <span class="built_in">open</span>(os.path.join(DATA_DIR, subfolder, <span class="string">&#x27;ham&#x27;</span>, ham_file), encoding=<span class="string">&quot;latin-1&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">                data.append(f.read())</span><br><span class="line">                target.append(<span class="number">0</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> data, target</span><br><span class="line"><span class="comment"># get_data(DATA_DIR)</span></span><br></pre></td></tr></table></figure>
+<p>You can verify that the data has been successfully loaded with the following code.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">X, y = get_data(DATA_DIR)</span><br><span class="line"></span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">len</span>(X) == <span class="number">33716</span>, <span class="string">&quot;Please check for missing files.&quot;</span></span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">len</span>(y) == <span class="number">33716</span>, <span class="string">&quot;Please check for missing files.&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Print the first data and target.</span></span><br><span class="line"><span class="built_in">print</span>(X[<span class="number">0</span>])</span><br><span class="line"><span class="built_in">print</span>(y[<span class="number">0</span>])</span><br></pre></td></tr></table></figure>
+<pre><code>Subject: dobmeos with hgh my energy level has gone up ! stukm
+introducing
+doctor - formulated
+hgh
+human growth hormone - also called hgh
+is referred to in medical science as the master hormone . it is very plentiful
+when we are young , but near the age of twenty - one our bodies begin to produce
+less of it . by the time we are forty nearly everyone is deficient in hgh ,
+and at eighty our production has normally diminished at least 90 - 95 % .
+advantages of hgh :
+- increased muscle strength
+- loss in body fat
+- increased bone density
+- lower blood pressure
+- quickens wound healing
+- reduces cellulite
+- improved vision
+- wrinkle disappearance
+- increased skin thickness texture
+- increased energy levels
+- improved sleep and emotional stability
+- improved memory and mental alertness
+- increased sexual potency
+- resistance to common illness
+- strengthened heart muscle
+- controlled cholesterol
+- controlled mood swings
+- new hair growth and color restore
+read
+more at this website
+unsubscribe
+
+1
+</code></pre><p>This will produce two lists: the data list, where each element is the text of an email, and the target list, which is simply binary (1 meaning spam and 0 meaning ham). Now let’s create a class and add some helper functions for string manipulation.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SpamDetector_1</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Implementation of Naive Bayes for binary classification&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">clean</span>(<span class="params">self, s</span>):</span><br><span class="line">        translator = <span class="built_in">str</span>.maketrans(<span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>, string.punctuation) <span class="comment">#Collect all punctuation in English string and turning them to None</span></span><br><span class="line">        <span class="keyword">return</span> s.translate(translator)</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">tokenize</span>(<span class="params">self, text</span>):</span><br><span class="line">        text = self.clean(text).lower()</span><br><span class="line">        <span class="keyword">return</span> re.split(<span class="string">&quot;\W+&quot;</span>, text) <span class="comment"># &quot;\W+&quot; matches infinite non-word characters</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_word_counts</span>(<span class="params">self, words</span>):</span><br><span class="line">        word_counts = &#123;&#125;</span><br><span class="line">        <span class="keyword">for</span> word <span class="keyword">in</span> words:</span><br><span class="line">            word_counts[word] = word_counts.get(word, <span class="number">0.0</span>) + <span class="number">1.0</span></span><br><span class="line">        <span class="keyword">return</span> word_counts</span><br></pre></td></tr></table></figure>
+<p>We have a function to clean up our string by removing punctuation, one to tokenize our string into words, and another to count up how many of each word appears in a list of words.</p>
+<p>Before we start the actual algorithm, let’s first understand the algorithm. For training,  we need three things: the (log) class priors, i.e., the probability that any given message is spam/ham; a vocabulary of words; and words frequency for spam and ham separately, i.e., the number of times a given word appears in a spam and ham message. Given a list of input documents, we can write this algorithm.</p>
+<ol>
+<li>Compute log class priors by counting how many messages are spam/ham, dividing by the total number of messages, and taking the log.</li>
+<li>For each (document, label) pair, tokenize the document into words.</li>
+<li>For each word, either add it to the vocabulary for spam/ham, if it isn’t already there, and update the number of counts. Also add that word to the global vocabulary.</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># modify this cell</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SpamDetector_2</span>(<span class="title class_ inherited__">SpamDetector_1</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">fit</span>(<span class="params">self, X, Y</span>):</span><br><span class="line">        self.num_messages = &#123;&#125;</span><br><span class="line">        self.log_class_priors = &#123;&#125;</span><br><span class="line">        self.word_counts = &#123;&#125;</span><br><span class="line">        self.vocab = <span class="built_in">set</span>()</span><br><span class="line">        n = <span class="built_in">len</span>(X)</span><br><span class="line">        self.num_messages[<span class="string">&#x27;spam&#x27;</span>] = <span class="built_in">sum</span>(<span class="number">1</span> <span class="keyword">for</span> label <span class="keyword">in</span> Y <span class="keyword">if</span> label == <span class="number">1</span>)</span><br><span class="line">        self.num_messages[<span class="string">&#x27;ham&#x27;</span>] = <span class="built_in">sum</span>(<span class="number">1</span> <span class="keyword">for</span> label <span class="keyword">in</span> Y <span class="keyword">if</span> label == <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Compute the log prior probability of spam/ham.</span></span><br><span class="line">        <span class="comment"># Hint: compute the log class priors by counting up how many spam/ham messages </span></span><br><span class="line">        <span class="comment"># are in our dataset and dividing by the total number, and take the log.</span></span><br><span class="line">        <span class="comment"># Please perform the calculation for self.log_class_priors[&#x27;spam&#x27;] and self.log_class_priors[&#x27;ham&#x27;] separately.</span></span><br><span class="line"></span><br><span class="line">        self.log_class_priors[<span class="string">&#x27;spam&#x27;</span>] = math.log(self.num_messages[<span class="string">&#x27;spam&#x27;</span>] / n) </span><br><span class="line">        self.log_class_priors[<span class="string">&#x27;ham&#x27;</span>] = math.log(self.num_messages[<span class="string">&#x27;ham&#x27;</span>] / n) </span><br><span class="line"></span><br><span class="line">        self.word_counts[<span class="string">&#x27;spam&#x27;</span>] = &#123;&#125;</span><br><span class="line">        self.word_counts[<span class="string">&#x27;ham&#x27;</span>] = &#123;&#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> x, y <span class="keyword">in</span> <span class="built_in">zip</span>(X, Y):</span><br><span class="line">            c = <span class="string">&#x27;spam&#x27;</span> <span class="keyword">if</span> y == <span class="number">1</span> <span class="keyword">else</span> <span class="string">&#x27;ham&#x27;</span></span><br><span class="line">            counts = self.get_word_counts(self.tokenize(x))</span><br><span class="line">            <span class="keyword">for</span> word, count <span class="keyword">in</span> counts.items():</span><br><span class="line">                <span class="keyword">if</span> word <span class="keyword">not</span> <span class="keyword">in</span> self.vocab:</span><br><span class="line">                    self.vocab.add(word)</span><br><span class="line">                <span class="keyword">if</span> word <span class="keyword">not</span> <span class="keyword">in</span> self.word_counts[c]:</span><br><span class="line">                    self.word_counts[c][word] = <span class="number">0.0</span></span><br><span class="line">                self.word_counts[c][word] += count</span><br></pre></td></tr></table></figure>
+<p>First, we can compute the log class priors by counting up how many spam/ham messages are in our dataset and dividing by the total number. Finally, we take the log.</p>
+<p><strong>You may apply the following code to see if the log prior probability of spam/ham is computed successfully.</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">MNB = SpamDetector_2()</span><br><span class="line">MNB.fit(X[<span class="number">100</span>:], y[<span class="number">100</span>:])</span><br><span class="line"></span><br><span class="line"><span class="comment"># If an assert error occurs, you can print and debug it.</span></span><br><span class="line"><span class="comment"># print(&quot;log_class_priors of spam&quot;, MNB.log_class_priors[&#x27;spam&#x27;])</span></span><br><span class="line"><span class="comment"># print(&quot;log_class_priors of ham&quot;, MNB.log_class_priors[&#x27;ham&#x27;])</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">round</span>(MNB.log_class_priors[<span class="string">&#x27;spam&#x27;</span>], <span class="number">4</span>) == -<span class="number">0.6776</span>, <span class="string">&quot;The prior probability of spam is calculated incorrectly, please try again.&quot;</span></span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">round</span>(MNB.log_class_priors[<span class="string">&#x27;ham&#x27;</span>], <span class="number">4</span>) == -<span class="number">0.7089</span>, <span class="string">&quot;The prior probability of ham is calculated incorrectly, please try again.&quot;</span></span><br></pre></td></tr></table></figure>
+<p>Then we can iterate through our dataset. For each input, we get the word counts and iterate through each (word, frequency) pair. If the word isn’t in our global vocabulary, we add it. If it isn’t in the vocabulary for that particular class label, we also add it along with the frequency.</p>
+<p>For example, suppose we had a “spam” message. We count up how many times each unique word appears in that spam message and add that count to the “spam” vocabulary. Suppose the word “free” appears 4 times. Then we add the word “free” to our global vocabulary and add it to the “spam” vocabulary with a count of 4.</p>
+<p>We’re keeping track of the frequency of each word as it appears in either a spam or ham message. For example, we expect the word “free” to appear in both messages, but we expect it to be more frequent in the “spam” vocabulary than the “ham” vocabulary.</p>
+<p>Now that we’ve extracted all of the data we need from the training data, we can write another function to actually output the class label for new data. To do this classification, we apply Naive Bayes directly. For example, given a document, we need to iterate each of the words and compute $\log p(w_i|\text{Spam})$ and sum them all up, and we also compute $\log p(w_i|\text{Ham})$ and sum them all up. Then we add the log class priors and check to see which score is bigger for that document. Whichever is larger, that is  the predicted label!</p>
+<p>To compute $\log p(w_i|\text{Spam})$, the numerator is how many times we’ve seen $w_i$ in a “spam” message, and the denominator is sum of all word counts in all “spam” messages.</p>
+<p>On additional note: remember that the log of 0 is undefined! What if we encounter a word that is in the “spam” vocabulary, but not the “ham” vocabulary? Then $p(w_i|\text{Ham})$ will be 0! One way around this is to use <strong>Laplace Smoothing</strong>. We simply add 1 to the numerator, but we also have to add the size of the vocabulary to the denominator to balance it.</p>
+<p><strong>Laplace Smoothing</strong>：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\boldsymbol{\hat{p}(w_i|c)} &= \displaystyle{\boldsymbol{\frac{count(w_i, c) + 1}{\sum_{w∈V}(count(w, c) + 1)}}}\\
+                   &= \displaystyle{\boldsymbol{\frac{count(w_i, c) + 1}{[\sum_{w∈V}(count(w, c)] + |V|}}}
+\end{aligned}\tag{4}</script><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># modify this cell</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SpamDetector</span>(<span class="title class_ inherited__">SpamDetector_2</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">predict</span>(<span class="params">self, X</span>):</span><br><span class="line">        result = []</span><br><span class="line">        flag_1 = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> x <span class="keyword">in</span> X:</span><br><span class="line">            counts = self.get_word_counts(self.tokenize(x))</span><br><span class="line">            spam_score = <span class="number">0</span></span><br><span class="line">            ham_score = <span class="number">0</span></span><br><span class="line">            flag_2 = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> word, _ <span class="keyword">in</span> counts.items():</span><br><span class="line">                <span class="keyword">if</span> word <span class="keyword">not</span> <span class="keyword">in</span> self.vocab: <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">                <span class="comment"># According to Equation 3，compute the conditional probability of spam/ham and add Laplace</span></span><br><span class="line">                <span class="comment"># smoothing (add 1 to the numerator and add the size of the vocabulary to the denominator).</span></span><br><span class="line">                <span class="comment"># Please define the variable name as log_w_given_spam and log_w_given_ham.</span></span><br><span class="line"></span><br><span class="line">                <span class="comment"># Perform Laplace Smoothing on the data, using the formula (4) defined in the previous cell;</span></span><br><span class="line">                <span class="comment"># It should be noted that if formula (4) is used, it will be divided into two cases to calculate the conditional probability;</span></span><br><span class="line">                <span class="comment"># The first case is that the current word only appears in one type of email, and the other is in both types of emails; &#x27;</span></span><br><span class="line">                <span class="comment"># Otherwise self.word_counts[class][word] will report an error.</span></span><br><span class="line">                <span class="keyword">if</span> word <span class="keyword">in</span> self.word_counts[<span class="string">&#x27;spam&#x27;</span>] :</span><br><span class="line">                    numerator = self.word_counts[<span class="string">&#x27;spam&#x27;</span>][word] + <span class="number">1</span></span><br><span class="line">                    denominator = <span class="built_in">sum</span>([self.word_counts[<span class="string">&#x27;spam&#x27;</span>][key] <span class="keyword">for</span> key <span class="keyword">in</span> self.word_counts[<span class="string">&#x27;spam&#x27;</span>]]) + <span class="built_in">len</span>(self.vocab)</span><br><span class="line">                    log_w_given_spam = math.log(numerator / denominator)</span><br><span class="line">                <span class="keyword">else</span> :</span><br><span class="line">                    numerator = <span class="number">1</span></span><br><span class="line">                    denominator = <span class="built_in">sum</span>([self.word_counts[<span class="string">&#x27;spam&#x27;</span>][key] <span class="keyword">for</span> key <span class="keyword">in</span> self.word_counts[<span class="string">&#x27;spam&#x27;</span>]]) + <span class="built_in">len</span>(self.vocab)</span><br><span class="line">                    log_w_given_spam = math.log(numerator / denominator)</span><br><span class="line">                </span><br><span class="line">                <span class="keyword">if</span> word <span class="keyword">in</span> self.word_counts[<span class="string">&#x27;ham&#x27;</span>] :</span><br><span class="line">                    numerator = self.word_counts[<span class="string">&#x27;ham&#x27;</span>][word] + <span class="number">1</span></span><br><span class="line">                    denominator = <span class="built_in">sum</span>([self.word_counts[<span class="string">&#x27;ham&#x27;</span>][key] <span class="keyword">for</span> key <span class="keyword">in</span> self.word_counts[<span class="string">&#x27;ham&#x27;</span>]]) + <span class="built_in">len</span>(self.vocab)</span><br><span class="line">                    log_w_given_ham = math.log(numerator / denominator)</span><br><span class="line">                <span class="keyword">else</span> :</span><br><span class="line">                    numerator = <span class="number">1</span></span><br><span class="line">                    denominator = <span class="built_in">sum</span>([self.word_counts[<span class="string">&#x27;ham&#x27;</span>][key] <span class="keyword">for</span> key <span class="keyword">in</span> self.word_counts[<span class="string">&#x27;ham&#x27;</span>]]) + <span class="built_in">len</span>(self.vocab)</span><br><span class="line">                    log_w_given_ham = math.log(numerator / denominator)</span><br><span class="line">                <span class="comment">#</span></span><br><span class="line">                </span><br><span class="line">                <span class="comment"># Testing your results. Do not remove.</span></span><br><span class="line">                <span class="keyword">if</span> (flag_1 == <span class="number">0</span>) <span class="keyword">and</span> (flag_2 == <span class="number">0</span>):</span><br><span class="line">                    <span class="comment"># If an assert error occurs, you can print and debug it.</span></span><br><span class="line">                    <span class="built_in">print</span>(<span class="string">&quot;log_w_given_spam&quot;</span>, log_w_given_spam)</span><br><span class="line">                    <span class="built_in">print</span>(<span class="string">&quot;log_w_given_ham&quot;</span>, log_w_given_ham)</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">assert</span> <span class="built_in">round</span>(log_w_given_spam, <span class="number">4</span>) == -<span class="number">5.2759</span>, <span class="string">&quot;The conditional probability of spam is calculated incorrectly, please try again.&quot;</span></span><br><span class="line">                    <span class="keyword">assert</span> <span class="built_in">round</span>(log_w_given_ham, <span class="number">4</span>) == -<span class="number">5.1075</span>, <span class="string">&quot;The conditional probability of ham is calculated incorrectly, please try again.&quot;</span></span><br><span class="line">                <span class="comment">#</span></span><br><span class="line"></span><br><span class="line">                <span class="comment"># Calculate the sum of the conditional probabilities of spam/ham and define them as spam_score and ham_score.</span></span><br><span class="line"></span><br><span class="line">                spam_score += log_w_given_spam</span><br><span class="line">                ham_score += log_w_given_ham</span><br><span class="line"></span><br><span class="line">                flag_2 += <span class="number">1</span></span><br><span class="line">                </span><br><span class="line">            <span class="comment"># Testing your results. Do not remove.</span></span><br><span class="line">            <span class="keyword">if</span> flag_1 == <span class="number">0</span>:</span><br><span class="line">                <span class="comment"># If an assert error occurs, you can print and debug it.</span></span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&quot;spam_score&quot;</span>, spam_score)</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&quot;ham_score&quot;</span>, ham_score)</span><br><span class="line"></span><br><span class="line">                <span class="keyword">assert</span> <span class="built_in">round</span>(spam_score, <span class="number">2</span>) == -<span class="number">1015.11</span>, <span class="string">&quot;The sum of the conditional probabilities of spam is calculated incorrectly, please try again.&quot;</span></span><br><span class="line">                <span class="keyword">assert</span> <span class="built_in">round</span>(ham_score, <span class="number">2</span>) == -<span class="number">1102.46</span>, <span class="string">&quot;The sum of the conditional probabilities of ham is calculated incorrectly, please try again.&quot;</span></span><br><span class="line"></span><br><span class="line">            <span class="comment"># Finally, remember to add the prior probability to the spam_score and spam_score.</span></span><br><span class="line"></span><br><span class="line">            <span class="comment"># Your Code</span></span><br><span class="line">            <span class="comment"># 要加上类别的先验概率。</span></span><br><span class="line">            spam_score += self.log_class_priors[<span class="string">&#x27;spam&#x27;</span>]</span><br><span class="line">            ham_score += self.log_class_priors[<span class="string">&#x27;ham&#x27;</span>]</span><br><span class="line">            <span class="comment">#</span></span><br><span class="line"></span><br><span class="line">            <span class="comment"># Testing your results. Do not remove.</span></span><br><span class="line">            <span class="keyword">if</span> flag_1 == <span class="number">0</span>:</span><br><span class="line">                <span class="comment"># If an assert error occurs, you can print and debug it.</span></span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&quot;spam_score plus prior_probability&quot;</span>, spam_score)</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&quot;ham_score plus prior_probability&quot;</span>, ham_score)</span><br><span class="line"></span><br><span class="line">                <span class="keyword">assert</span> <span class="built_in">round</span>(spam_score, <span class="number">2</span>) == -<span class="number">1015.79</span>, <span class="string">&quot;You forget to add its prior probability to the spam_score, please try again.&quot;</span></span><br><span class="line">                <span class="keyword">assert</span> <span class="built_in">round</span>(ham_score, <span class="number">2</span>) == -<span class="number">1103.17</span>, <span class="string">&quot;You forget to add its prior probability to the ham_score, please try again.&quot;</span></span><br><span class="line"></span><br><span class="line">            <span class="comment"># Please count the prediction results according to the rules </span></span><br><span class="line">            <span class="comment"># (Check to see which score is bigger for that document. Whichever is larger, that is the predicted label!), </span></span><br><span class="line">            <span class="comment"># and add the labels to the list result (1 for spam and 0 for ham).</span></span><br><span class="line">            </span><br><span class="line">            <span class="comment"># Calculate the Bayesian probability according to formula (3);</span></span><br><span class="line">            <span class="comment"># If the score of garbage text is larger, the predicted label is 1, otherwise the predicted label is 0.</span></span><br><span class="line">            <span class="keyword">if</span> spam_score &gt; ham_score :</span><br><span class="line">                result.append(<span class="number">1</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                result.append(<span class="number">0</span>)</span><br><span class="line">            <span class="comment">#</span></span><br><span class="line"></span><br><span class="line">            flag_1 += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> result</span><br></pre></td></tr></table></figure>
+<p>In our case, the input can be a list of document texts; we return a list of predictions. Finally, we can use the class like this.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># modify this cell</span></span><br><span class="line"></span><br><span class="line">MNB = SpamDetector()</span><br><span class="line">MNB.fit(X[<span class="number">100</span>:], y[<span class="number">100</span>:])</span><br><span class="line">pred = MNB.predict(X[:<span class="number">100</span>])</span><br><span class="line">true = y[:<span class="number">100</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># Compute the accuracy rate and print it (results are retained to 4 decimal places).</span></span><br><span class="line"><span class="comment"># Please define the variable name as accuracy.</span></span><br><span class="line"></span><br><span class="line">accuracy = <span class="built_in">sum</span>(pred) / <span class="built_in">sum</span>(true)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(accuracy)</span><br><span class="line"><span class="keyword">assert</span> accuracy == <span class="number">0.9800</span></span><br></pre></td></tr></table></figure>
+<pre><code>log_w_given_spam -5.275940294514414
+log_w_given_ham -5.107477914537173
+spam_score -1015.1113024344844
+ham_score -1102.456441377472
+spam_score plus prior_probability -1015.7889234611885
+ham_score plus prior_probability -1103.165359580201
+0.98
+</code></pre><p>We’re reserving the first 100 for the testing set, “train” our Naive Bayes classifier, then compute the accuracy.</p>
+<p>To recap, we reviewed Bayes Theorem and demonstrated how to use it with an example. Then we re-worked it using hypotheses and evidence instead of just events A and B to make it more specific to our task of spam detection. From there, we derived Naive Bayes by making the Naive Bayes Assumption that each word appears independently of all other words. Then we formulated a prediction equation/rule. Using the Enron dataset, we created a binary Naive Bayes classifier for detecting spam emails.</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Bayes/" rel="tag"># Bayes</a>
+              <a href="/tags/text-classification/" rel="tag"># text classification</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/%E5%9F%BA%E4%BA%8E-PCA-%E7%9A%84%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB%E7%B3%BB%E7%BB%9F%E5%92%8C%E5%A7%BF%E6%80%81%E5%88%86%E6%9E%90/" rel="prev" title="基于 PCA 的人脸识别系统和姿态分析">
+      <i class="fa fa-chevron-left"></i> 基于 PCA 的人脸识别系统和姿态分析
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Experimental-Purposes"><span class="nav-text">1. Experimental Purposes</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Background-Information"><span class="nav-text">2. Background Information</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-Samples-and-the-Sampling-Distribution"><span class="nav-text">2.1 Samples and the Sampling Distribution</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-Deriving-Naive-Bayes"><span class="nav-text">2.2 Deriving Naive Bayes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-Naive-Bayes-Assumption"><span class="nav-text">2.3 Naive Bayes Assumption</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-Numerical-Stability"><span class="nav-text">2.4 Numerical Stability</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Experimental-Requirements"><span class="nav-text">3. Experimental Requirements</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Dataset"><span class="nav-text">3.1 Dataset</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-Naive-Bayes-for-Text-Classification"><span class="nav-text">3.2 Naive Bayes for Text Classification</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Z.H.Chen"
+      src="/images/%E5%AE%9D%E5%84%BF%E5%A7%90.jpg">
+  <p class="site-author-name" itemprop="name">Z.H.Chen</p>
+  <div class="site-description" itemprop="description">你好啊！欢迎来到我的博客世界！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">58</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aishangcengloua" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aishangcengloua" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhihonghaha@outlook.com" title="E-Mail → mailto:zhihonghaha@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/San%20Zhang" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;San Zhang" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_53598445" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_53598445" rel="noopener" target="_blank"><i class="fa custom csdn fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+	  <div>
+		<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=29567192&auto=1&height=66"></iframe>
+	  </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Z.H.Chen</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">152k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">4:14</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>-->
+
+
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+      Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+      year - 作为date对象的年份，为4位年份值
+      month - 0-11之间的整数，做为date对象的月份
+      day - 1-31之间的整数，做为date对象的天数
+      hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+      minutes - 0-59之间的整数，做为date对象的分钟数
+      seconds - 0-59之间的整数，做为date对象的秒数
+      microseconds - 0-999之间的整数，做为date对象的毫秒数
+     */
+		var t1 = Date.UTC(2022,06,03,21,44,16); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 本站已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--// 添加运行时间-->
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='' opacity='' zIndex='' count='' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    // window.MathJax = {
+    //   loader: {
+    //
+    //     source: {
+    //       '[tex]/amsCd': '[tex]/amscd',
+    //       '[tex]/AMScd': '[tex]/amscd'
+    //     }
+    //   },
+    //   tex: {
+    //     inlineMath: {'[+]': [['$', '$']]},
+    //
+    //     tags: 'ams'
+    //   },
+    //   options: {
+    //     renderActions: {
+    //       findScript: [10, doc => {
+    //         document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+    //           const display = !!node.type.match(/; *mode=display/);
+    //           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+    //           const text = document.createTextNode('');
+    //           node.parentNode.replaceChild(text, node);
+    //           math.start = {node: text, delim: '', n: 0};
+    //           math.end = {node: text, delim: '', n: 0};
+    //           doc.math.push(math);
+    //         });
+    //       }, '', false],
+    //       insertedScript: [200, () => {
+    //         document.querySelectorAll('mjx-container').forEach(node => {
+    //           let target = node.parentNode;
+    //           if (target.nodeName.toLowerCase() === 'li') {
+    //             target.parentNode.classList.add('has-jax');
+    //           }
+    //         });
+    //       }, '', false]
+    //     }
+    //   }
+    // };
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uK0vMHBYaRUKqNipxEo7b3Xu-gzGzoHsz',
+      appKey     : 'GP3Y93YOxdDSB61tVmKVt3AW',
+      placeholder: "有任何问题欢迎随时讨论！",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>

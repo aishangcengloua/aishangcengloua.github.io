@@ -1,6 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Bayesian based text classification</title>
+    <url>/2022/06/07/Bayesian-based-text-classification/</url>
+    <content><![CDATA[<p>
+    <font size="6"><font color=red><strong>Statement:</strong></font></font>
+</p>
+
+<p>
+    <font size="5"><strong>Here are some very important announcements: The content of this blog is from the Python experiment of probability theory and mathematical statistics at the School of Electronic and Information Engineering, Shenzhen University. If you happen to be completing this experiment, please only use this blog as a reference, please do not copy it directly. If this blog violates your rights, please contact me to delete it.</strong></font></font>
+</p>
+
+<p><strong>DataSet：</strong><a href="https://www2.aueb.gr/users/ion/data/enron-spam/"><strong>https://www2.aueb.gr/users/ion/data/enron-spam/</strong></a></p>
+<h2 id="1-Experimental-Purposes"><a href="#1-Experimental-Purposes" class="headerlink" title="1. Experimental Purposes"></a>1. Experimental Purposes</h2><ul>
+<li>Familiar with the Bayes theorem.</li>
+<li>Understand the implementation of the Bayes theorem in python.</li>
+<li>Know how to use Naive Bayes for a practical task, e.g., text classification.</li>
+</ul>
+<h2 id="2-Background-Information"><a href="#2-Background-Information" class="headerlink" title="2. Background Information"></a>2. Background Information</h2><p>The challenge of text classification is to attach labels to bodies of text, e.g., tax document, medical form, etc. based on the text itself. For example, think of your spam folder in your email. How does your email provider know that a particular message is spam or “ham” (not spam)? We’ll take a look at one natural language processing technique for text classification called Naive Bayes. </p>
+<h3 id="2-1-Samples-and-the-Sampling-Distribution"><a href="#2-1-Samples-and-the-Sampling-Distribution" class="headerlink" title="2.1 Samples and the Sampling Distribution"></a>2.1 Samples and the Sampling Distribution</h3><p>Before we derive the algorithm, we need to discuss the fundamental rule that Naive Bayes uses: Bayes Theorem:</p>
+<script type="math/tex; mode=display">p(A|B) = \displaystyle\frac{p(B|A)p(A)}{p(B)}</script><p>where $A$ and $B$ are events and $p(\cdot)$ is a probability.</p>
+<p>Let’s take a second to break this down. On the left, we have the probability of an event $A$ happening given that event $B$ happens. We say this is equal to the probability of event $B$ happening given event $A$ times the probability that event $A$ happens overall. All of that is divided by the probability that event $B$ happens overall. An example of this might help shed some light on why this is an ingenious theorem.</p>
+<p>The classic example used to illustrate Bayes Theorem involves medical testing. Let’s suppose that we were getting tested for the flu. When we get a medical test, there are really 4 cases to consider when we get the results back:</p>
+<ul>
+<li><strong>True Positive</strong>: The test says we have the flu and we actually have the flu</li>
+<li><strong>True Negative</strong>: The test says we don’t have the flu and we actually don’t have the flu</li>
+<li><strong>False Positive</strong>: The test says we have the flu and we actually don’t have the flu</li>
+<li><strong>False Negative</strong>: The test says we don’t have the flu and we actually do have the flu</li>
+</ul>
+<p>Suppose we also know some information about the flu and our testing methodology: we know our test can correctly detect that a person has the flu 99.5% of the time (i.e., $p(\text{tested+}|\text{Flu})=0.995$)  and correctly detect that a person does not have the flu 99.5% of the time (i.e., $p(\text{tested-}|\text{No Flu})=0.995$). These correspond to the <strong>true positive rate</strong> and <strong>true negative rate</strong>. We also know that this specific type of flu is rare and only affects 1% of people. Given this information, we can compute the probability that any randomly selected person will have this specific type of the flu. Specifically, we want to compute the probability that the person has the specific type of flu, given that the person tested positive for it, i.e., event $A=\text{Flu}$ and $B=\text{tested+}$.</p>
+<p>Let’s just substitute the problem specifics into Bayes Theorem.</p>
+<script type="math/tex; mode=display">p(\text{Flu}|\text{tested+}) = \displaystyle\frac{p(\text{tested+}|\text{Flu})p(\text{Flu})}{p(\text{tested+})}</script><p>Now let’s try to figure out specific values for the quantities on the right-hand side. The first quantity is $p(\text{tested+}|\text{Flu})$. This is the probability that someone tests positive given that they have the flu. In other words, this is the true positive rate: the probability that our test can correctly detect that a person has the flu! This number is 99.5% or 0.995 The next quantity in the numerator is $p(\text{Flu})$. This is called the <strong>prior probability</strong>. In other words, it is the probability that any random person has the flu. We know from our problem that this number is 1%, or 0.01. Let’s substitute in those values in the numerator.</p>
+<script type="math/tex; mode=display">
+p(\text{Flu}|\text{tested+}) = \displaystyle\frac{0.995 \cdot 0.01}{p(\text{tested+})}</script><p>Now we have to deal with the denominator: $p(\text{tested+})$. This is the probability that our test returns positive overall. We can’t quite use the information given in the problem as directly as before however. But first, why do we even need $p(\text{tested+})$? Recall that probabilities have to be between 0 and 1. Based on the above equation, if we left out the denominator, then we wouldn’t have a valid probability!</p>
+<p>Anyways, when can our test return positive? Well there are two cases: either our test returns positive and the person actually has the flu (true positive) or our test returns positive and our person does not have the flu (false positive). We can’t quite simply sum both of these cases to be the denominator. We have to weight them by their respective probabilities, i.e., the probability that any person has the flu overall and the probability that any person does not have the flu overall. Let’s expand the denominator.</p>
+<script type="math/tex; mode=display">p(\text{Flu}|\text{tested+}) = \displaystyle\frac{0.995 \cdot 0.01}{p(\text{tested+}|\text{Flu})p(\text{Flu})+p(\text{tested+}|\text{No Flu})p(\text{No Flu})}</script><p>Now let’s reason about these values. $p(\text{+}|\text{Flu})p(\text{Flu})$ is something we’ve seen before: it’s the numerator! Now let’s look at the next quantity: $p(\text{+}|\text{No Flu})p(\text{No Flu})$. We can compute the first term by taking the complement of the true negative: $p(\text{+}|\text{No Flu})=1-p(\text{-}|\text{No Flu})=0.005$. And $p(\text{No Flu})=1-p(\text{Flu})=0.99$ since they are complimentary events. So now we can plug in all of our values and get a result.</p>
+<script type="math/tex; mode=display">p(\text{Flu}|\text{tested+}) = \displaystyle\frac{0.995 \cdot 0.01}{0.995 \cdot 0.01+0.005 \cdot 0.99}= 0.6678</script><p>This result is a little surprising! This is saying, despite our test’s accuracy, knowing someone tested positive means that there’s only a 67% chance that they actually have the flu! Hopefully, this example illustrated how to use Bayes Theorem.</p>
+<h3 id="2-2-Deriving-Naive-Bayes"><a href="#2-2-Deriving-Naive-Bayes" class="headerlink" title="2.2 Deriving Naive Bayes"></a>2.2 Deriving Naive Bayes</h3><p>Now let’s convert the Bayes Theorem notation into something slightly more machine learning-oriented.</p>
+<script type="math/tex; mode=display">p(H|E) = \displaystyle\frac{p(E|H)p(H)}{p(E)}</script><p>where $H$ is the hypothesis and $E$ is the evidence. Now this might make more sense in the context of text classification: the probability that our hypothesis is correct given the evidence to support it is equal to the probability of observing that evidence given our hypothesis times the prior probability of the hypothesis divided by the probability of observing that evidence overall.</p>
+<p>Let’s break this down again like we did for the original Bayes Theorem, except we’ll use the context of the text classification problem we’re trying to solve: spam detection. Our hypothesis $H$ is something like “this text is spam” and the evidence $E$ is the text of the email. So to restate, we’re trying to find the probability that our email is spam given the text in the email. The numerator is then the probability that that we find these words in a spam email times the probability that any email is spam. The denominator is a bit tricky: it’s the probability that we observe those words overall.</p>
+<p>There’s something a bit off with this formulation though: the evidence needs to be represented as multiple pieces of evidence: the words $w_1,\dots,w_n$. No problem! We can do that and Bayes Theorem still holds. We can also change hypothesis $H$ to a class $\text{Spam}$.</p>
+<script type="math/tex; mode=display">p(\text{Spam}|w_1,\dots,w_n) = \displaystyle\frac{p(w_1,\dots,w_n|\text{Spam})p(\text{Spam})}{p(w_1,\dots,w_n)}</script><p>We can use a conditional probability formula to expand out the numerator.</p>
+<script type="math/tex; mode=display">p(\text{Spam}|w_1,\dots,w_n) = \displaystyle\frac{p(w_1|w_2,\dots,w_n,\text{Spam})p(w_2|w_3,\dots,w_n,\text{Spam})\dots p(w_{n-1}|w_n,\text{Spam})p(\text{Spam})}{p(w_1,\dots,w_n)}</script><p>Not only does this look messy, it’s also quite messy to compute! Let’s think about the first term: $p(w_1|w_2,\dots,w_n,\text{Spam})$. This is the probability of finding the first word, given all of the other words and given that the email is spam. This is really difficult to compute if we have a lot of words!</p>
+<h3 id="2-3-Naive-Bayes-Assumption"><a href="#2-3-Naive-Bayes-Assumption" class="headerlink" title="2.3 Naive Bayes Assumption"></a>2.3 Naive Bayes Assumption</h3><p>To help us with that equation, we can make an assumption called the <strong>Naive Bayes assumption</strong> to help us with the math, and eventually the code. <strong>The assumption is that each word is independent of all other words.</strong> <em>In reality</em>, this is not always true! Knowing what words come before/after do influence the next/previous word! However, making this assumption greatly simplifies the math and, in practice, works well! This assumption is why this technique is called Naive Bayes. So after making that assumption, we can break down the numerator into the following.</p>
+<script type="math/tex; mode=display">p(\text{Spam}|w_1,\dots,w_n) = \displaystyle\frac{p(w_1|\text{Spam})p(w_2|\text{Spam})\dots p(w_n|\text{Spam})p(\text{Spam})}{p(w_1,\dots,w_n)}</script><p>This looks better! Now we can interpret a term $p(w_1|\text{Spam})$ to mean the probability of finding word $w_1$ in a spam email. We can use a notational shorthand to symbolize product $(\Pi)$.</p>
+<script type="math/tex; mode=display">p(\text{Spam}|w_1,\dots,w_n) = \displaystyle\frac{p(\text{Spam})\displaystyle\prod_{i=1}^np(w_i|\text{Spam})}{p(w_1,\dots,w_n)}</script><p>This is the Naive Bayes formulation! This returns the probability that an email message is spam given the words in that email. For text classification, however, we need an actually label, not a probability, so we may simply say that an email is spam if $p(\text{Spam}|w_1,\dots,w_n)$ is greater than 50%. If not, then it is not spam. In other words, we choose “spam” or “ham” based on which one of these two classes has the higher probability! Actually, we don’t need probabilities at all. We can forget about the denominator since its only purpose is to scale the numerator.</p>
+<script type="math/tex; mode=display">p(\text{Spam}|w_1,\dots,w_n) \propto p(\text{Spam})\displaystyle\prod_{i=1}^np(w_i|\text{Spam})</script><p>(where $\propto$ signifies proportional to) That’s one extra thing we don’t have to compute! In this instance, we pick whichever class has the higher score since this is not a true probability anymore.</p>
+<h3 id="2-4-Numerical-Stability"><a href="#2-4-Numerical-Stability" class="headerlink" title="2.4 Numerical Stability"></a>2.4 Numerical Stability</h3><p>There’s one extra thing we’re going to do to help us with <strong>numerical stability</strong>. If we look at the numerator, we see we’re multiplying many probabilities together. If we do that, we could end up with <em>really</em> small numbers, and our computer might round down to zero! To prevent this, we’re going to look at the <strong>log probability</strong> by taking the log of each side. Using some properties of logarithms, we can manipulate our Naive Bayes formulation.</p>
+<script type="math/tex; mode=display">\begin{align*} \log p(\text{Spam}|w_1,\dots,w_n) &\propto \log p(\text{Spam})\displaystyle\prod_{i=1}^np(w_i|\text{Spam})\tag{1}\\ \log p(\text{Spam}|w_1,\dots,w_n) &\propto \log p(\text{Spam}) + \log \displaystyle\prod_{i=1}^np(w_i|\text{Spam})\tag{2}\\ \log p(\text{Spam}|w_1,\dots,w_n) &\propto \log p(\text{Spam}) + \displaystyle\sum_{i=1}^n \log p(w_i|\text{Spam}) \tag{3} \end{align*}</script><p>Now we’re dealing with additions of log probabilities instead of <em>multiplying</em> many probabilities together! Since log has really nice properties (monotonicity being the key one), we can still take the highest score to be our prediction, i.e., we don’t have to “undo” the log!</p>
+<h2 id="3-Experimental-Requirements"><a href="#3-Experimental-Requirements" class="headerlink" title="3. Experimental Requirements"></a>3. Experimental Requirements</h2><h3 id="3-1-Dataset"><a href="#3-1-Dataset" class="headerlink" title="3.1 Dataset"></a>3.1 Dataset</h3><p>We’ll be using the Enron email dataset for our training data. This is real email data from the Enron Corporation after the company collapsed. We have downloaded the dataset for you. Put this enron folder in the same directory as your source code so we can find the dataset!</p>
+<font size=4><strong><font color=red>A WORD OF WARNING!</font>: Since this dataset is a real dataset of emails, it contains real spam messages. Your anti-virus may prune some these emails because they are spam. You may need to turn off these protection temporarily.</strong></font>
+
+<h3 id="3-2-Naive-Bayes-for-Text-Classification"><a href="#3-2-Naive-Bayes-for-Text-Classification" class="headerlink" title="3.2 Naive Bayes for Text Classification"></a>3.2 Naive Bayes for Text Classification</h3><p>Here is the dataset-loading code:</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"><span class="keyword">import</span> math</span><br><span class="line">DATA_DIR = <span class="string">&#x27;enron&#x27;</span></span><br><span class="line">target_names = [<span class="string">&#x27;ham&#x27;</span>, <span class="string">&#x27;spam&#x27;</span>]</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_data</span>(<span class="params">DATA_DIR</span>):</span><br><span class="line">    subfolders = [<span class="string">&#x27;enron%d&#x27;</span> % i <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">7</span>)]</span><br><span class="line">    data = []</span><br><span class="line">    target = []</span><br><span class="line">    <span class="keyword">for</span> subfolder <span class="keyword">in</span> subfolders:</span><br><span class="line">        <span class="comment"># spam</span></span><br><span class="line">        spam_files = os.listdir(os.path.join(DATA_DIR, subfolder, <span class="string">&#x27;spam&#x27;</span>))</span><br><span class="line">        <span class="keyword">for</span> spam_file <span class="keyword">in</span> spam_files:</span><br><span class="line">            <span class="keyword">with</span> <span class="built_in">open</span>(os.path.join(DATA_DIR, subfolder, <span class="string">&#x27;spam&#x27;</span>, spam_file), encoding=<span class="string">&quot;latin-1&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">                data.append(f.read())</span><br><span class="line">                target.append(<span class="number">1</span>)</span><br><span class="line">        <span class="comment"># ham</span></span><br><span class="line">        ham_files = os.listdir(os.path.join(DATA_DIR, subfolder, <span class="string">&#x27;ham&#x27;</span>))</span><br><span class="line">        <span class="keyword">for</span> ham_file <span class="keyword">in</span> ham_files:</span><br><span class="line">            <span class="keyword">with</span> <span class="built_in">open</span>(os.path.join(DATA_DIR, subfolder, <span class="string">&#x27;ham&#x27;</span>, ham_file), encoding=<span class="string">&quot;latin-1&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">                data.append(f.read())</span><br><span class="line">                target.append(<span class="number">0</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> data, target</span><br><span class="line"><span class="comment"># get_data(DATA_DIR)</span></span><br></pre></td></tr></table></figure>
+<p>You can verify that the data has been successfully loaded with the following code.</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">X, y = get_data(DATA_DIR)</span><br><span class="line"></span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">len</span>(X) == <span class="number">33716</span>, <span class="string">&quot;Please check for missing files.&quot;</span></span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">len</span>(y) == <span class="number">33716</span>, <span class="string">&quot;Please check for missing files.&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Print the first data and target.</span></span><br><span class="line"><span class="built_in">print</span>(X[<span class="number">0</span>])</span><br><span class="line"><span class="built_in">print</span>(y[<span class="number">0</span>])</span><br></pre></td></tr></table></figure>
+<pre><code>Subject: dobmeos with hgh my energy level has gone up ! stukm
+introducing
+doctor - formulated
+hgh
+human growth hormone - also called hgh
+is referred to in medical science as the master hormone . it is very plentiful
+when we are young , but near the age of twenty - one our bodies begin to produce
+less of it . by the time we are forty nearly everyone is deficient in hgh ,
+and at eighty our production has normally diminished at least 90 - 95 % .
+advantages of hgh :
+- increased muscle strength
+- loss in body fat
+- increased bone density
+- lower blood pressure
+- quickens wound healing
+- reduces cellulite
+- improved vision
+- wrinkle disappearance
+- increased skin thickness texture
+- increased energy levels
+- improved sleep and emotional stability
+- improved memory and mental alertness
+- increased sexual potency
+- resistance to common illness
+- strengthened heart muscle
+- controlled cholesterol
+- controlled mood swings
+- new hair growth and color restore
+read
+more at this website
+unsubscribe
+
+1
+</code></pre><p>This will produce two lists: the data list, where each element is the text of an email, and the target list, which is simply binary (1 meaning spam and 0 meaning ham). Now let’s create a class and add some helper functions for string manipulation.</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SpamDetector_1</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Implementation of Naive Bayes for binary classification&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">clean</span>(<span class="params">self, s</span>):</span><br><span class="line">        translator = <span class="built_in">str</span>.maketrans(<span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>, string.punctuation) <span class="comment">#Collect all punctuation in English string and turning them to None</span></span><br><span class="line">        <span class="keyword">return</span> s.translate(translator)</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">tokenize</span>(<span class="params">self, text</span>):</span><br><span class="line">        text = self.clean(text).lower()</span><br><span class="line">        <span class="keyword">return</span> re.split(<span class="string">&quot;\W+&quot;</span>, text) <span class="comment"># &quot;\W+&quot; matches infinite non-word characters</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_word_counts</span>(<span class="params">self, words</span>):</span><br><span class="line">        word_counts = &#123;&#125;</span><br><span class="line">        <span class="keyword">for</span> word <span class="keyword">in</span> words:</span><br><span class="line">            word_counts[word] = word_counts.get(word, <span class="number">0.0</span>) + <span class="number">1.0</span></span><br><span class="line">        <span class="keyword">return</span> word_counts</span><br></pre></td></tr></table></figure>
+<p>We have a function to clean up our string by removing punctuation, one to tokenize our string into words, and another to count up how many of each word appears in a list of words.</p>
+<p>Before we start the actual algorithm, let’s first understand the algorithm. For training,  we need three things: the (log) class priors, i.e., the probability that any given message is spam/ham; a vocabulary of words; and words frequency for spam and ham separately, i.e., the number of times a given word appears in a spam and ham message. Given a list of input documents, we can write this algorithm.</p>
+<ol>
+<li>Compute log class priors by counting how many messages are spam/ham, dividing by the total number of messages, and taking the log.</li>
+<li>For each (document, label) pair, tokenize the document into words.</li>
+<li>For each word, either add it to the vocabulary for spam/ham, if it isn’t already there, and update the number of counts. Also add that word to the global vocabulary.</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># modify this cell</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SpamDetector_2</span>(<span class="title class_ inherited__">SpamDetector_1</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">fit</span>(<span class="params">self, X, Y</span>):</span><br><span class="line">        self.num_messages = &#123;&#125;</span><br><span class="line">        self.log_class_priors = &#123;&#125;</span><br><span class="line">        self.word_counts = &#123;&#125;</span><br><span class="line">        self.vocab = <span class="built_in">set</span>()</span><br><span class="line">        n = <span class="built_in">len</span>(X)</span><br><span class="line">        self.num_messages[<span class="string">&#x27;spam&#x27;</span>] = <span class="built_in">sum</span>(<span class="number">1</span> <span class="keyword">for</span> label <span class="keyword">in</span> Y <span class="keyword">if</span> label == <span class="number">1</span>)</span><br><span class="line">        self.num_messages[<span class="string">&#x27;ham&#x27;</span>] = <span class="built_in">sum</span>(<span class="number">1</span> <span class="keyword">for</span> label <span class="keyword">in</span> Y <span class="keyword">if</span> label == <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Compute the log prior probability of spam/ham.</span></span><br><span class="line">        <span class="comment"># Hint: compute the log class priors by counting up how many spam/ham messages </span></span><br><span class="line">        <span class="comment"># are in our dataset and dividing by the total number, and take the log.</span></span><br><span class="line">        <span class="comment"># Please perform the calculation for self.log_class_priors[&#x27;spam&#x27;] and self.log_class_priors[&#x27;ham&#x27;] separately.</span></span><br><span class="line"></span><br><span class="line">        self.log_class_priors[<span class="string">&#x27;spam&#x27;</span>] = math.log(self.num_messages[<span class="string">&#x27;spam&#x27;</span>] / n) </span><br><span class="line">        self.log_class_priors[<span class="string">&#x27;ham&#x27;</span>] = math.log(self.num_messages[<span class="string">&#x27;ham&#x27;</span>] / n) </span><br><span class="line"></span><br><span class="line">        self.word_counts[<span class="string">&#x27;spam&#x27;</span>] = &#123;&#125;</span><br><span class="line">        self.word_counts[<span class="string">&#x27;ham&#x27;</span>] = &#123;&#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> x, y <span class="keyword">in</span> <span class="built_in">zip</span>(X, Y):</span><br><span class="line">            c = <span class="string">&#x27;spam&#x27;</span> <span class="keyword">if</span> y == <span class="number">1</span> <span class="keyword">else</span> <span class="string">&#x27;ham&#x27;</span></span><br><span class="line">            counts = self.get_word_counts(self.tokenize(x))</span><br><span class="line">            <span class="keyword">for</span> word, count <span class="keyword">in</span> counts.items():</span><br><span class="line">                <span class="keyword">if</span> word <span class="keyword">not</span> <span class="keyword">in</span> self.vocab:</span><br><span class="line">                    self.vocab.add(word)</span><br><span class="line">                <span class="keyword">if</span> word <span class="keyword">not</span> <span class="keyword">in</span> self.word_counts[c]:</span><br><span class="line">                    self.word_counts[c][word] = <span class="number">0.0</span></span><br><span class="line">                self.word_counts[c][word] += count</span><br></pre></td></tr></table></figure>
+<p>First, we can compute the log class priors by counting up how many spam/ham messages are in our dataset and dividing by the total number. Finally, we take the log.</p>
+<p><strong>You may apply the following code to see if the log prior probability of spam/ham is computed successfully.</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">MNB = SpamDetector_2()</span><br><span class="line">MNB.fit(X[<span class="number">100</span>:], y[<span class="number">100</span>:])</span><br><span class="line"></span><br><span class="line"><span class="comment"># If an assert error occurs, you can print and debug it.</span></span><br><span class="line"><span class="comment"># print(&quot;log_class_priors of spam&quot;, MNB.log_class_priors[&#x27;spam&#x27;])</span></span><br><span class="line"><span class="comment"># print(&quot;log_class_priors of ham&quot;, MNB.log_class_priors[&#x27;ham&#x27;])</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">round</span>(MNB.log_class_priors[<span class="string">&#x27;spam&#x27;</span>], <span class="number">4</span>) == -<span class="number">0.6776</span>, <span class="string">&quot;The prior probability of spam is calculated incorrectly, please try again.&quot;</span></span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">round</span>(MNB.log_class_priors[<span class="string">&#x27;ham&#x27;</span>], <span class="number">4</span>) == -<span class="number">0.7089</span>, <span class="string">&quot;The prior probability of ham is calculated incorrectly, please try again.&quot;</span></span><br></pre></td></tr></table></figure>
+<p>Then we can iterate through our dataset. For each input, we get the word counts and iterate through each (word, frequency) pair. If the word isn’t in our global vocabulary, we add it. If it isn’t in the vocabulary for that particular class label, we also add it along with the frequency.</p>
+<p>For example, suppose we had a “spam” message. We count up how many times each unique word appears in that spam message and add that count to the “spam” vocabulary. Suppose the word “free” appears 4 times. Then we add the word “free” to our global vocabulary and add it to the “spam” vocabulary with a count of 4.</p>
+<p>We’re keeping track of the frequency of each word as it appears in either a spam or ham message. For example, we expect the word “free” to appear in both messages, but we expect it to be more frequent in the “spam” vocabulary than the “ham” vocabulary.</p>
+<p>Now that we’ve extracted all of the data we need from the training data, we can write another function to actually output the class label for new data. To do this classification, we apply Naive Bayes directly. For example, given a document, we need to iterate each of the words and compute $\log p(w_i|\text{Spam})$ and sum them all up, and we also compute $\log p(w_i|\text{Ham})$ and sum them all up. Then we add the log class priors and check to see which score is bigger for that document. Whichever is larger, that is  the predicted label!</p>
+<p>To compute $\log p(w_i|\text{Spam})$, the numerator is how many times we’ve seen $w_i$ in a “spam” message, and the denominator is sum of all word counts in all “spam” messages.</p>
+<p>On additional note: remember that the log of 0 is undefined! What if we encounter a word that is in the “spam” vocabulary, but not the “ham” vocabulary? Then $p(w_i|\text{Ham})$ will be 0! One way around this is to use <strong>Laplace Smoothing</strong>. We simply add 1 to the numerator, but we also have to add the size of the vocabulary to the denominator to balance it.</p>
+<p><strong>Laplace Smoothing</strong>：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\boldsymbol{\hat{p}(w_i|c)} &= \displaystyle{\boldsymbol{\frac{count(w_i, c) + 1}{\sum_{w∈V}(count(w, c) + 1)}}}\\
+                   &= \displaystyle{\boldsymbol{\frac{count(w_i, c) + 1}{[\sum_{w∈V}(count(w, c)] + |V|}}}
+\end{aligned}\tag{4}</script><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># modify this cell</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SpamDetector</span>(<span class="title class_ inherited__">SpamDetector_2</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">predict</span>(<span class="params">self, X</span>):</span><br><span class="line">        result = []</span><br><span class="line">        flag_1 = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> x <span class="keyword">in</span> X:</span><br><span class="line">            counts = self.get_word_counts(self.tokenize(x))</span><br><span class="line">            spam_score = <span class="number">0</span></span><br><span class="line">            ham_score = <span class="number">0</span></span><br><span class="line">            flag_2 = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> word, _ <span class="keyword">in</span> counts.items():</span><br><span class="line">                <span class="keyword">if</span> word <span class="keyword">not</span> <span class="keyword">in</span> self.vocab: <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">                <span class="comment"># According to Equation 3，compute the conditional probability of spam/ham and add Laplace</span></span><br><span class="line">                <span class="comment"># smoothing (add 1 to the numerator and add the size of the vocabulary to the denominator).</span></span><br><span class="line">                <span class="comment"># Please define the variable name as log_w_given_spam and log_w_given_ham.</span></span><br><span class="line"></span><br><span class="line">                <span class="comment"># Perform Laplace Smoothing on the data, using the formula (4) defined in the previous cell;</span></span><br><span class="line">                <span class="comment"># It should be noted that if formula (4) is used, it will be divided into two cases to calculate the conditional probability;</span></span><br><span class="line">                <span class="comment"># The first case is that the current word only appears in one type of email, and the other is in both types of emails; &#x27;</span></span><br><span class="line">                <span class="comment"># Otherwise self.word_counts[class][word] will report an error.</span></span><br><span class="line">                <span class="keyword">if</span> word <span class="keyword">in</span> self.word_counts[<span class="string">&#x27;spam&#x27;</span>] :</span><br><span class="line">                    numerator = self.word_counts[<span class="string">&#x27;spam&#x27;</span>][word] + <span class="number">1</span></span><br><span class="line">                    denominator = <span class="built_in">sum</span>([self.word_counts[<span class="string">&#x27;spam&#x27;</span>][key] <span class="keyword">for</span> key <span class="keyword">in</span> self.word_counts[<span class="string">&#x27;spam&#x27;</span>]]) + <span class="built_in">len</span>(self.vocab)</span><br><span class="line">                    log_w_given_spam = math.log(numerator / denominator)</span><br><span class="line">                <span class="keyword">else</span> :</span><br><span class="line">                    numerator = <span class="number">1</span></span><br><span class="line">                    denominator = <span class="built_in">sum</span>([self.word_counts[<span class="string">&#x27;spam&#x27;</span>][key] <span class="keyword">for</span> key <span class="keyword">in</span> self.word_counts[<span class="string">&#x27;spam&#x27;</span>]]) + <span class="built_in">len</span>(self.vocab)</span><br><span class="line">                    log_w_given_spam = math.log(numerator / denominator)</span><br><span class="line">                </span><br><span class="line">                <span class="keyword">if</span> word <span class="keyword">in</span> self.word_counts[<span class="string">&#x27;ham&#x27;</span>] :</span><br><span class="line">                    numerator = self.word_counts[<span class="string">&#x27;ham&#x27;</span>][word] + <span class="number">1</span></span><br><span class="line">                    denominator = <span class="built_in">sum</span>([self.word_counts[<span class="string">&#x27;ham&#x27;</span>][key] <span class="keyword">for</span> key <span class="keyword">in</span> self.word_counts[<span class="string">&#x27;ham&#x27;</span>]]) + <span class="built_in">len</span>(self.vocab)</span><br><span class="line">                    log_w_given_ham = math.log(numerator / denominator)</span><br><span class="line">                <span class="keyword">else</span> :</span><br><span class="line">                    numerator = <span class="number">1</span></span><br><span class="line">                    denominator = <span class="built_in">sum</span>([self.word_counts[<span class="string">&#x27;ham&#x27;</span>][key] <span class="keyword">for</span> key <span class="keyword">in</span> self.word_counts[<span class="string">&#x27;ham&#x27;</span>]]) + <span class="built_in">len</span>(self.vocab)</span><br><span class="line">                    log_w_given_ham = math.log(numerator / denominator)</span><br><span class="line">                <span class="comment">#</span></span><br><span class="line">                </span><br><span class="line">                <span class="comment"># Testing your results. Do not remove.</span></span><br><span class="line">                <span class="keyword">if</span> (flag_1 == <span class="number">0</span>) <span class="keyword">and</span> (flag_2 == <span class="number">0</span>):</span><br><span class="line">                    <span class="comment"># If an assert error occurs, you can print and debug it.</span></span><br><span class="line">                    <span class="built_in">print</span>(<span class="string">&quot;log_w_given_spam&quot;</span>, log_w_given_spam)</span><br><span class="line">                    <span class="built_in">print</span>(<span class="string">&quot;log_w_given_ham&quot;</span>, log_w_given_ham)</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">assert</span> <span class="built_in">round</span>(log_w_given_spam, <span class="number">4</span>) == -<span class="number">5.2759</span>, <span class="string">&quot;The conditional probability of spam is calculated incorrectly, please try again.&quot;</span></span><br><span class="line">                    <span class="keyword">assert</span> <span class="built_in">round</span>(log_w_given_ham, <span class="number">4</span>) == -<span class="number">5.1075</span>, <span class="string">&quot;The conditional probability of ham is calculated incorrectly, please try again.&quot;</span></span><br><span class="line">                <span class="comment">#</span></span><br><span class="line"></span><br><span class="line">                <span class="comment"># Calculate the sum of the conditional probabilities of spam/ham and define them as spam_score and ham_score.</span></span><br><span class="line"></span><br><span class="line">                spam_score += log_w_given_spam</span><br><span class="line">                ham_score += log_w_given_ham</span><br><span class="line"></span><br><span class="line">                flag_2 += <span class="number">1</span></span><br><span class="line">                </span><br><span class="line">            <span class="comment"># Testing your results. Do not remove.</span></span><br><span class="line">            <span class="keyword">if</span> flag_1 == <span class="number">0</span>:</span><br><span class="line">                <span class="comment"># If an assert error occurs, you can print and debug it.</span></span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&quot;spam_score&quot;</span>, spam_score)</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&quot;ham_score&quot;</span>, ham_score)</span><br><span class="line"></span><br><span class="line">                <span class="keyword">assert</span> <span class="built_in">round</span>(spam_score, <span class="number">2</span>) == -<span class="number">1015.11</span>, <span class="string">&quot;The sum of the conditional probabilities of spam is calculated incorrectly, please try again.&quot;</span></span><br><span class="line">                <span class="keyword">assert</span> <span class="built_in">round</span>(ham_score, <span class="number">2</span>) == -<span class="number">1102.46</span>, <span class="string">&quot;The sum of the conditional probabilities of ham is calculated incorrectly, please try again.&quot;</span></span><br><span class="line"></span><br><span class="line">            <span class="comment"># Finally, remember to add the prior probability to the spam_score and spam_score.</span></span><br><span class="line"></span><br><span class="line">            <span class="comment"># Your Code</span></span><br><span class="line">            <span class="comment"># 要加上类别的先验概率。</span></span><br><span class="line">            spam_score += self.log_class_priors[<span class="string">&#x27;spam&#x27;</span>]</span><br><span class="line">            ham_score += self.log_class_priors[<span class="string">&#x27;ham&#x27;</span>]</span><br><span class="line">            <span class="comment">#</span></span><br><span class="line"></span><br><span class="line">            <span class="comment"># Testing your results. Do not remove.</span></span><br><span class="line">            <span class="keyword">if</span> flag_1 == <span class="number">0</span>:</span><br><span class="line">                <span class="comment"># If an assert error occurs, you can print and debug it.</span></span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&quot;spam_score plus prior_probability&quot;</span>, spam_score)</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&quot;ham_score plus prior_probability&quot;</span>, ham_score)</span><br><span class="line"></span><br><span class="line">                <span class="keyword">assert</span> <span class="built_in">round</span>(spam_score, <span class="number">2</span>) == -<span class="number">1015.79</span>, <span class="string">&quot;You forget to add its prior probability to the spam_score, please try again.&quot;</span></span><br><span class="line">                <span class="keyword">assert</span> <span class="built_in">round</span>(ham_score, <span class="number">2</span>) == -<span class="number">1103.17</span>, <span class="string">&quot;You forget to add its prior probability to the ham_score, please try again.&quot;</span></span><br><span class="line"></span><br><span class="line">            <span class="comment"># Please count the prediction results according to the rules </span></span><br><span class="line">            <span class="comment"># (Check to see which score is bigger for that document. Whichever is larger, that is the predicted label!), </span></span><br><span class="line">            <span class="comment"># and add the labels to the list result (1 for spam and 0 for ham).</span></span><br><span class="line">            </span><br><span class="line">            <span class="comment"># Calculate the Bayesian probability according to formula (3);</span></span><br><span class="line">            <span class="comment"># If the score of garbage text is larger, the predicted label is 1, otherwise the predicted label is 0.</span></span><br><span class="line">            <span class="keyword">if</span> spam_score &gt; ham_score :</span><br><span class="line">                result.append(<span class="number">1</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                result.append(<span class="number">0</span>)</span><br><span class="line">            <span class="comment">#</span></span><br><span class="line"></span><br><span class="line">            flag_1 += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> result</span><br></pre></td></tr></table></figure>
+<p>In our case, the input can be a list of document texts; we return a list of predictions. Finally, we can use the class like this.</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># modify this cell</span></span><br><span class="line"></span><br><span class="line">MNB = SpamDetector()</span><br><span class="line">MNB.fit(X[<span class="number">100</span>:], y[<span class="number">100</span>:])</span><br><span class="line">pred = MNB.predict(X[:<span class="number">100</span>])</span><br><span class="line">true = y[:<span class="number">100</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># Compute the accuracy rate and print it (results are retained to 4 decimal places).</span></span><br><span class="line"><span class="comment"># Please define the variable name as accuracy.</span></span><br><span class="line"></span><br><span class="line">accuracy = <span class="built_in">sum</span>(pred) / <span class="built_in">sum</span>(true)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(accuracy)</span><br><span class="line"><span class="keyword">assert</span> accuracy == <span class="number">0.9800</span></span><br></pre></td></tr></table></figure>
+<pre><code>log_w_given_spam -5.275940294514414
+log_w_given_ham -5.107477914537173
+spam_score -1015.1113024344844
+ham_score -1102.456441377472
+spam_score plus prior_probability -1015.7889234611885
+ham_score plus prior_probability -1103.165359580201
+0.98
+</code></pre><p>We’re reserving the first 100 for the testing set, “train” our Naive Bayes classifier, then compute the accuracy.</p>
+<p>To recap, we reviewed Bayes Theorem and demonstrated how to use it with an example. Then we re-worked it using hypotheses and evidence instead of just events A and B to make it more specific to our task of spam detection. From there, we derived Naive Bayes by making the Naive Bayes Assumption that each word appears independently of all other words. Then we formulated a prediction equation/rule. Using the Enron dataset, we created a binary Naive Bayes classifier for detecting spam emails.</p>
+]]></content>
+      <categories>
+        <category>机器学习</category>
+        <category>传统算法</category>
+      </categories>
+      <tags>
+        <tag>Bayes</tag>
+        <tag>text classification</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>基于 PCA 的人脸识别系统和姿态分析</title>
     <url>/2022/06/05/%E5%9F%BA%E4%BA%8E-PCA-%E7%9A%84%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB%E7%B3%BB%E7%BB%9F%E5%92%8C%E5%A7%BF%E6%80%81%E5%88%86%E6%9E%90/</url>
     <content><![CDATA[<h1 id="1-PCA"><a href="#1-PCA" class="headerlink" title="1    PCA"></a>1    PCA</h1><p>&emsp;&emsp;在解决实际问题的时候，多变量问题是经常会遇到的，变量太多，无疑会增加分析问题的难度与复杂性。同时，在许多实际问题中，多个变量之间是具有一定的相关关系的。因此，能否在各个变量之间相关关系研究的基础上， 用较少的新变量代替原来较多的变量，而且使这些较少的新变量尽可能多地保留原来较多的变量所反映的信息？事实上，这种想法是可以实现的。</p>
@@ -525,9 +659,9 @@ c(n, m) + h(m) \geq h(n)</script><p>如果 <code>h(n)</code> 是一致的，那�
       </categories>
       <tags>
         <tag>Python</tag>
+        <tag>图</tag>
         <tag>A*</tag>
         <tag>启发式函数</tag>
-        <tag>图</tag>
       </tags>
   </entry>
   <entry>
@@ -797,8 +931,8 @@ c(n, m) + h(m) \geq h(n)</script><p>如果 <code>h(n)</code> 是一致的，那�
       </categories>
       <tags>
         <tag>Python</tag>
-        <tag>图</tag>
         <tag>Dijkstra</tag>
+        <tag>图</tag>
       </tags>
   </entry>
   <entry>
@@ -907,8 +1041,8 @@ c(n, m) + h(m) \geq h(n)</script><p>如果 <code>h(n)</code> 是一致的，那�
         <category>深度学习</category>
       </categories>
       <tags>
-        <tag>深度学习</tag>
         <tag>机器学习</tag>
+        <tag>深度学习</tag>
       </tags>
   </entry>
   <entry>
@@ -954,8 +1088,8 @@ f'(x) = \begin{cases} 1 ,& x \geq 0 \\ \alpha, &x < 0 \end{cases}</script><p>其
         <category>深度学习</category>
       </categories>
       <tags>
-        <tag>深度学习</tag>
         <tag>机器学习</tag>
+        <tag>深度学习</tag>
       </tags>
   </entry>
   <entry>
@@ -1066,8 +1200,8 @@ f'(x) = \begin{cases} 1 ,& x \geq 0 \\ \alpha, &x < 0 \end{cases}</script><p>其
         <category>数据结构与算法</category>
       </categories>
       <tags>
-        <tag>二叉树</tag>
         <tag>Python</tag>
+        <tag>二叉树</tag>
       </tags>
   </entry>
   <entry>
@@ -1983,9 +2117,9 @@ b = y - rsin\theta</script><ul>
         <category>数据挖掘</category>
       </categories>
       <tags>
-        <tag>深度学习</tag>
         <tag>数据处理</tag>
         <tag>机器学习</tag>
+        <tag>深度学习</tag>
       </tags>
   </entry>
   <entry>
@@ -2023,8 +2157,8 @@ b = y - rsin\theta</script><ul>
       </categories>
       <tags>
         <tag>深度学习</tag>
-        <tag>PyTorch</tag>
         <tag>LSTM</tag>
+        <tag>PyTorch</tag>
       </tags>
   </entry>
   <entry>
@@ -2552,8 +2686,8 @@ b = y - rsin\theta</script><ul>
         <category>深度学习</category>
       </categories>
       <tags>
-        <tag>深度学习</tag>
         <tag>机器学习</tag>
+        <tag>深度学习</tag>
         <tag>循环神经网络</tag>
       </tags>
   </entry>
@@ -2645,8 +2779,8 @@ b = y - rsin\theta</script><ul>
         <category>深度学习</category>
       </categories>
       <tags>
-        <tag>深度学习</tag>
         <tag>机器学习</tag>
+        <tag>深度学习</tag>
         <tag>循环神经网络</tag>
       </tags>
   </entry>
@@ -2732,8 +2866,8 @@ b = y - rsin\theta</script><ul>
         <category>深度学习</category>
       </categories>
       <tags>
-        <tag>深度学习</tag>
         <tag>机器学习</tag>
+        <tag>深度学习</tag>
         <tag>卷积神经网络</tag>
       </tags>
   </entry>
@@ -2796,8 +2930,8 @@ b = y - rsin\theta</script><ul>
         <category>深度学习</category>
       </categories>
       <tags>
-        <tag>深度学习</tag>
         <tag>机器学习</tag>
+        <tag>深度学习</tag>
         <tag>卷积神经网络</tag>
       </tags>
   </entry>
@@ -2895,8 +3029,8 @@ w_{00} & w_{01} & w_{02} \\
         <category>深度学习</category>
       </categories>
       <tags>
-        <tag>深度学习</tag>
         <tag>机器学习</tag>
+        <tag>深度学习</tag>
         <tag>卷积神经网络</tag>
       </tags>
   </entry>

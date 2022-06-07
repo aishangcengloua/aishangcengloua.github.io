@@ -6,7 +6,7 @@
   <link href="https://aishangcengloua.github.io/atom.xml" rel="self"/>
   
   <link href="https://aishangcengloua.github.io/"/>
-  <updated>2022-06-05T14:53:39.628Z</updated>
+  <updated>2022-06-07T13:06:21.229Z</updated>
   <id>https://aishangcengloua.github.io/</id>
   
   <author>
@@ -15,6 +15,35 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Bayesian based text classification</title>
+    <link href="https://aishangcengloua.github.io/2022/06/07/Bayesian-based-text-classification/"/>
+    <id>https://aishangcengloua.github.io/2022/06/07/Bayesian-based-text-classification/</id>
+    <published>2022-06-07T12:40:09.000Z</published>
+    <updated>2022-06-07T13:06:21.229Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;
+    &lt;font size=&quot;6&quot;&gt;&lt;font color=&quot;red&quot;&gt;&lt;strong&gt;Statement:&lt;/strong&gt;&lt;/font&gt;&lt;/font&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+    &lt;font size=&quot;5&quot;&gt;&lt;strong&gt;Here are some very important announcements: The content of this blog is from the Python experiment of probability theory and mathematical statistics at the School of Electronic and Information Engineering, Shenzhen University. If you happen to be completing this experiment, please only use this blog as a reference, please do not copy it directly. If this blog violates your rights, please contact me to delete it.&lt;/strong&gt;&lt;/font&gt;
+&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="传统算法" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/"/>
+    
+    
+    <category term="Bayes" scheme="https://aishangcengloua.github.io/tags/Bayes/"/>
+    
+    <category term="text classification" scheme="https://aishangcengloua.github.io/tags/text-classification/"/>
+    
+  </entry>
   
   <entry>
     <title>基于 PCA 的人脸识别系统和姿态分析</title>
@@ -135,11 +164,11 @@
     
     <category term="Python" scheme="https://aishangcengloua.github.io/tags/Python/"/>
     
+    <category term="图" scheme="https://aishangcengloua.github.io/tags/%E5%9B%BE/"/>
+    
     <category term="A*" scheme="https://aishangcengloua.github.io/tags/A/"/>
     
     <category term="启发式函数" scheme="https://aishangcengloua.github.io/tags/%E5%90%AF%E5%8F%91%E5%BC%8F%E5%87%BD%E6%95%B0/"/>
-    
-    <category term="图" scheme="https://aishangcengloua.github.io/tags/%E5%9B%BE/"/>
     
   </entry>
   
@@ -232,9 +261,9 @@
     
     <category term="Python" scheme="https://aishangcengloua.github.io/tags/Python/"/>
     
-    <category term="图" scheme="https://aishangcengloua.github.io/tags/%E5%9B%BE/"/>
-    
     <category term="Dijkstra" scheme="https://aishangcengloua.github.io/tags/Dijkstra/"/>
+    
+    <category term="图" scheme="https://aishangcengloua.github.io/tags/%E5%9B%BE/"/>
     
   </entry>
   
@@ -282,9 +311,9 @@
     <category term="深度学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
     
     
-    <category term="深度学习" scheme="https://aishangcengloua.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
-    
     <category term="机器学习" scheme="https://aishangcengloua.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="深度学习" scheme="https://aishangcengloua.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
     
   </entry>
   
@@ -305,9 +334,9 @@
     <category term="深度学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
     
     
-    <category term="深度学习" scheme="https://aishangcengloua.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
-    
     <category term="机器学习" scheme="https://aishangcengloua.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="深度学习" scheme="https://aishangcengloua.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
     
   </entry>
   
@@ -386,9 +415,9 @@
     <category term="数据结构与算法" scheme="https://aishangcengloua.github.io/categories/Python/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
     
     
-    <category term="二叉树" scheme="https://aishangcengloua.github.io/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/"/>
-    
     <category term="Python" scheme="https://aishangcengloua.github.io/tags/Python/"/>
+    
+    <category term="二叉树" scheme="https://aishangcengloua.github.io/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/"/>
     
   </entry>
   
@@ -485,29 +514,6 @@
     <category term="KNN" scheme="https://aishangcengloua.github.io/tags/KNN/"/>
     
     <category term="图像分类" scheme="https://aishangcengloua.github.io/tags/%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>对抗攻击</title>
-    <link href="https://aishangcengloua.github.io/2022/06/05/%E5%AF%B9%E6%8A%97%E6%94%BB%E5%87%BB/"/>
-    <id>https://aishangcengloua.github.io/2022/06/05/%E5%AF%B9%E6%8A%97%E6%94%BB%E5%87%BB/</id>
-    <published>2022-06-05T11:00:54.000Z</published>
-    <updated>2022-06-05T11:01:48.998Z</updated>
-    
-    
-    <summary type="html">&lt;h1 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;在人工智能带来的风险中，对抗攻击就是重要风险之一。攻击者可以通过各种手段绕过，或直接对机器学习模型进行攻击达到对抗目的，使我们的模型失效或误判。如果类似攻击发生在无人驾驶、金融AI等领域则将导致严重后果。所以，需要未雨绸缪，认识各种对抗攻击，并有效地破解各种对抗攻击。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="机器学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
-    
-    <category term="深度学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
-    
-    
-    <category term="深度学习" scheme="https://aishangcengloua.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
-    
-    <category term="对抗攻击" scheme="https://aishangcengloua.github.io/tags/%E5%AF%B9%E6%8A%97%E6%94%BB%E5%87%BB/"/>
     
   </entry>
   
