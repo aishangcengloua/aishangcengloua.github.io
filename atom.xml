@@ -6,7 +6,7 @@
   <link href="https://aishangcengloua.github.io/atom.xml" rel="self"/>
   
   <link href="https://aishangcengloua.github.io/"/>
-  <updated>2022-06-07T13:39:50.015Z</updated>
+  <updated>2022-06-24T11:33:07.642Z</updated>
   <id>https://aishangcengloua.github.io/</id>
   
   <author>
@@ -15,6 +15,40 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>论文阅读: Generative Adversarial Transformers</title>
+    <link href="https://aishangcengloua.github.io/2022/06/24/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB-Generative-Adversarial-Transformers/"/>
+    <id>https://aishangcengloua.github.io/2022/06/24/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB-Generative-Adversarial-Transformers/</id>
+    <published>2022-06-24T11:31:11.000Z</published>
+    <updated>2022-06-24T11:33:07.642Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;center&gt;&lt;font size=5&gt;&lt;strong&gt;论文阅读：Generative Adversarial Transformers&lt;/strong&gt;&lt;/font&lt;/center&gt;
+
+
+&lt;h3 id=&quot;1-摘要&quot;&gt;&lt;a href=&quot;#1-摘要&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="机器学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="深度学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+    <category term="transformer" scheme="https://aishangcengloua.github.io/tags/transformer/"/>
+    
+    <category term="论文阅读" scheme="https://aishangcengloua.github.io/tags/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/"/>
+    
+    <category term="GAN" scheme="https://aishangcengloua.github.io/tags/GAN/"/>
+    
+  </entry>
   
   <entry>
     <title>Text Classification Based On Bayes</title>
@@ -491,29 +525,6 @@
     <category term="数据结构与算法" scheme="https://aishangcengloua.github.io/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"/>
     
     <category term="回溯" scheme="https://aishangcengloua.github.io/tags/%E5%9B%9E%E6%BA%AF/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>KNN 算法实现图像分类</title>
-    <link href="https://aishangcengloua.github.io/2022/06/05/KNN-%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB/"/>
-    <id>https://aishangcengloua.github.io/2022/06/05/KNN-%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB/</id>
-    <published>2022-06-05T11:02:59.000Z</published>
-    <updated>2022-06-05T11:04:59.718Z</updated>
-    
-    
-    <summary type="html">&lt;h1 id=&quot;1-scikit-learn介绍&quot;&gt;&lt;a href=&quot;#1-scikit-learn介绍&quot; class=&quot;headerlink&quot; title=&quot;1    scikit-learn介绍&quot;&gt;&lt;/a&gt;1    scikit-learn介绍&lt;/h1&gt;&lt;p&gt;scikit-learn与机器学习的关系：&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="机器学习" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
-    
-    <category term="传统算法" scheme="https://aishangcengloua.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/"/>
-    
-    
-    <category term="KNN" scheme="https://aishangcengloua.github.io/tags/KNN/"/>
-    
-    <category term="图像分类" scheme="https://aishangcengloua.github.io/tags/%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB/"/>
     
   </entry>
   
