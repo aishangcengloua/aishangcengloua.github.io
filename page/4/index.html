@@ -275,6 +275,9 @@
       
           <p>﻿conda 环境下更新 pip 失败，出现以下问题：<br><strong><em>1.</em></strong> Script file ‘D:\Anaconda\Anaconda3\Scripts\pip-script.py’ is not present.</p>
 <p>在使用网上的正常方法如：easy_install pip 等方法后依旧出现以下问题：</p>
+<p><strong><em>1.</em></strong>  The easy_install command is deprecated and will be removed in a future version.<br><strong><em>2.</em></strong> D:\Anaconda\Anaconda3\python.exe: No module named pip.<strong>main</strong>; ‘pip’ is a package and cannot be directly executed</p>
+<p>在 conda 环境下输入以下命令即可解决：</p>
+<p><strong><em>1.</em></strong> curl <a target="_blank" rel="noopener" href="https://bootstrap.pypa.io/get-pip.py">https://bootstrap.pypa.io/get-pip.py</a> -o get-pip.py<br><strong><em>2.</em></strong> python get-pip.py —force-reinstall</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/conda-%E7%8E%AF%E5%A2%83%E4%B8%8B%E6%9B%B4%E6%96%B0-pip-%E5%A4%B1%E8%B4%A5/#more" rel="contents">
@@ -380,6 +383,8 @@
 
       
           <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;&emsp;我们知道，现在会很多框架中都有集成数据集的库，我们可以通过几行简单的代码进行下载，如我们前几篇博客中的 MNIST 手写数字集和 Fashion MNIST数据集均可以通过PyTorch中的torchvision库下载。但库中收集到的数据集始终有限，我们则需要利用爬虫等技术进行收集新数据集，如果要用于模型训练，则需要我们自定义数据集。</p>
+<h1 id="1-猫狗数据集"><a href="#1-猫狗数据集" class="headerlink" title="1    猫狗数据集"></a>1    猫狗数据集</h1><p>&emsp;&emsp;猫狗数据集可以从kaggle官网下载，该数据集包含test1文件夹和train文件夹，train文件夹中包含12500张猫的图片和12500张狗的图片，图片的文件名中带序号：<br><img src="https://img-blog.csdnimg.cn/cdee8a259541497ca443d4a270a07f67.png#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="2-自定义数据加载"><a href="#2-自定义数据加载" class="headerlink" title="2    自定义数据加载"></a>2    自定义数据加载</h1>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%95%B0%E6%8D%AE%E9%9B%86/#more" rel="contents">
@@ -485,6 +490,8 @@
 
       
           <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;&emsp;Python有了NumPy的Pandas，用Python处理数据就像使用Exel或SQL一样简单方便。Pandas是基于NumPy的Python 库，它被广泛用于快速分析数据，以及数据清洗和准备等工作。可以把 Pandas 看作是 Python版的Excel或Table。Pandas 有两种数据结构：Series和DataFrame，Pandas经过几个版本的更新，目前已经成为数据清洗、处理和分析的不二选择。</p>
+<h1 id="1-Pandas数据结构"><a href="#1-Pandas数据结构" class="headerlink" title="1    Pandas数据结构"></a>1    Pandas数据结构</h1><p>&emsp;&emsp;Pandas主要采用Series和DataFrame两种数据结构。Series是一种类似一维数据的数据结构，由数据(values)及索引(indexs)组成，而DataFrame是一个表格型的数据结构，它有一组序列，每列的数据可以为不同类型（NumPy数据组中数据要求为相同类型）,它既有行索引，也有列索引。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 导入相关模块</span></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd </span><br><span class="line"></span><br><span class="line">a = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>])</span><br><span class="line">b = np.array([<span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>])</span><br><span class="line">c = np.array([<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>, <span class="string">&#x27;d&#x27;</span>])</span><br><span class="line"><span class="comment"># 转成 DataFrame 结构</span></span><br><span class="line">df = pd.DataFrame(&#123;<span class="string">&#x27;a&#x27;</span> : a, <span class="string">&#x27;b&#x27;</span> : b, <span class="string">&#x27;c&#x27;</span> : c, <span class="string">&#x27;c&#x27;</span> : c&#125;)</span><br><span class="line">df</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/Python-Pandas-%E5%BA%93%E6%95%99%E7%A8%8B/#more" rel="contents">
@@ -589,7 +596,13 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="1-Numpy概述"><a href="#1-Numpy概述" class="headerlink" title="1    Numpy概述"></a>1    Numpy概述</h1><h2 id="1-1-概念"><a href="#1-1-概念" class="headerlink" title="1.1    概念"></a>1.1    概念</h2>
+          <h1 id="1-Numpy概述"><a href="#1-Numpy概述" class="headerlink" title="1    Numpy概述"></a>1    Numpy概述</h1><h2 id="1-1-概念"><a href="#1-1-概念" class="headerlink" title="1.1    概念"></a>1.1    概念</h2><p>&emsp;&emsp;Python本身含有列表和数组，但对于大数据来说，这些结构是有很多不足的。由于列表的元素可以是任何对象，因此列表中所保存的是对象的指针。对于数值运算来说这种    结构比较浪费内存和CPU资源。至于数组对象，它可以直接保存 数值，和C语言的一维数组比较类似。但是由于它不支持多维，在上面的函数也不多，因此也不适合做数值运算。Numpy提供了两种基本的对象：ndarray(N-dimensional Array Object)和 ufunc(Universal Function Object)。ndarray是存储单一数据类型的多维数组，而ufunc则是能够对数组进行处理的函数。</p>
+<h2 id="1-2-功能"><a href="#1-2-功能" class="headerlink" title="1.2    功能"></a>1.2    功能</h2><ul>
+<li>创建n维数组(矩阵)</li>
+<li>对数组进行函数运算，使用函数计算十分快速，节省了大量的时间，且不需要编写循环，十分方便</li>
+<li>数值积分、线性代数运算、傅里叶变换</li>
+<li>ndarray快速节省空间的多维数组，提供数组化的算术运算和高级的 广播功能。</li>
+</ul>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/Python-Numpy-%E5%BA%93%E6%95%99%E7%A8%8B/#more" rel="contents">
@@ -695,6 +708,7 @@
 
       
           <h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><p>如下图所示为某种用于试剂检验的产品，需要利用机器视觉的方法检测产品的缺陷。 本设计的目的是综合运用图像处理的知识，检测产品是否有严重缺陷。 在检测算法之前， 作为图像的预处理， 检测和定位产品的外轮廓，矫正产品的姿态，对于后续的算法处理有着重要的意义。<br><img src="https://img-blog.csdnimg.cn/7f7ab2467c43495ba7a8053cdd9d6425.png#pic_center" alt="在这里插入图片描述"><br>数据为真实的工业产品成像，分为放在OK，NG目录下。数据提取地址<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1mfA0OoOSo6SAmioCol5uSw">链接</a> 提取码：s3jl，OK目录下的图像没有缺陷，NG目录是有缺陷的产品，包括如下两种缺陷：<br><img src="https://img-blog.csdnimg.cn/1544c7a71bb245bd8010516ba5210ed0.png#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h1><h2 id="1-介绍"><a href="#1-介绍" class="headerlink" title="1    介绍"></a>1    介绍</h2><p>&emsp;&emsp;随着机器学习的发展,对于工业产品的缺陷检测,深度网络模型检测缺陷的准确率远远高于传统图像处理算法。但是由于成本过高和深度学习的不可解释性,使用传统图像处理方法检测产品缺陷检测在工业上仍占着很大一部分比例。本次课程设计主要是针对磁盘的两种缺陷:胶带和大气泡进行检测。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E5%B7%A5%E4%B8%9A%E4%BA%A7%E5%93%81%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B-Opencv-Python/#more" rel="contents">
@@ -800,6 +814,8 @@
 
       
           <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p> &emsp;&emsp; 最近写了一个python的图片分类任务的作业，本篇博客是将我所做的流程所进行的整理。数据链接：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1OhsEgLGZ_MYxESPPGM5g5g">百度网盘</a> 提取码：rkhw，HoG特征理论知识可参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/zouxy09/article/details/7929348">这里</a>，PCA降维可参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_38262266/article/details/100592330">这里</a></p>
+<h1 id="1-介绍"><a href="#1-介绍" class="headerlink" title="1    介绍"></a>1    介绍</h1><p> &emsp;&emsp; 特征提取是图像处理中的一大领域,著名的提取算法有HoG(Histogram of Oriented Gradient)[1]、LBP(Local Binary Pattern)[2]和Haar-like[3]等等。近些年来,随着GPU算力的急速发展,深度学习也得到了迅速发展,使得图像特征提取的效率大大提升,各种分类任务的正确率不断的刷新提升。而深度学习存在着较差的可解释性和海量数据需求的问题,这是对机器视觉任务来说是伪命题,与之相反的是,传统特征提取方法可视性非常强,且现有的卷积神经网络可能与这些特征提取方法有一定类似性,因为每个滤波权重实际上是一个线性的识别模式,与这些特征提取过程的边界与梯度检测类似。因此对我们的学习来说,传统特征提取方法的学习是不可少的,本次实验是基于HoG 的图像特征提取及其分类研究。<br>&emsp;&emsp;HOG特征是一种在计算机视觉和图像处理中用来进行物体检测的特征描述子。它通过计算和统计图像局部区域的梯度方向直方图来构成特征。最早出现在2005年CVPR上，法国的研究人员Navneet Dalal 和Bill Triggs利用HOG特征+SVM进行行人检测,在当时得到了较好的检测效果。主要流程如下:<br><img src="https://img-blog.csdnimg.cn/5cdd3d64f5544f70a0261cb352950e2b.png" alt="在这里插入图片描述"><br>&emsp;&emsp;本次的实验也是基于上述流程进行一步一步实现,最终实现分类。</p>
+<h1 id="2-方法"><a href="#2-方法" class="headerlink" title="2    方法"></a>2    方法</h1>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E5%9F%BA%E4%BA%8E-HoG-%E7%9A%84%E5%9B%BE%E5%83%8F%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB%E7%A0%94%E7%A9%B6/#more" rel="contents">
@@ -900,7 +916,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="一、数据集"><a href="#一、数据集" class="headerlink" title="一、数据集"></a>一、数据集</h1><h2 id="数据集介绍"><a href="#数据集介绍" class="headerlink" title="数据集介绍"></a>数据集介绍</h2>
+          <h1 id="一、数据集"><a href="#一、数据集" class="headerlink" title="一、数据集"></a>一、数据集</h1><h2 id="数据集介绍"><a href="#数据集介绍" class="headerlink" title="数据集介绍"></a>数据集介绍</h2><p>Adult数据集是一个经典的数据挖掘项目的的数据集，该数据从美国1994年人口普查数据库中抽取而来，因此也称作“人口普查收入”数据集，共包含48842条记录，年收入大于 50k 的占比23.93%年收入小于 50k 的占比76.07%，数据集已经划分为训练数据32561条和测试数据16281条。该数据集类变量为年收入是否超过 50k ，属性变量包括年龄、工种、学历、职业等14类重要信息，其中有8类属于类别离散型变量，另外6类属于数值连续型变量。该数据集是一个分类数据集，用来预测年收入是否超过50k。下载地址<a target="_blank" rel="noopener" href="https://archive.ics.uci.edu/ml/machine-learning-databases/adult/">点这里</a>。<br><img src="https://img-blog.csdnimg.cn/f8c920dc998447a291c4f6636dedef53.png" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/f836e82e69cd4328a60298deab1d6b67.png" alt="在这里插入图片描述"></p>
+<h2 id="数据集预处理及分析"><a href="#数据集预处理及分析" class="headerlink" title="数据集预处理及分析"></a>数据集预处理及分析</h2><p>因为是csv数据，所以主要采用pandas和numpy库来进行预处理，首先数据读取以及查看是否有缺失：</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/Adult-%E6%95%B0%E6%8D%AE%E9%9B%86%E5%88%86%E6%9E%90%E5%8F%8A%E5%9B%9B%E7%A7%8D%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0/#more" rel="contents">
@@ -1009,6 +1026,9 @@
 <blockquote>
 <p>首先使用pip install tushare安装tushare工具包 ，github地址为：<br><a target="_blank" rel="noopener" href="https://github.com/aishangcengloua/MLData/blob/master/PyTorch/NLP/Forecast_stock/LSTM.ipynb">https://github.com/aishangcengloua/MLData/blob/master/PyTorch/NLP/Forecast_stock/LSTM.ipynb</a></p>
 </blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tushare <span class="keyword">as</span> ts</span><br><span class="line">cons = ts.get_apis()<span class="comment">#建立连接</span></span><br><span class="line">df = ts.bar(<span class="string">&#x27;000300&#x27;</span>, conn = cons, asset = <span class="string">&#x27;INDEX&#x27;</span>, start_date = <span class="string">&#x27;2010-01-01&#x27;</span>, end_date = <span class="string">&#x27;&#x27;</span>)</span><br><span class="line">df.info()<span class="comment">#查看没有缺失值之后保存</span></span><br><span class="line">df.columns<span class="comment">#可知沪深300指数（000300）的信息包括交易日期，开盘价，收盘价，最高价，最低价，交易量，成交金额，涨跌幅。</span></span><br><span class="line"><span class="comment"># df.to_csv(&#x27;sh300.csv&#x27;)</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/f2d9f88f105e4c3286b86d871441eb60.png#pic_center" alt="在这里插入图片描述"></p>
+<p>导入所需的包</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/LSTM-%E9%A2%84%E6%B5%8B%E8%82%A1%E7%A5%A8/#more" rel="contents">
@@ -1110,6 +1130,11 @@
 
       
           <h1 id="一、什么是Tensorboard"><a href="#一、什么是Tensorboard" class="headerlink" title="一、什么是Tensorboard"></a>一、什么是Tensorboard</h1><p>Tensorboard原本是Google TensorFlow的可视化工具，可以用于记录训练数据、评估数据、网络结构、图像等，并且可以在web上展示，对于观察神经网络的过程非常有帮助。PyTorch也推出了自己的可视化工具，一个是<strong>tensorboardX</strong>包，一个是<strong>torch.utils.tensorboard</strong>，二者的使用相差不大，这里介绍后者</p>
+<h2 id="二、配置Tensorboard"><a href="#二、配置Tensorboard" class="headerlink" title="二、配置Tensorboard"></a>二、配置Tensorboard</h2><h3 id="环境要求"><a href="#环境要求" class="headerlink" title="环境要求"></a>环境要求</h3><ul>
+<li>操作系统：Windows</li>
+<li>Python3</li>
+<li>PyTorch &gt;= 1.0.0 &amp;&amp; torchvision &gt;= 0.2.1 &amp;&amp; tensorboard &gt;= 1.12.0 1</li>
+</ul>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E8%AF%A6%E8%A7%A3-Tensorboard-%E5%8F%8A%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/#more" rel="contents">
@@ -1214,14 +1239,9 @@
 <blockquote>
 <p>tensorboard: error: invalid choice: ‘Recognizer\\logs’ (choose from ‘serve’, ‘dev’)</p>
 </blockquote>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/06/05/%E5%9C%A8%E4%BD%BF%E7%94%A8-tensorboard-%E6%97%B6%E6%8A%A5%E9%94%99/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
+<p>开始还以为是代码问题，但发现不是，又去找官网和别人的经过，但是最多找到的是路径是否正确的问题，但是我确定我不是。然后突然发现路径中有空格，就怀疑可能是空格的问题，经手一改，然后就可以了(学艺不精)</p>
+<p>注意检查 <strong>tensorboard —logdir=”路径”</strong>（注意要是双引号） 中的路径是否空格以及logs所在路径是否填写正确。</p>
+
       
     </div>
 

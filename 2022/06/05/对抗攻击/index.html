@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="前言&amp;emsp;&amp;emsp;在人工智能带来的风险中，对抗攻击就是重要风险之一。攻击者可以通过各种手段绕过，或直接对机器学习模型进行攻击达到对抗目的，使我们的模型失效或误判。如果类似攻击发生在无人驾驶、金融AI等领域则将导致严重后果。所以，需要未雨绸缪，认识各种对抗攻击，并有效地破解各种对抗攻击。">
+  <meta name="description" content="前言&amp;emsp;&amp;emsp;在人工智能带来的风险中，对抗攻击就是重要风险之一。攻击者可以通过各种手段绕过，或直接对机器学习模型进行攻击达到对抗目的，使我们的模型失效或误判。如果类似攻击发生在无人驾驶、金融AI等领域则将导致严重后果。所以，需要未雨绸缪，认识各种对抗攻击，并有效地破解各种对抗攻击。 1    原理&amp;emsp;&amp;emsp;对抗攻击最核心的手段就是制造对抗样本去迷惑模型，比如在计算机视觉">
 <meta property="og:type" content="article">
 <meta property="og:title" content="对抗攻击">
 <meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/%E5%AF%B9%E6%8A%97%E6%94%BB%E5%87%BB/index.html">
 <meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
-<meta property="og:description" content="前言&amp;emsp;&amp;emsp;在人工智能带来的风险中，对抗攻击就是重要风险之一。攻击者可以通过各种手段绕过，或直接对机器学习模型进行攻击达到对抗目的，使我们的模型失效或误判。如果类似攻击发生在无人驾驶、金融AI等领域则将导致严重后果。所以，需要未雨绸缪，认识各种对抗攻击，并有效地破解各种对抗攻击。">
+<meta property="og:description" content="前言&amp;emsp;&amp;emsp;在人工智能带来的风险中，对抗攻击就是重要风险之一。攻击者可以通过各种手段绕过，或直接对机器学习模型进行攻击达到对抗目的，使我们的模型失效或误判。如果类似攻击发生在无人驾驶、金融AI等领域则将导致严重后果。所以，需要未雨绸缪，认识各种对抗攻击，并有效地破解各种对抗攻击。 1    原理&amp;emsp;&amp;emsp;对抗攻击最核心的手段就是制造对抗样本去迷惑模型，比如在计算机视觉">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/949bdab6932d41db8afe9a83ad323625.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/6e4f600e3b99407fa44cc15e834ffd5e.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center">

@@ -27,7 +27,19 @@
     <summary type="html">&lt;p&gt;&lt;center&gt;&lt;font size=&quot;5&quot;&gt;&lt;strong&gt;论文阅读：Generative Adversarial Transformers&lt;/strong&gt;&lt;/font&gt;&lt;/center&gt;&lt;/p&gt;
 
 
-&lt;h3 id=&quot;1-摘要&quot;&gt;&lt;a href=&quot;#1-摘要&quot; class=&quot;headerlink&quot; title=&quot;1    摘要&quot;&gt;&lt;/a&gt;1    摘要&lt;/h3&gt;</summary>
+&lt;h3 id=&quot;1-摘要&quot;&gt;&lt;a href=&quot;#1-摘要&quot; class=&quot;headerlink&quot; title=&quot;1    摘要&quot;&gt;&lt;/a&gt;1    摘要&lt;/h3&gt;&lt;p&gt;背景：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;本文的核心思想来自于认知科学领域经常讨论的人类感知的两种互惠机制：&lt;strong&gt;自下而上&lt;/strong&gt;（从视网膜到视觉皮层 - 局部元素和显着刺激分层组合在一起形成整体）处理和 &lt;strong&gt;自上而下&lt;/strong&gt;（围绕全局上下文、选择性注意和先验知识为特定的解释提供信息）处理；&lt;/li&gt;
+&lt;li&gt;过去十年在计算机视觉领域取得巨大成功的卷积神经网络并没有反映视觉系统的这种双向性质。相反，它的前馈传播只是通过从原始感觉信号建立更高的抽象表示来模拟自下而上的处理；&lt;/li&gt;
+&lt;li&gt;CNN 的局部感受野和刚性计算会使得 CNN 缺乏对全局上下文的理解，这样会导致许多问题：&lt;ul&gt;
+&lt;li&gt;模型难以建立和捕捉长期依赖关系；&lt;/li&gt;
+&lt;li&gt;缺乏对全局形状和结构形成整体理解的能力；&lt;/li&gt;
+&lt;li&gt;优化和训练稳定性问题，如 GAN 模型普遍存在难训练的问题，因为在生成图像的精细细节之间的协调存在着固有的困难。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;需要新型模型来缓解上述问题。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;核心思想：&lt;/p&gt;</summary>
     
     
     
@@ -58,7 +70,14 @@
 
 &lt;p&gt;
     &lt;font size=&quot;5&quot;&gt;&lt;strong&gt;Here are some very important announcements: The content of this blog is from the Python experiment of probability theory and mathematical statistics at the School of Electronic and Information Engineering, Shenzhen University. If you happen to be completing this experiment, please only use this blog as a reference, please do not copy it directly. If this blog violates your rights, please contact me to delete it.&lt;/strong&gt;&lt;/font&gt;
-&lt;/p&gt;</summary>
+&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;DataSet：&lt;/strong&gt;&lt;a href=&quot;https://www2.aueb.gr/users/ion/data/enron-spam/&quot;&gt;&lt;strong&gt;https://www2.aueb.gr/users/ion/data/enron-spam/&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;1-Experimental-Purposes&quot;&gt;&lt;a href=&quot;#1-Experimental-Purposes&quot; class=&quot;headerlink&quot; title=&quot;1. Experimental Purposes&quot;&gt;&lt;/a&gt;1. Experimental Purposes&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;Familiar with the Bayes theorem.&lt;/li&gt;
+&lt;li&gt;Understand the implementation of the Bayes theorem in python.&lt;/li&gt;
+&lt;li&gt;Know how to use Naive Bayes for a practical task, e.g., text classification.&lt;/li&gt;
+&lt;/ul&gt;</summary>
     
     
     
@@ -81,7 +100,9 @@
     <updated>2022-06-05T14:53:39.628Z</updated>
     
     
-    <summary type="html">&lt;h1 id=&quot;1-PCA&quot;&gt;&lt;a href=&quot;#1-PCA&quot; class=&quot;headerlink&quot; title=&quot;1    PCA&quot;&gt;&lt;/a&gt;1    PCA&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;在解决实际问题的时候，多变量问题是经常会遇到的，变量太多，无疑会增加分析问题的难度与复杂性。同时，在许多实际问题中，多个变量之间是具有一定的相关关系的。因此，能否在各个变量之间相关关系研究的基础上， 用较少的新变量代替原来较多的变量，而且使这些较少的新变量尽可能多地保留原来较多的变量所反映的信息？事实上，这种想法是可以实现的。&lt;/p&gt;</summary>
+    <summary type="html">&lt;h1 id=&quot;1-PCA&quot;&gt;&lt;a href=&quot;#1-PCA&quot; class=&quot;headerlink&quot; title=&quot;1    PCA&quot;&gt;&lt;/a&gt;1    PCA&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;在解决实际问题的时候，多变量问题是经常会遇到的，变量太多，无疑会增加分析问题的难度与复杂性。同时，在许多实际问题中，多个变量之间是具有一定的相关关系的。因此，能否在各个变量之间相关关系研究的基础上， 用较少的新变量代替原来较多的变量，而且使这些较少的新变量尽可能多地保留原来较多的变量所反映的信息？事实上，这种想法是可以实现的。&lt;/p&gt;
+&lt;h2 id=&quot;1-1-原理&quot;&gt;&lt;a href=&quot;#1-1-原理&quot; class=&quot;headerlink&quot; title=&quot;1.1    原理&quot;&gt;&lt;/a&gt;1.1    原理&lt;/h2&gt;&lt;p&gt;&amp;emsp;&amp;emsp;&lt;strong&gt;PCA&lt;/strong&gt;(Principal Components Analysis,，主成分分析)是将原来多个变量化为少数几个综合指标的一种统计分析方法，从数学角度来看，这是一种降维处理技术。  下面举例说明其原理，加入有以下数据：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://th.bing.com/th/id/OIP.2LuHxwMc-MzJ1dVcPILd8gHaFj?w=232&amp;amp;h=180&amp;amp;c=7&amp;amp;r=0&amp;amp;o=5&amp;amp;dpr=1.25&amp;amp;pid=1.7&quot; alt=&quot;img&quot;&gt;&lt;/p&gt;</summary>
     
     
     
@@ -106,7 +127,14 @@
     <updated>2022-06-05T11:46:14.292Z</updated>
     
     
-    <summary type="html">&lt;h1 id=&quot;1-原理简述&quot;&gt;&lt;a href=&quot;#1-原理简述&quot; class=&quot;headerlink&quot; title=&quot;1    原理简述&quot;&gt;&lt;/a&gt;1    原理简述&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;Self-Attention Layer 一次检查同一句子中的所有单词的注意力，这使得它成为一个简单的矩阵计算，并且能够在计算单元上并行计算。 此外，Self-Attention Layer 可以使用下面提到的 Multi-Head 架构来拓宽视野，也就是多头注意力机制。Self-Attention Layer 基本结构如下：&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/fc65b9f0024549318aad9019931c293a.png&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;/p&gt;</summary>
+    <summary type="html">&lt;h1 id=&quot;1-原理简述&quot;&gt;&lt;a href=&quot;#1-原理简述&quot; class=&quot;headerlink&quot; title=&quot;1    原理简述&quot;&gt;&lt;/a&gt;1    原理简述&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;Self-Attention Layer 一次检查同一句子中的所有单词的注意力，这使得它成为一个简单的矩阵计算，并且能够在计算单元上并行计算。 此外，Self-Attention Layer 可以使用下面提到的 Multi-Head 架构来拓宽视野，也就是多头注意力机制。Self-Attention Layer 基本结构如下：&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/fc65b9f0024549318aad9019931c293a.png&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;/p&gt;
+&lt;p&gt;对于每个输入 $\boldsymbol{x}$，首先经过 &lt;strong&gt;Embedding&lt;/strong&gt; 层对每个输入进行编码得到 $\boldsymbol{a_1,a_2,a_3,a_4}$，后将输入特征经过三个全连接层分别得到 &lt;strong&gt;Query，Key，Value&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$\boldsymbol{q^i(Query) = W^q a^i}$；&lt;/li&gt;
+&lt;li&gt;$\boldsymbol{k^i(Key) = W^k a^i}$；&lt;/li&gt;
+&lt;li&gt;$\boldsymbol{v^i(Value) = W^v a^i}$。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;$\boldsymbol{W^q, W^k,W^v}$ 由网络训练而来。注意力矩阵是由 Query 和 Key 计算得到，方式由许多种，如点积、缩放点积等。Value 可以看作是信息提取器，将根据单词的注意力提取一个唯一的值，也即某个特征有多少成分被提取出来。下面计算一种注意力矩阵的方式：缩放点积。&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/6385301128964680b30be08f2ac35638.gif#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;br&gt;注意力矩阵 $\boldsymbol{A}$ 定义为 Query (giver) 和 Key (receiver) 的内积除以其维度的平方根。 每个单词通过提供 Query 来匹配作为注意力的目标单词的 Key，从而对所有单词产生注意力。为防止注意力分数随维度增大而增大，让注意力矩阵除以向量的维度的开方。 然后对得到的注意力矩阵 $\boldsymbol{A}$ 进行 &lt;strong&gt;Softmax&lt;/strong&gt; 归一化得到 $\boldsymbol{\hat{A}}$，最后将  $\boldsymbol{\hat{A}}$ 乘以 Value 矩阵并相加得到最终的特征 $\boldsymbol{b}$。&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/9c375b3ad70240f1b2014231cbdd5e14.gif#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;/p&gt;</summary>
     
     
     
@@ -131,7 +159,9 @@
     
     <summary type="html">&lt;center&gt;&lt;font size=&quot;6&quot;&gt;&lt;font color=&quot;red&quot;&gt;论文阅读：Pseudo-Label : The Simple and Efficient Semi-Supervised Learning Method for Deep Neural Networks&lt;/font&gt;&lt;/font&gt;&lt;/center&gt;
 
-&lt;h1 id=&quot;1-文章简述&quot;&gt;&lt;a href=&quot;#1-文章简述&quot; class=&quot;headerlink&quot; title=&quot;1    文章简述&quot;&gt;&lt;/a&gt;1    文章简述&lt;/h1&gt;</summary>
+&lt;h1 id=&quot;1-文章简述&quot;&gt;&lt;a href=&quot;#1-文章简述&quot; class=&quot;headerlink&quot; title=&quot;1    文章简述&quot;&gt;&lt;/a&gt;1    文章简述&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;该文章的主要思想是将预测概率最大的标记作为无标记数据的伪标签，然后给未标记数据设一个权重，在训练过程中慢慢增加未标记数据的权重来进行训练，在手写体数据集上有了较好的性能。算法流程如下：&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;输入：样本集 $\boldsymbol{D1 = \{(x_1, y_1),(x_2,y_2),\cdots,(x_n, y_n)\}, D2 = \{x_1,x_2,,\cdots,x_n\}}$，其中 $\boldsymbol{D_1}$ 为已标注数据，$\boldsymbol{D_2}$ 为未标注数据；&lt;/strong&gt;&lt;/p&gt;</summary>
     
     
     
@@ -154,7 +184,14 @@
     <updated>2022-06-05T11:39:53.542Z</updated>
     
     
-    <summary type="html">&lt;h1 id=&quot;1-网络结构&quot;&gt;&lt;a href=&quot;#1-网络结构&quot; class=&quot;headerlink&quot; title=&quot;1    网络结构&quot;&gt;&lt;/a&gt;1    网络结构&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;MTCNN 是多任务级联 CNN 的人脸检测深度学习模型，该模型不仅考虑了人脸检测概率，还综合训练了人脸边框回归和面部关键点检测，多任务同时建立 loss function 并训练，因此为 MTCNN。级联 CNN 主要由三个子网络组成：P-Net、R-Net 和 O-Net。&lt;br&gt;&amp;emsp;&amp;emsp;P-Net 的结构如下：&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/52bf5bf680944505ad1a4f52c5a94644.png#pic_center&quot; alt=&quot;在这里插入图片描述\](https://img-blog.csdnimg.cn/a37a2812f2914fd48ae0c9f7ed16cb35.png&quot;&gt;&lt;/p&gt;</summary>
+    <summary type="html">&lt;h1 id=&quot;1-网络结构&quot;&gt;&lt;a href=&quot;#1-网络结构&quot; class=&quot;headerlink&quot; title=&quot;1    网络结构&quot;&gt;&lt;/a&gt;1    网络结构&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;MTCNN 是多任务级联 CNN 的人脸检测深度学习模型，该模型不仅考虑了人脸检测概率，还综合训练了人脸边框回归和面部关键点检测，多任务同时建立 loss function 并训练，因此为 MTCNN。级联 CNN 主要由三个子网络组成：P-Net、R-Net 和 O-Net。&lt;br&gt;&amp;emsp;&amp;emsp;P-Net 的结构如下：&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/52bf5bf680944505ad1a4f52c5a94644.png#pic_center&quot; alt=&quot;在这里插入图片描述\](https://img-blog.csdnimg.cn/a37a2812f2914fd48ae0c9f7ed16cb35.png&quot;&gt;&lt;/p&gt;
+&lt;p&gt;从网络结构上看，P-Net 接受大小为 (12，12，3) 的图片的输入，输出三种特征图，大小为 (1，1，C)，也就是说最终得到的特征图每一点都对应着一个大小为 12×12 的感受野。三种输出如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;cls&lt;/strong&gt;：图像是否包含人脸，输出向量大小为 (1，1，2)，也就是两个值，即图像不是人脸的概率和图像是人脸的概率。这两个值加起来严格等于 1，之所以使用两个值来表示，是为了方便定义交叉熵损失函数；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;bounding_box&lt;/strong&gt;：当前框位置相对完美的人脸框位置的偏移。这个偏移大小为 (1，1，4)，即表示框左上角和右下角的坐标的偏移量。网络结构中的输出叫做 &lt;strong&gt;bounding_boxes&lt;/strong&gt;，如果按代码来说应该是 &lt;strong&gt;offsets&lt;/strong&gt;；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;landmark&lt;/strong&gt;：5 个关键点相对于人脸框的偏移量。分别对应着左眼的位置、右眼的位置、鼻子的位置、左嘴巴的位置、右嘴巴的位置。每个关键点需要两维来表示，因此输出是向量大小为 (1，1，10)。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Tips：&lt;/strong&gt;&lt;/p&gt;</summary>
     
     
     
@@ -181,7 +218,10 @@
     <updated>2022-06-05T11:30:36.563Z</updated>
     
     
-    <summary type="html">&lt;h1 id=&quot;1-什么是A-算法&quot;&gt;&lt;a href=&quot;#1-什么是A-算法&quot; class=&quot;headerlink&quot; title=&quot;1    什么是A*算法&quot;&gt;&lt;/a&gt;1    什么是A*算法&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;假设一个走迷宫游戏，我将 &lt;strong&gt;A&lt;/strong&gt; 点定义成起点也就是开始状态，定义 &lt;strong&gt;B&lt;/strong&gt; 为终点也就是结束状态。我们的目标就是找到从 A 走到 B 地最佳路径，如下图所示：&lt;/p&gt;</summary>
+    <summary type="html">&lt;h1 id=&quot;1-什么是A-算法&quot;&gt;&lt;a href=&quot;#1-什么是A-算法&quot; class=&quot;headerlink&quot; title=&quot;1    什么是A*算法&quot;&gt;&lt;/a&gt;1    什么是A*算法&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;假设一个走迷宫游戏，我将 &lt;strong&gt;A&lt;/strong&gt; 点定义成起点也就是开始状态，定义 &lt;strong&gt;B&lt;/strong&gt; 为终点也就是结束状态。我们的目标就是找到从 A 走到 B 地最佳路径，如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/b034a9f77f034966a81f547473c07042.png#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;/p&gt;
+&lt;p&gt;我们可以将上述的迷宫看做一张图，在简单的情况下（比如这个），生成的图由少量节点和边组成，BFS、DFS 和 Dijkstra 就足够了。然而，在现实生活中，因为我们通常要处理组合复杂性非常大的问题，我们将不得不处理大量的节点和边，而 BFS、DFS 和 Dijkstra 要不可避免地遍历整张图，搜索代价十分巨大。因此，我们必须使用某种意义上的引导算法（启发式算法）。A&lt;em&gt; 算法就是一种启发式算法。与其他图遍历算法不同，A&lt;/em&gt; 仅根据其功能在看起来有希望且合理的情况下执行一个步骤。它朝着目标前进，不考虑任何非最佳步骤，所以 A&lt;em&gt; 所搜索出来的路径一定是最优路径。这使得 A&lt;/em&gt; 对于人工智能系统非常有用——尤其是在机器学习和游戏开发中，因为这些系统复制了现实世界的场景。&lt;/p&gt;
+&lt;h2 id=&quot;1-1-A-的基本概念&quot;&gt;&lt;a href=&quot;#1-1-A-的基本概念&quot; class=&quot;headerlink&quot; title=&quot;1.1    A* 的基本概念&quot;&gt;&lt;/a&gt;1.1    A* 的基本概念&lt;/h2&gt;</summary>
     
     
     
@@ -208,7 +248,10 @@
     <updated>2022-06-05T11:28:39.286Z</updated>
     
     
-    <summary type="html">&lt;h2 id=&quot;344-反转字符串&quot;&gt;&lt;a href=&quot;#344-反转字符串&quot; class=&quot;headerlink&quot; title=&quot;344. 反转字符串&quot;&gt;&lt;/a&gt;344. 反转字符串&lt;/h2&gt;&lt;p&gt;&amp;emsp;&amp;emsp;编写一个函数，其作用是将输入的字符串反转过来。输入字符串以字符数组 &lt;code&gt;s&lt;/code&gt; 的形式给出。不要给另外的数组分配额外的空间，你必须&lt;strong&gt;原地修改输入数组&lt;/strong&gt;、使用 &lt;code&gt;O(1)&lt;/code&gt; 的额外空间解决这一问题。&lt;/p&gt;</summary>
+    <summary type="html">&lt;h2 id=&quot;344-反转字符串&quot;&gt;&lt;a href=&quot;#344-反转字符串&quot; class=&quot;headerlink&quot; title=&quot;344. 反转字符串&quot;&gt;&lt;/a&gt;344. 反转字符串&lt;/h2&gt;&lt;p&gt;&amp;emsp;&amp;emsp;编写一个函数，其作用是将输入的字符串反转过来。输入字符串以字符数组 &lt;code&gt;s&lt;/code&gt; 的形式给出。不要给另外的数组分配额外的空间，你必须&lt;strong&gt;原地修改输入数组&lt;/strong&gt;、使用 &lt;code&gt;O(1)&lt;/code&gt; 的额外空间解决这一问题。&lt;/p&gt;
+&lt;p&gt;示例一：&lt;/p&gt;
+&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;输入：s = [&lt;span class=&quot;string&quot;&gt;&amp;quot;h&amp;quot;&lt;/span&gt;,&lt;span class=&quot;string&quot;&gt;&amp;quot;e&amp;quot;&lt;/span&gt;,&lt;span class=&quot;string&quot;&gt;&amp;quot;l&amp;quot;&lt;/span&gt;,&lt;span class=&quot;string&quot;&gt;&amp;quot;l&amp;quot;&lt;/span&gt;,&lt;span class=&quot;string&quot;&gt;&amp;quot;o&amp;quot;&lt;/span&gt;]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;输出：[&lt;span class=&quot;string&quot;&gt;&amp;quot;o&amp;quot;&lt;/span&gt;,&lt;span class=&quot;string&quot;&gt;&amp;quot;l&amp;quot;&lt;/span&gt;,&lt;span class=&quot;string&quot;&gt;&amp;quot;l&amp;quot;&lt;/span&gt;,&lt;span class=&quot;string&quot;&gt;&amp;quot;e&amp;quot;&lt;/span&gt;,&lt;span class=&quot;string&quot;&gt;&amp;quot;h&amp;quot;&lt;/span&gt;]&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;示例二：&lt;/p&gt;</summary>
     
     
     
@@ -231,7 +274,9 @@
     <updated>2022-06-05T11:26:48.596Z</updated>
     
     
-    <summary type="html">&lt;h1 id=&quot;1-什么是图&quot;&gt;&lt;a href=&quot;#1-什么是图&quot; class=&quot;headerlink&quot; title=&quot;1    什么是图&quot;&gt;&lt;/a&gt;1    什么是图&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;图是一种数据结构，可用于对对象之间的层次结构和关系进行建模。它由&lt;strong&gt;一组节点&lt;/strong&gt;和&lt;strong&gt;一组边&lt;/strong&gt;组成。节点表示单个对象，而边表示这些对象之间的关系。&lt;strong&gt;注意&lt;/strong&gt;：可能在不同的文献中节点也被称作&lt;strong&gt;顶点&lt;/strong&gt;，它们指同一个意思。&lt;br&gt;&amp;emsp;&amp;emsp;如果图中的边可以通过双向遍历，则是&lt;strong&gt;无向图(undirected)&lt;/strong&gt;，如果只能通过一个方向进行遍历，则是&lt;strong&gt;有向图(undirected)&lt;/strong&gt;。&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/2b04ebe1cbfb4c40b1634dde5bbcbb67.png&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;br&gt;并非图的所有节点都需要与其他节点连接。如果可以从图中的每个节点 访问其他任何的节点，我们称该图为&lt;strong&gt;连接图(connected)&lt;/strong&gt;，但有时你通过一些几点无法访问其他节点，那这个图就是&lt;strong&gt;未连接图(disconnected)&lt;/strong&gt;。常见的误解是图的节点之间都必须连接，事实上，图可以不包含边，只有节点：&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/1924b974e53047c992477123b99185a0.png&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;br&gt;从实现的角度来看，在定义好节点之后，我们需要定义是&lt;strong&gt;边缘的权重(weights)&lt;/strong&gt;。它是分配给边缘的数值，描述了遍历该边缘的成本。边的权重越小，遍历它的成本就越低。基于此，将权重分配给边缘的图称为&lt;strong&gt;加权图&lt;/strong&gt;：&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/15925167fb9c48648c311f39b2eebc80.png&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;/p&gt;</summary>
+    <summary type="html">&lt;h1 id=&quot;1-什么是图&quot;&gt;&lt;a href=&quot;#1-什么是图&quot; class=&quot;headerlink&quot; title=&quot;1    什么是图&quot;&gt;&lt;/a&gt;1    什么是图&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;图是一种数据结构，可用于对对象之间的层次结构和关系进行建模。它由&lt;strong&gt;一组节点&lt;/strong&gt;和&lt;strong&gt;一组边&lt;/strong&gt;组成。节点表示单个对象，而边表示这些对象之间的关系。&lt;strong&gt;注意&lt;/strong&gt;：可能在不同的文献中节点也被称作&lt;strong&gt;顶点&lt;/strong&gt;，它们指同一个意思。&lt;br&gt;&amp;emsp;&amp;emsp;如果图中的边可以通过双向遍历，则是&lt;strong&gt;无向图(undirected)&lt;/strong&gt;，如果只能通过一个方向进行遍历，则是&lt;strong&gt;有向图(undirected)&lt;/strong&gt;。&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/2b04ebe1cbfb4c40b1634dde5bbcbb67.png&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;br&gt;并非图的所有节点都需要与其他节点连接。如果可以从图中的每个节点 访问其他任何的节点，我们称该图为&lt;strong&gt;连接图(connected)&lt;/strong&gt;，但有时你通过一些几点无法访问其他节点，那这个图就是&lt;strong&gt;未连接图(disconnected)&lt;/strong&gt;。常见的误解是图的节点之间都必须连接，事实上，图可以不包含边，只有节点：&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/1924b974e53047c992477123b99185a0.png&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;br&gt;从实现的角度来看，在定义好节点之后，我们需要定义是&lt;strong&gt;边缘的权重(weights)&lt;/strong&gt;。它是分配给边缘的数值，描述了遍历该边缘的成本。边的权重越小，遍历它的成本就越低。基于此，将权重分配给边缘的图称为&lt;strong&gt;加权图&lt;/strong&gt;：&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/15925167fb9c48648c311f39b2eebc80.png&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;/p&gt;
+&lt;h1 id=&quot;2-图的三种存储方式&quot;&gt;&lt;a href=&quot;#2-图的三种存储方式&quot; class=&quot;headerlink&quot; title=&quot;2    图的三种存储方式&quot;&gt;&lt;/a&gt;2    图的三种存储方式&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;一般来说，为了更简单的实现，任何给定图的节点都用数字(从零开始)标记，如果需要字符的方式进行定义节点名称，可用字典的方式进行转换。我将使用以下加权有向图作为后面部分中的示例：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/de223cb8122a4d11a8d7d57818a9e96a.png&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;br&gt;之所以选择加权有向图作为示例，因为它说明了大多数实现的细微差别。一般来说，加权图和未加权图之间的切换非常简单。在有向图和无向图之间切换也是一件非常容易的事情。如果需要，我们将在以下部分中介绍这些主题中的每一个。&lt;/p&gt;</summary>
     
     
     
@@ -254,7 +299,10 @@
     <updated>2022-06-05T11:25:26.865Z</updated>
     
     
-    <summary type="html">&lt;h2 id=&quot;242-有效的字母异位词&quot;&gt;&lt;a href=&quot;#242-有效的字母异位词&quot; class=&quot;headerlink&quot; title=&quot;242. 有效的字母异位词&quot;&gt;&lt;/a&gt;242. 有效的字母异位词&lt;/h2&gt;&lt;p&gt;&amp;emsp;&amp;emsp;给定两个字符串 s 和 t ，编写一个函数来判断 t 是否是 s 的字母异位词。注意：若 s 和 t 中每个字符出现的次数都相同，则称 s 和 t 互为字母异位词。&lt;br&gt;示例 1:&lt;/p&gt;</summary>
+    <summary type="html">&lt;h2 id=&quot;242-有效的字母异位词&quot;&gt;&lt;a href=&quot;#242-有效的字母异位词&quot; class=&quot;headerlink&quot; title=&quot;242. 有效的字母异位词&quot;&gt;&lt;/a&gt;242. 有效的字母异位词&lt;/h2&gt;&lt;p&gt;&amp;emsp;&amp;emsp;给定两个字符串 s 和 t ，编写一个函数来判断 t 是否是 s 的字母异位词。注意：若 s 和 t 中每个字符出现的次数都相同，则称 s 和 t 互为字母异位词。&lt;br&gt;示例 1:&lt;/p&gt;
+&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;输入: s = &lt;span class=&quot;string&quot;&gt;&amp;quot;anagram&amp;quot;&lt;/span&gt;, t = &lt;span class=&quot;string&quot;&gt;&amp;quot;nagaram&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;输出: true&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;示例二：&lt;/p&gt;
+&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;输入: s = &lt;span class=&quot;string&quot;&gt;&amp;quot;rat&amp;quot;&lt;/span&gt;, t = &lt;span class=&quot;string&quot;&gt;&amp;quot;car&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;输出: false&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
     
     
     
@@ -278,7 +326,13 @@
     
     
     <summary type="html">&lt;p&gt;﻿## 介绍&lt;/p&gt;
-&lt;p&gt;&amp;emsp;&amp;emsp;图是最有用的数据结构之一。它们可用于对几乎所有事物进行建模——对象关系和网络是最常见的。图像可以表示为网格状的像素图，句子可以表示为单词的图。图表被用于各个领域，从制图到社会心理学，当然它们在计算机科学中也被广泛使用。因此图搜索和遍历起着重要的计算作用。&lt;strong&gt;Dijkstra 算法&lt;/strong&gt;旨在找到 &lt;strong&gt;图中节点&lt;/strong&gt; 之间的最短路径。它是由荷兰计算机科学家 Edsger Wybe Dijkstra 于 1956 年在思考从鹿特丹到格罗宁根的最短路线时设计的。&lt;strong&gt;Dijkstra 算法&lt;/strong&gt; 多年来一直在发生变化，并且存在各种版本和变体。最初用于计算两个节点之间的最短路径。由于它的工作方式 ，适用于计算起始节点和图中每个其他节点之间的最短路径。这种方式可用于生成 &lt;strong&gt;最短路径树&lt;/strong&gt;，该树由两个节点以及所有其他节点之间的最短路径组成。然后你可以修剪掉你不感兴趣的树，得到两个节点之间的最短路径，但你不可避免地必须计算整个树，这是 &lt;strong&gt;Dijkstra 算法&lt;/strong&gt; 的一个缺点，它不适合大型图。&lt;/p&gt;</summary>
+&lt;p&gt;&amp;emsp;&amp;emsp;图是最有用的数据结构之一。它们可用于对几乎所有事物进行建模——对象关系和网络是最常见的。图像可以表示为网格状的像素图，句子可以表示为单词的图。图表被用于各个领域，从制图到社会心理学，当然它们在计算机科学中也被广泛使用。因此图搜索和遍历起着重要的计算作用。&lt;strong&gt;Dijkstra 算法&lt;/strong&gt;旨在找到 &lt;strong&gt;图中节点&lt;/strong&gt; 之间的最短路径。它是由荷兰计算机科学家 Edsger Wybe Dijkstra 于 1956 年在思考从鹿特丹到格罗宁根的最短路线时设计的。&lt;strong&gt;Dijkstra 算法&lt;/strong&gt; 多年来一直在发生变化，并且存在各种版本和变体。最初用于计算两个节点之间的最短路径。由于它的工作方式 ，适用于计算起始节点和图中每个其他节点之间的最短路径。这种方式可用于生成 &lt;strong&gt;最短路径树&lt;/strong&gt;，该树由两个节点以及所有其他节点之间的最短路径组成。然后你可以修剪掉你不感兴趣的树，得到两个节点之间的最短路径，但你不可避免地必须计算整个树，这是 &lt;strong&gt;Dijkstra 算法&lt;/strong&gt; 的一个缺点，它不适合大型图。&lt;/p&gt;
+&lt;h2 id=&quot;Dijkstra-算法&quot;&gt;&lt;a href=&quot;#Dijkstra-算法&quot; class=&quot;headerlink&quot; title=&quot;Dijkstra 算法&quot;&gt;&lt;/a&gt;Dijkstra 算法&lt;/h2&gt;&lt;p&gt;&amp;emsp;&amp;emsp;&lt;strong&gt;Dijkstra 算法&lt;/strong&gt; 适用于无向、连接、加权图，&lt;strong&gt;Dijkstra 算法&lt;/strong&gt; 可以求出源节点到其他所有节点的最短路径。&lt;br&gt;&amp;emsp;&amp;emsp;一开始，我们要创建一组已访问顶点，以跟踪所有已分配正确最短路径的顶点。我们还需要设置图中所有顶点的“成本”（通向它的当前最短路径的长度）。开始时所有成本都将设置为 &lt;strong&gt;“无穷大(inf)”&lt;/strong&gt; ，以确保我们可以与之比较的所有其他成本都小于起始成本。唯一的例外是第一个起始顶点的成本——这个顶点的成本为 0，因为它没有通往自身的路径——标记为 源节点 &lt;code&gt;s&lt;/code&gt;。然后依据以下三个规则，直到遍历整个图：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;每次从未标记的节点中选择距离出发点最近的节点，标记，收录到最优路径集合中。&lt;/li&gt;
+&lt;li&gt;对于当前节点 &lt;code&gt;n&lt;/code&gt; 和其的邻居节点 &lt;code&gt;m&lt;/code&gt; 如果 &lt;code&gt;cheapestPath(s, n)&lt;/code&gt; + &lt;code&gt;cheapestPath(n, m)&lt;/code&gt; &amp;lt; &lt;code&gt;cheapestPath(s, m)&lt;/code&gt;，则更新 &lt;code&gt;s&lt;/code&gt; 到 &lt;code&gt;m&lt;/code&gt; 的最短路径为 &lt;code&gt;cheapestPath(s, n)&lt;/code&gt; + &lt;code&gt;cheapestPath(n, m)&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;且每次更新最短路径时会保存该节点的前节点。&lt;/li&gt;
+&lt;/ul&gt;</summary>
     
     
     
@@ -307,7 +361,9 @@
 &lt;li&gt;Python 3.8.8&lt;/li&gt;
 &lt;li&gt;PyCharm 2021&lt;/li&gt;
 &lt;li&gt;opencv-python&lt;/li&gt;
-&lt;/ul&gt;</summary>
+&lt;/ul&gt;
+&lt;h1 id=&quot;2-效果&quot;&gt;&lt;a href=&quot;#2-效果&quot; class=&quot;headerlink&quot; title=&quot;2    效果&quot;&gt;&lt;/a&gt;2    效果&lt;/h1&gt;&lt;p&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/3c23354eb51a4c6ab84cb9762f6a1e98.gif#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;/p&gt;
+&lt;h1 id=&quot;3-原理&quot;&gt;&lt;a href=&quot;#3-原理&quot; class=&quot;headerlink&quot; title=&quot;3    原理&quot;&gt;&lt;/a&gt;3    原理&lt;/h1&gt;</summary>
     
     
     
@@ -330,7 +386,9 @@
     <updated>2022-06-05T11:20:02.378Z</updated>
     
     
-    <summary type="html">&lt;h1 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;在机器学习模型中，我们会使用损失函数对模型的输出和标注信息计算他们之间的差异，然后使用损失进行反向传播，在反向传播中，我们的目的是不断地更新参数使得模型损失越来越小直至达到最小，这过程是优化参数的过程，基础的优化算法是使用梯度下降法(如下图)，梯度下降法利用了梯度的反方向是函数下降最快的方向的特性，该过程可以理解成寻找山谷。随后为了提高效率和准确率许多的改进的优化算法被提出，下面我们将介绍几种常用的优化算法。&lt;/p&gt;</summary>
+    <summary type="html">&lt;h1 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;在机器学习模型中，我们会使用损失函数对模型的输出和标注信息计算他们之间的差异，然后使用损失进行反向传播，在反向传播中，我们的目的是不断地更新参数使得模型损失越来越小直至达到最小，这过程是优化参数的过程，基础的优化算法是使用梯度下降法(如下图)，梯度下降法利用了梯度的反方向是函数下降最快的方向的特性，该过程可以理解成寻找山谷。随后为了提高效率和准确率许多的改进的优化算法被提出，下面我们将介绍几种常用的优化算法。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/f106af1dda3c43e7a79f35ab00f213f1.png#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;/p&gt;
+&lt;h1 id=&quot;1-梯度下降算法&quot;&gt;&lt;a href=&quot;#1-梯度下降算法&quot; class=&quot;headerlink&quot; title=&quot;1    梯度下降算法&quot;&gt;&lt;/a&gt;1    梯度下降算法&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;假设线性回归函数为：$\boldsymbol{h_\theta(x^{(i)}) = \theta    _1x^{(i)} + \theta_0}$，代价函数为：$\boldsymbol{J(\theta_0,&lt;br&gt;\theta_1) = \frac{1}{2m}\sum_{i=1}^{m}(h_\theta(x^{(i)}) - y^{(i)})^2}$，其中 $\boldsymbol{i= 1,2, … ,𝑚}$ 表示样本数，$\boldsymbol{𝑗 = 0,1}$ 表示特征数，这里我们使用偏置项 $\boldsymbol{x_0^{(i)} = 1}$。&lt;/p&gt;</summary>
     
     
     
@@ -353,7 +411,9 @@
     <updated>2022-06-05T11:18:39.615Z</updated>
     
     
-    <summary type="html">&lt;h1 id=&quot;1-定义&quot;&gt;&lt;a href=&quot;#1-定义&quot; class=&quot;headerlink&quot; title=&quot;1    定义&quot;&gt;&lt;/a&gt;1    定义&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;激活函数 (&lt;strong&gt;&lt;em&gt;Activation functions&lt;/em&gt;&lt;/strong&gt;) 对于人工神经网络模型去学习、理解非常复杂和非线性的函数来说具有十分重要的作用。它们将非线性特性引入到神经网络中。在下图中，输入的 inputs 通过加权，求和后，还被作用了一个函数，这个函数就是激活函数。引入激活函数是为了增加神经网络模型的非线性。没有激活函数的每层都相当于矩阵相乘。就算你叠加了若干层之后，无非还是个矩阵相乘罢了。&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/2076a4e3b2ad4eac9c75c74ffbcb8ede.png#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;/p&gt;</summary>
+    <summary type="html">&lt;h1 id=&quot;1-定义&quot;&gt;&lt;a href=&quot;#1-定义&quot; class=&quot;headerlink&quot; title=&quot;1    定义&quot;&gt;&lt;/a&gt;1    定义&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;激活函数 (&lt;strong&gt;&lt;em&gt;Activation functions&lt;/em&gt;&lt;/strong&gt;) 对于人工神经网络模型去学习、理解非常复杂和非线性的函数来说具有十分重要的作用。它们将非线性特性引入到神经网络中。在下图中，输入的 inputs 通过加权，求和后，还被作用了一个函数，这个函数就是激活函数。引入激活函数是为了增加神经网络模型的非线性。没有激活函数的每层都相当于矩阵相乘。就算你叠加了若干层之后，无非还是个矩阵相乘罢了。&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/2076a4e3b2ad4eac9c75c74ffbcb8ede.png#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;/p&gt;
+&lt;h1 id=&quot;2-激活函数的必要性&quot;&gt;&lt;a href=&quot;#2-激活函数的必要性&quot; class=&quot;headerlink&quot; title=&quot;2    激活函数的必要性&quot;&gt;&lt;/a&gt;2    激活函数的必要性&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;如果不用激活函数，每一层输出都是上层输入的线性函数，无论神经网络有多少层，输出都是输入的线性组合，这种情况就是最原始的感知机(&lt;strong&gt;&lt;em&gt;Perceptron&lt;/em&gt;&lt;/strong&gt;)。这种情况无论有多少层神经网络均可以仅使用输入层和输出层代替，不同的地方就是线性函数的系数不同。激活函数给神经元引入了非线性因素，使得神经网络可以任意逼近任何非线性函数，这样神经网络就可以应用到众多的非线性模型中。&lt;/p&gt;
+&lt;h1 id=&quot;3-常用的激活函数&quot;&gt;&lt;a href=&quot;#3-常用的激活函数&quot; class=&quot;headerlink&quot; title=&quot;3    常用的激活函数&quot;&gt;&lt;/a&gt;3    常用的激活函数&lt;/h1&gt;</summary>
     
     
     
@@ -380,7 +440,9 @@
 &lt;li&gt;Python 3.8.8&lt;/li&gt;
 &lt;li&gt;PyCharm 2021&lt;/li&gt;
 &lt;li&gt;opencv-python&lt;/li&gt;
-&lt;/ul&gt;</summary>
+&lt;/ul&gt;
+&lt;h1 id=&quot;2-效果&quot;&gt;&lt;a href=&quot;#2-效果&quot; class=&quot;headerlink&quot; title=&quot;2    效果&quot;&gt;&lt;/a&gt;2    效果&lt;/h1&gt;&lt;p&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/25a660a9b01b458bb555118218f30342.gif#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/b8142811e30142519a2d4d2e2cd53f67.gif#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;/p&gt;
+&lt;h1 id=&quot;3-原理&quot;&gt;&lt;a href=&quot;#3-原理&quot; class=&quot;headerlink&quot; title=&quot;3    原理&quot;&gt;&lt;/a&gt;3    原理&lt;/h1&gt;</summary>
     
     
     
@@ -407,7 +469,9 @@
 &lt;li&gt;Python 3.8.8&lt;/li&gt;
 &lt;li&gt;PyCharm 2021&lt;/li&gt;
 &lt;li&gt;opencv-python&lt;/li&gt;
-&lt;/ul&gt;</summary>
+&lt;/ul&gt;
+&lt;h1 id=&quot;2-效果&quot;&gt;&lt;a href=&quot;#2-效果&quot; class=&quot;headerlink&quot; title=&quot;2    效果&quot;&gt;&lt;/a&gt;2    效果&lt;/h1&gt;&lt;p&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/04ac6b270c534055a3acc8e63711927a.png#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;/p&gt;
+&lt;h1 id=&quot;3-原理&quot;&gt;&lt;a href=&quot;#3-原理&quot; class=&quot;headerlink&quot; title=&quot;3    原理&quot;&gt;&lt;/a&gt;3    原理&lt;/h1&gt;</summary>
     
     
     
@@ -434,7 +498,12 @@
 &lt;ul&gt;
 &lt;li&gt;深度优先遍历：先往深走，遇到叶子节点再往回走。&lt;/li&gt;
 &lt;li&gt;广度优先遍历：一层一层的去遍历，也就是常说的层遍历。&lt;/li&gt;
-&lt;/ul&gt;</summary>
+&lt;/ul&gt;
+&lt;p&gt;在深度优先遍历中：有三个顺序，前中后序遍历，这中间的”前中后”指的是遍历父节点的先后顺序，且左节点永远在右节点前面遍历。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;前序遍历(父左右)：F、B、A、D、C、E、G、I、H。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/995903c9c7ca4e478bbfd83931f7f6f6.png#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;/p&gt;</summary>
     
     
     
@@ -457,7 +526,19 @@
     <updated>2022-06-05T11:10:21.098Z</updated>
     
     
-    <summary type="html">&lt;h1 id=&quot;1-原理&quot;&gt;&lt;a href=&quot;#1-原理&quot; class=&quot;headerlink&quot; title=&quot;1    原理&quot;&gt;&lt;/a&gt;1    原理&lt;/h1&gt;&lt;p&gt;KMeans算法概述&lt;/p&gt;</summary>
+    <summary type="html">&lt;h1 id=&quot;1-原理&quot;&gt;&lt;a href=&quot;#1-原理&quot; class=&quot;headerlink&quot; title=&quot;1    原理&quot;&gt;&lt;/a&gt;1    原理&lt;/h1&gt;&lt;p&gt;KMeans算法概述&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;KMeans算法的作者是MacQueen， KMeans的算法是对数据进行分类的算法，采用的硬分类方式，是属于非监督学习的算法；&lt;/li&gt;
+&lt;li&gt;对于给定的样本集，按照样本之间的距离大小，将样本划分为K个簇，让簇内的点尽量紧密的连接在一起，而让簇间的距离尽量的大。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;KMeans算法流程&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;1：选择K个点作为初始质心。&lt;/li&gt;
+&lt;li&gt;2：&lt;strong&gt;&lt;em&gt;Repeat&lt;/em&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;3： 计算邻近度，将每个点指派到最近的质心，形成K个簇；&lt;/li&gt;
+&lt;li&gt;4： 重新计算每个簇的质心；&lt;/li&gt;
+&lt;li&gt;5： &lt;strong&gt;&lt;em&gt;Until&lt;/em&gt;&lt;/strong&gt; 质心不发生变化或者新的中心和之前的中心之间的距离小于某阈值，或迭代次数超过某阈值，认为聚类已经收敛，终止。&lt;/li&gt;
+&lt;/ul&gt;</summary>
     
     
     
@@ -482,7 +563,15 @@
     <updated>2022-06-05T11:08:50.551Z</updated>
     
     
-    <summary type="html">&lt;h1 id=&quot;1-原理&quot;&gt;&lt;a href=&quot;#1-原理&quot; class=&quot;headerlink&quot; title=&quot;1    原理&quot;&gt;&lt;/a&gt;1    原理&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;分水岭分割方法，是一种基于拓扑理论的数学形态学的分割方法，其基本思想是把图像看作是测地学上的拓扑地貌，图像中每一点像素的灰度值表示该点的海拔高度，每一个局部极小值及其影响区域称为集水盆，而集水盆的边界则形成分水岭。分水岭的概念和形成可以通过模拟浸入过程来说明。在每一个局部极小值表面，刺穿一个小孔，然后把整个模型慢慢浸入水中，随着浸入的加深，每一个局部极小值的影响域慢慢向外扩展，在两个集水盆汇合处构筑大坝，即形成分水岭。这种方法也称作泛洪法，对应的还有降雨法。&lt;/p&gt;</summary>
+    <summary type="html">&lt;h1 id=&quot;1-原理&quot;&gt;&lt;a href=&quot;#1-原理&quot; class=&quot;headerlink&quot; title=&quot;1    原理&quot;&gt;&lt;/a&gt;1    原理&lt;/h1&gt;&lt;p&gt;&amp;emsp;&amp;emsp;分水岭分割方法，是一种基于拓扑理论的数学形态学的分割方法，其基本思想是把图像看作是测地学上的拓扑地貌，图像中每一点像素的灰度值表示该点的海拔高度，每一个局部极小值及其影响区域称为集水盆，而集水盆的边界则形成分水岭。分水岭的概念和形成可以通过模拟浸入过程来说明。在每一个局部极小值表面，刺穿一个小孔，然后把整个模型慢慢浸入水中，随着浸入的加深，每一个局部极小值的影响域慢慢向外扩展，在两个集水盆汇合处构筑大坝，即形成分水岭。这种方法也称作泛洪法，对应的还有降雨法。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/b5945e2ce1f64e16889a1b0c1e8d7ae0.png#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;br&gt;&amp;emsp;&amp;emsp;分水岭的计算过程是一个迭代标注过程。分水岭比较经典的计算方法是L. Vincent提出的。在该算法中，分水岭计算分两个步骤，一个是排序过程，一个是淹没过程。首先对每个像素的灰度级进行从低到高排序，然后在从低到高实现淹没过程中，对每一个局部极小值在 $h$ 阶高度的影响域采用先进先出(FIFO)结构进行判断及标注。具体流程如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;把梯度图像中的像素按照灰度值进行分类，设定一个测地距离阈值(测地线距离(Geodesic Distance)：地球表面两点之间的最短路径的距离)。&lt;/li&gt;
+&lt;li&gt;找到灰度值最小的像素点，让 $threshold$ 从最小值开始增长，这些点为起始点。&lt;/li&gt;
+&lt;li&gt;水平面在增长的过程中，会碰到周围的邻域像素，测量这些像素到起始点(灰度值最低点)的测地距离，如果小于设定阈值，则将这些像素淹没，否则在这些像素上设置大坝，这样就对这些邻域像素进行了分类。&lt;/li&gt;
+&lt;li&gt;随着水平面越来越高，会设置更多更高的大坝，直到灰度值的最大值，所有区域都在分水岭线上相遇，这些大坝就对整个图像像素的进行了分区。&lt;br&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/1c41a28800204914b434e12cd29d9a58.png#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&quot;2-算法改进&quot;&gt;&lt;a href=&quot;#2-算法改进&quot; class=&quot;headerlink&quot; title=&quot;2    算法改进&quot;&gt;&lt;/a&gt;2    算法改进&lt;/h1&gt;</summary>
     
     
     
@@ -505,7 +594,10 @@
     <updated>2022-06-05T11:07:13.902Z</updated>
     
     
-    <summary type="html">&lt;h1 id=&quot;17-电话号码的字母组合&quot;&gt;&lt;a href=&quot;#17-电话号码的字母组合&quot; class=&quot;headerlink&quot; title=&quot;17. 电话号码的字母组合&quot;&gt;&lt;/a&gt;17. 电话号码的字母组合&lt;/h1&gt;&lt;p&gt;给定一个仅包含数字 2-9 的字符串，返回所有它能表示的字母组合。答案可以按任意顺序 返回。给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母。&lt;/p&gt;</summary>
+    <summary type="html">&lt;h1 id=&quot;17-电话号码的字母组合&quot;&gt;&lt;a href=&quot;#17-电话号码的字母组合&quot; class=&quot;headerlink&quot; title=&quot;17. 电话号码的字母组合&quot;&gt;&lt;/a&gt;17. 电话号码的字母组合&lt;/h1&gt;&lt;p&gt;给定一个仅包含数字 2-9 的字符串，返回所有它能表示的字母组合。答案可以按任意顺序 返回。给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://img-blog.csdnimg.cn/ccfb1550c00046609eba8783710053ad.png#pic_center&quot; alt=&quot;在这里插入图片描述&quot;&gt;&lt;br&gt;示例：&lt;/p&gt;
+&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;输入：digits = &lt;span class=&quot;string&quot;&gt;&amp;quot;23&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;输出：[&lt;span class=&quot;string&quot;&gt;&amp;quot;ad&amp;quot;&lt;/span&gt;,&lt;span class=&quot;string&quot;&gt;&amp;quot;ae&amp;quot;&lt;/span&gt;,&lt;span class=&quot;string&quot;&gt;&amp;quot;af&amp;quot;&lt;/span&gt;,&lt;span class=&quot;string&quot;&gt;&amp;quot;bd&amp;quot;&lt;/span&gt;,&lt;span class=&quot;string&quot;&gt;&amp;quot;be&amp;quot;&lt;/span&gt;,&lt;span class=&quot;string&quot;&gt;&amp;quot;bf&amp;quot;&lt;/span&gt;,&lt;span class=&quot;string&quot;&gt;&amp;quot;cd&amp;quot;&lt;/span&gt;,&lt;span class=&quot;string&quot;&gt;&amp;quot;ce&amp;quot;&lt;/span&gt;,&lt;span class=&quot;string&quot;&gt;&amp;quot;cf&amp;quot;&lt;/span&gt;]&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;33&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;34&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;35&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;36&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title class_&quot;&gt;Solution&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;title function_&quot;&gt;letterCombinations&lt;/span&gt;(&lt;span class=&quot;params&quot;&gt;self, digits: &lt;span class=&quot;built_in&quot;&gt;str&lt;/span&gt;&lt;/span&gt;) -&amp;gt; &lt;span class=&quot;type&quot;&gt;List&lt;/span&gt;[&lt;span class=&quot;built_in&quot;&gt;str&lt;/span&gt;]:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; digits == &lt;span class=&quot;string&quot;&gt;&amp;quot;&amp;quot;&lt;/span&gt; :&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; []&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;comment&quot;&gt;#数字字母映射表&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        mapping = &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;string&quot;&gt;&amp;#x27;2&amp;#x27;&lt;/span&gt; : &lt;span class=&quot;string&quot;&gt;&amp;#x27;abc&amp;#x27;&lt;/span&gt;, &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;string&quot;&gt;&amp;#x27;3&amp;#x27;&lt;/span&gt; : &lt;span class=&quot;string&quot;&gt;&amp;#x27;def&amp;#x27;&lt;/span&gt;, &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;string&quot;&gt;&amp;#x27;4&amp;#x27;&lt;/span&gt; : &lt;span class=&quot;string&quot;&gt;&amp;#x27;ghi&amp;#x27;&lt;/span&gt;, &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;string&quot;&gt;&amp;#x27;5&amp;#x27;&lt;/span&gt; : &lt;span class=&quot;string&quot;&gt;&amp;#x27;jkl&amp;#x27;&lt;/span&gt;, &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;string&quot;&gt;&amp;#x27;6&amp;#x27;&lt;/span&gt; : &lt;span class=&quot;string&quot;&gt;&amp;#x27;mno&amp;#x27;&lt;/span&gt;, &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;string&quot;&gt;&amp;#x27;7&amp;#x27;&lt;/span&gt; : &lt;span class=&quot;string&quot;&gt;&amp;#x27;pqrs&amp;#x27;&lt;/span&gt;, &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;string&quot;&gt;&amp;#x27;8&amp;#x27;&lt;/span&gt; : &lt;span class=&quot;string&quot;&gt;&amp;#x27;tuv&amp;#x27;&lt;/span&gt;, &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;string&quot;&gt;&amp;#x27;9&amp;#x27;&lt;/span&gt; : &lt;span class=&quot;string&quot;&gt;&amp;#x27;wxyz&amp;#x27;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        res = []&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        res_str = []&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        mapping_digits = []&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; i &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;range&lt;/span&gt;(&lt;span class=&quot;built_in&quot;&gt;len&lt;/span&gt;(digits)) :&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            mapping_digits.append(mapping[digits[i]])&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;title function_&quot;&gt;backtracking&lt;/span&gt;(&lt;span class=&quot;params&quot;&gt;res_str, index&lt;/span&gt;) :&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;comment&quot;&gt;#递归终止条件&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;len&lt;/span&gt;(res_str) == &lt;span class=&quot;built_in&quot;&gt;len&lt;/span&gt;(digits) :&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                res.append(&lt;span class=&quot;string&quot;&gt;&amp;quot;&amp;quot;&lt;/span&gt;.join(res_str))&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; i &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;range&lt;/span&gt;(&lt;span class=&quot;built_in&quot;&gt;len&lt;/span&gt;(mapping_digits[index])) :&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                res_str.append(mapping_digits[index][i])&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                &lt;span class=&quot;comment&quot;&gt;#回溯&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                backtracking(res_str, index + &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                &lt;span class=&quot;comment&quot;&gt;#撤销&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                res_str.pop()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        backtracking(res_str, &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; res&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
     
     
     

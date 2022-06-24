@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="1    PCA&amp;emsp;&amp;emsp;在解决实际问题的时候，多变量问题是经常会遇到的，变量太多，无疑会增加分析问题的难度与复杂性。同时，在许多实际问题中，多个变量之间是具有一定的相关关系的。因此，能否在各个变量之间相关关系研究的基础上， 用较少的新变量代替原来较多的变量，而且使这些较少的新变量尽可能多地保留原来较多的变量所反映的信息？事实上，这种想法是可以实现的。">
+  <meta name="description" content="1    PCA&amp;emsp;&amp;emsp;在解决实际问题的时候，多变量问题是经常会遇到的，变量太多，无疑会增加分析问题的难度与复杂性。同时，在许多实际问题中，多个变量之间是具有一定的相关关系的。因此，能否在各个变量之间相关关系研究的基础上， 用较少的新变量代替原来较多的变量，而且使这些较少的新变量尽可能多地保留原来较多的变量所反映的信息？事实上，这种想法是可以实现的。 1.1    原理&amp;emsp;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="基于 PCA 的人脸识别系统和姿态分析">
 <meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/%E5%9F%BA%E4%BA%8E-PCA-%E7%9A%84%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB%E7%B3%BB%E7%BB%9F%E5%92%8C%E5%A7%BF%E6%80%81%E5%88%86%E6%9E%90/index.html">
 <meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
-<meta property="og:description" content="1    PCA&amp;emsp;&amp;emsp;在解决实际问题的时候，多变量问题是经常会遇到的，变量太多，无疑会增加分析问题的难度与复杂性。同时，在许多实际问题中，多个变量之间是具有一定的相关关系的。因此，能否在各个变量之间相关关系研究的基础上， 用较少的新变量代替原来较多的变量，而且使这些较少的新变量尽可能多地保留原来较多的变量所反映的信息？事实上，这种想法是可以实现的。">
+<meta property="og:description" content="1    PCA&amp;emsp;&amp;emsp;在解决实际问题的时候，多变量问题是经常会遇到的，变量太多，无疑会增加分析问题的难度与复杂性。同时，在许多实际问题中，多个变量之间是具有一定的相关关系的。因此，能否在各个变量之间相关关系研究的基础上， 用较少的新变量代替原来较多的变量，而且使这些较少的新变量尽可能多地保留原来较多的变量所反映的信息？事实上，这种想法是可以实现的。 1.1    原理&amp;emsp;">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://th.bing.com/th/id/OIP.2LuHxwMc-MzJ1dVcPILd8gHaFj?w=232&amp;h=180&amp;c=7&amp;r=0&amp;o=5&amp;dpr=1.25&amp;pid=1.7">
 <meta property="og:image" content="https://www.biaodianfu.com/wp-content/uploads/2020/09/pca-1.png">

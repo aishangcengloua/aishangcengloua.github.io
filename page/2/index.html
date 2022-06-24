@@ -279,6 +279,12 @@
       
           <p>﻿## 介绍</p>
 <p>&emsp;&emsp;图是最有用的数据结构之一。它们可用于对几乎所有事物进行建模——对象关系和网络是最常见的。图像可以表示为网格状的像素图，句子可以表示为单词的图。图表被用于各个领域，从制图到社会心理学，当然它们在计算机科学中也被广泛使用。因此图搜索和遍历起着重要的计算作用。<strong>Dijkstra 算法</strong>旨在找到 <strong>图中节点</strong> 之间的最短路径。它是由荷兰计算机科学家 Edsger Wybe Dijkstra 于 1956 年在思考从鹿特丹到格罗宁根的最短路线时设计的。<strong>Dijkstra 算法</strong> 多年来一直在发生变化，并且存在各种版本和变体。最初用于计算两个节点之间的最短路径。由于它的工作方式 ，适用于计算起始节点和图中每个其他节点之间的最短路径。这种方式可用于生成 <strong>最短路径树</strong>，该树由两个节点以及所有其他节点之间的最短路径组成。然后你可以修剪掉你不感兴趣的树，得到两个节点之间的最短路径，但你不可避免地必须计算整个树，这是 <strong>Dijkstra 算法</strong> 的一个缺点，它不适合大型图。</p>
+<h2 id="Dijkstra-算法"><a href="#Dijkstra-算法" class="headerlink" title="Dijkstra 算法"></a>Dijkstra 算法</h2><p>&emsp;&emsp;<strong>Dijkstra 算法</strong> 适用于无向、连接、加权图，<strong>Dijkstra 算法</strong> 可以求出源节点到其他所有节点的最短路径。<br>&emsp;&emsp;一开始，我们要创建一组已访问顶点，以跟踪所有已分配正确最短路径的顶点。我们还需要设置图中所有顶点的“成本”（通向它的当前最短路径的长度）。开始时所有成本都将设置为 <strong>“无穷大(inf)”</strong> ，以确保我们可以与之比较的所有其他成本都小于起始成本。唯一的例外是第一个起始顶点的成本——这个顶点的成本为 0，因为它没有通往自身的路径——标记为 源节点 <code>s</code>。然后依据以下三个规则，直到遍历整个图：</p>
+<ul>
+<li>每次从未标记的节点中选择距离出发点最近的节点，标记，收录到最优路径集合中。</li>
+<li>对于当前节点 <code>n</code> 和其的邻居节点 <code>m</code> 如果 <code>cheapestPath(s, n)</code> + <code>cheapestPath(n, m)</code> &lt; <code>cheapestPath(s, m)</code>，则更新 <code>s</code> 到 <code>m</code> 的最短路径为 <code>cheapestPath(s, n)</code> + <code>cheapestPath(n, m)</code>。</li>
+<li>且每次更新最短路径时会保存该节点的前节点。</li>
+</ul>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/Python-%E4%B8%AD%E7%9A%84%E5%9B%BE%EF%BC%9ADijkstra-%E7%AE%97%E6%B3%95/#more" rel="contents">
@@ -388,6 +394,8 @@
 <li>PyCharm 2021</li>
 <li>opencv-python</li>
 </ul>
+<h1 id="2-效果"><a href="#2-效果" class="headerlink" title="2    效果"></a>2    效果</h1><p><img src="https://img-blog.csdnimg.cn/3c23354eb51a4c6ab84cb9762f6a1e98.gif#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="3-原理"><a href="#3-原理" class="headerlink" title="3    原理"></a>3    原理</h1>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E3%80%90Opencv%E3%80%91%E7%9B%AE%E6%A0%87%E8%BF%BD%E8%B8%AA%E2%80%94%E2%80%94%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E5%88%86%E7%A6%BB%E7%AE%97%E6%B3%95-MOG/#more" rel="contents">
@@ -493,6 +501,8 @@
 
       
           <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;&emsp;在机器学习模型中，我们会使用损失函数对模型的输出和标注信息计算他们之间的差异，然后使用损失进行反向传播，在反向传播中，我们的目的是不断地更新参数使得模型损失越来越小直至达到最小，这过程是优化参数的过程，基础的优化算法是使用梯度下降法(如下图)，梯度下降法利用了梯度的反方向是函数下降最快的方向的特性，该过程可以理解成寻找山谷。随后为了提高效率和准确率许多的改进的优化算法被提出，下面我们将介绍几种常用的优化算法。</p>
+<p><img src="https://img-blog.csdnimg.cn/f106af1dda3c43e7a79f35ab00f213f1.png#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="1-梯度下降算法"><a href="#1-梯度下降算法" class="headerlink" title="1    梯度下降算法"></a>1    梯度下降算法</h1><p>&emsp;&emsp;假设线性回归函数为：$\boldsymbol{h_\theta(x^{(i)}) = \theta    _1x^{(i)} + \theta_0}$，代价函数为：$\boldsymbol{J(\theta_0,<br>\theta_1) = \frac{1}{2m}\sum_{i=1}^{m}(h_\theta(x^{(i)}) - y^{(i)})^2}$，其中 $\boldsymbol{i= 1,2, … ,𝑚}$ 表示样本数，$\boldsymbol{𝑗 = 0,1}$ 表示特征数，这里我们使用偏置项 $\boldsymbol{x_0^{(i)} = 1}$。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/#more" rel="contents">
@@ -598,6 +608,8 @@
 
       
           <h1 id="1-定义"><a href="#1-定义" class="headerlink" title="1    定义"></a>1    定义</h1><p>&emsp;&emsp;激活函数 (<strong><em>Activation functions</em></strong>) 对于人工神经网络模型去学习、理解非常复杂和非线性的函数来说具有十分重要的作用。它们将非线性特性引入到神经网络中。在下图中，输入的 inputs 通过加权，求和后，还被作用了一个函数，这个函数就是激活函数。引入激活函数是为了增加神经网络模型的非线性。没有激活函数的每层都相当于矩阵相乘。就算你叠加了若干层之后，无非还是个矩阵相乘罢了。<br><img src="https://img-blog.csdnimg.cn/2076a4e3b2ad4eac9c75c74ffbcb8ede.png#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="2-激活函数的必要性"><a href="#2-激活函数的必要性" class="headerlink" title="2    激活函数的必要性"></a>2    激活函数的必要性</h1><p>&emsp;&emsp;如果不用激活函数，每一层输出都是上层输入的线性函数，无论神经网络有多少层，输出都是输入的线性组合，这种情况就是最原始的感知机(<strong><em>Perceptron</em></strong>)。这种情况无论有多少层神经网络均可以仅使用输入层和输出层代替，不同的地方就是线性函数的系数不同。激活函数给神经元引入了非线性因素，使得神经网络可以任意逼近任何非线性函数，这样神经网络就可以应用到众多的非线性模型中。</p>
+<h1 id="3-常用的激活函数"><a href="#3-常用的激活函数" class="headerlink" title="3    常用的激活函数"></a>3    常用的激活函数</h1>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/#more" rel="contents">
@@ -707,6 +719,8 @@
 <li>PyCharm 2021</li>
 <li>opencv-python</li>
 </ul>
+<h1 id="2-效果"><a href="#2-效果" class="headerlink" title="2    效果"></a>2    效果</h1><p><img src="https://img-blog.csdnimg.cn/25a660a9b01b458bb555118218f30342.gif#pic_center" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/b8142811e30142519a2d4d2e2cd53f67.gif#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="3-原理"><a href="#3-原理" class="headerlink" title="3    原理"></a>3    原理</h1>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E3%80%90Opencv%E3%80%91%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2%E2%80%94%E2%80%94%E5%8C%BA%E5%9F%9F%E7%94%9F%E9%95%BF/#more" rel="contents">
@@ -816,6 +830,8 @@
 <li>PyCharm 2021</li>
 <li>opencv-python</li>
 </ul>
+<h1 id="2-效果"><a href="#2-效果" class="headerlink" title="2    效果"></a>2    效果</h1><p><img src="https://img-blog.csdnimg.cn/04ac6b270c534055a3acc8e63711927a.png#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="3-原理"><a href="#3-原理" class="headerlink" title="3    原理"></a>3    原理</h1>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E3%80%90Opencv%E3%80%91%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2%E2%80%94%E2%80%94%E5%8C%BA%E5%9F%9F%E5%88%86%E8%A3%82%E5%90%88%E5%B9%B6/#more" rel="contents">
@@ -925,6 +941,11 @@
 <li>深度优先遍历：先往深走，遇到叶子节点再往回走。</li>
 <li>广度优先遍历：一层一层的去遍历，也就是常说的层遍历。</li>
 </ul>
+<p>在深度优先遍历中：有三个顺序，前中后序遍历，这中间的”前中后”指的是遍历父节点的先后顺序，且左节点永远在右节点前面遍历。</p>
+<ul>
+<li>前序遍历(父左右)：F、B、A、D、C、E、G、I、H。</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/995903c9c7ca4e478bbfd83931f7f6f6.png#pic_center" alt="在这里插入图片描述"></p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/LeetCode%E2%80%94%E2%80%94%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%89%8D%E4%B8%AD%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86/#more" rel="contents">
@@ -1030,6 +1051,18 @@
 
       
           <h1 id="1-原理"><a href="#1-原理" class="headerlink" title="1    原理"></a>1    原理</h1><p>KMeans算法概述</p>
+<ul>
+<li>KMeans算法的作者是MacQueen， KMeans的算法是对数据进行分类的算法，采用的硬分类方式，是属于非监督学习的算法；</li>
+<li>对于给定的样本集，按照样本之间的距离大小，将样本划分为K个簇，让簇内的点尽量紧密的连接在一起，而让簇间的距离尽量的大。</li>
+</ul>
+<p>KMeans算法流程</p>
+<ul>
+<li>1：选择K个点作为初始质心。</li>
+<li>2：<strong><em>Repeat</em></strong></li>
+<li>3： 计算邻近度，将每个点指派到最近的质心，形成K个簇；</li>
+<li>4： 重新计算每个簇的质心；</li>
+<li>5： <strong><em>Until</em></strong> 质心不发生变化或者新的中心和之前的中心之间的距离小于某阈值，或迭代次数超过某阈值，认为聚类已经收敛，终止。</li>
+</ul>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E3%80%90OpenCv%E3%80%91%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2%E2%80%94%E2%80%94%E8%81%9A%E7%B1%BB%E7%AE%97%E6%B3%95/#more" rel="contents">
@@ -1135,6 +1168,14 @@
 
       
           <h1 id="1-原理"><a href="#1-原理" class="headerlink" title="1    原理"></a>1    原理</h1><p>&emsp;&emsp;分水岭分割方法，是一种基于拓扑理论的数学形态学的分割方法，其基本思想是把图像看作是测地学上的拓扑地貌，图像中每一点像素的灰度值表示该点的海拔高度，每一个局部极小值及其影响区域称为集水盆，而集水盆的边界则形成分水岭。分水岭的概念和形成可以通过模拟浸入过程来说明。在每一个局部极小值表面，刺穿一个小孔，然后把整个模型慢慢浸入水中，随着浸入的加深，每一个局部极小值的影响域慢慢向外扩展，在两个集水盆汇合处构筑大坝，即形成分水岭。这种方法也称作泛洪法，对应的还有降雨法。</p>
+<p><img src="https://img-blog.csdnimg.cn/b5945e2ce1f64e16889a1b0c1e8d7ae0.png#pic_center" alt="在这里插入图片描述"><br>&emsp;&emsp;分水岭的计算过程是一个迭代标注过程。分水岭比较经典的计算方法是L. Vincent提出的。在该算法中，分水岭计算分两个步骤，一个是排序过程，一个是淹没过程。首先对每个像素的灰度级进行从低到高排序，然后在从低到高实现淹没过程中，对每一个局部极小值在 $h$ 阶高度的影响域采用先进先出(FIFO)结构进行判断及标注。具体流程如下：</p>
+<ul>
+<li>把梯度图像中的像素按照灰度值进行分类，设定一个测地距离阈值(测地线距离(Geodesic Distance)：地球表面两点之间的最短路径的距离)。</li>
+<li>找到灰度值最小的像素点，让 $threshold$ 从最小值开始增长，这些点为起始点。</li>
+<li>水平面在增长的过程中，会碰到周围的邻域像素，测量这些像素到起始点(灰度值最低点)的测地距离，如果小于设定阈值，则将这些像素淹没，否则在这些像素上设置大坝，这样就对这些邻域像素进行了分类。</li>
+<li>随着水平面越来越高，会设置更多更高的大坝，直到灰度值的最大值，所有区域都在分水岭线上相遇，这些大坝就对整个图像像素的进行了分区。<br><img src="https://img-blog.csdnimg.cn/1c41a28800204914b434e12cd29d9a58.png#pic_center" alt="在这里插入图片描述"></li>
+</ul>
+<h1 id="2-算法改进"><a href="#2-算法改进" class="headerlink" title="2    算法改进"></a>2    算法改进</h1>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E3%80%90OpenCv%E3%80%91%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2%E2%80%94%E2%80%94%E5%88%86%E6%B0%B4%E5%B2%AD%E7%AE%97%E6%B3%95/#more" rel="contents">
@@ -1240,6 +1281,9 @@
 
       
           <h1 id="17-电话号码的字母组合"><a href="#17-电话号码的字母组合" class="headerlink" title="17. 电话号码的字母组合"></a>17. 电话号码的字母组合</h1><p>给定一个仅包含数字 2-9 的字符串，返回所有它能表示的字母组合。答案可以按任意顺序 返回。给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母。</p>
+<p><img src="https://img-blog.csdnimg.cn/ccfb1550c00046609eba8783710053ad.png#pic_center" alt="在这里插入图片描述"><br>示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：digits = <span class="string">&quot;23&quot;</span></span><br><span class="line">输出：[<span class="string">&quot;ad&quot;</span>,<span class="string">&quot;ae&quot;</span>,<span class="string">&quot;af&quot;</span>,<span class="string">&quot;bd&quot;</span>,<span class="string">&quot;be&quot;</span>,<span class="string">&quot;bf&quot;</span>,<span class="string">&quot;cd&quot;</span>,<span class="string">&quot;ce&quot;</span>,<span class="string">&quot;cf&quot;</span>]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">letterCombinations</span>(<span class="params">self, digits: <span class="built_in">str</span></span>) -&gt; <span class="type">List</span>[<span class="built_in">str</span>]:</span><br><span class="line">        <span class="keyword">if</span> digits == <span class="string">&quot;&quot;</span> :</span><br><span class="line">            <span class="keyword">return</span> []</span><br><span class="line">        <span class="comment">#数字字母映射表</span></span><br><span class="line">        mapping = &#123;</span><br><span class="line">            <span class="string">&#x27;2&#x27;</span> : <span class="string">&#x27;abc&#x27;</span>, </span><br><span class="line">            <span class="string">&#x27;3&#x27;</span> : <span class="string">&#x27;def&#x27;</span>, </span><br><span class="line">            <span class="string">&#x27;4&#x27;</span> : <span class="string">&#x27;ghi&#x27;</span>, </span><br><span class="line">            <span class="string">&#x27;5&#x27;</span> : <span class="string">&#x27;jkl&#x27;</span>, </span><br><span class="line">            <span class="string">&#x27;6&#x27;</span> : <span class="string">&#x27;mno&#x27;</span>, </span><br><span class="line">            <span class="string">&#x27;7&#x27;</span> : <span class="string">&#x27;pqrs&#x27;</span>, </span><br><span class="line">            <span class="string">&#x27;8&#x27;</span> : <span class="string">&#x27;tuv&#x27;</span>, </span><br><span class="line">            <span class="string">&#x27;9&#x27;</span> : <span class="string">&#x27;wxyz&#x27;</span></span><br><span class="line">        &#125;</span><br><span class="line">        res = []</span><br><span class="line">        res_str = []</span><br><span class="line"></span><br><span class="line">        mapping_digits = []</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(digits)) :</span><br><span class="line">            mapping_digits.append(mapping[digits[i]])</span><br><span class="line"></span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">backtracking</span>(<span class="params">res_str, index</span>) :</span><br><span class="line">            <span class="comment">#递归终止条件</span></span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(res_str) == <span class="built_in">len</span>(digits) :</span><br><span class="line">                res.append(<span class="string">&quot;&quot;</span>.join(res_str))</span><br><span class="line">                <span class="keyword">return</span> </span><br><span class="line">            </span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(mapping_digits[index])) :</span><br><span class="line">                res_str.append(mapping_digits[index][i])</span><br><span class="line">                <span class="comment">#回溯</span></span><br><span class="line">                backtracking(res_str, index + <span class="number">1</span>)</span><br><span class="line">                <span class="comment">#撤销</span></span><br><span class="line">                res_str.pop()</span><br><span class="line">        backtracking(res_str, <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> res</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/LeetCode%E2%80%94%E2%80%94%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95%E7%9A%84%E7%BB%8F%E5%85%B8%E9%97%AE%E9%A2%98/#more" rel="contents">

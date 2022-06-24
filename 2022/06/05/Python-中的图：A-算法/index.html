@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="1    什么是A*算法&amp;emsp;&amp;emsp;假设一个走迷宫游戏，我将 A 点定义成起点也就是开始状态，定义 B 为终点也就是结束状态。我们的目标就是找到从 A 走到 B 地最佳路径，如下图所示：">
+  <meta name="description" content="1    什么是A*算法&amp;emsp;&amp;emsp;假设一个走迷宫游戏，我将 A 点定义成起点也就是开始状态，定义 B 为终点也就是结束状态。我们的目标就是找到从 A 走到 B 地最佳路径，如下图所示：  我们可以将上述的迷宫看做一张图，在简单的情况下（比如这个），生成的图由少量节点和边组成，BFS、DFS 和 Dijkstra 就足够了。然而，在现实生活中，因为我们通常要处理组合复杂性非常大的问题，">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Python 中的图：A* 算法">
 <meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/Python-%E4%B8%AD%E7%9A%84%E5%9B%BE%EF%BC%9AA-%E7%AE%97%E6%B3%95/index.html">
 <meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
-<meta property="og:description" content="1    什么是A*算法&amp;emsp;&amp;emsp;假设一个走迷宫游戏，我将 A 点定义成起点也就是开始状态，定义 B 为终点也就是结束状态。我们的目标就是找到从 A 走到 B 地最佳路径，如下图所示：">
+<meta property="og:description" content="1    什么是A*算法&amp;emsp;&amp;emsp;假设一个走迷宫游戏，我将 A 点定义成起点也就是开始状态，定义 B 为终点也就是结束状态。我们的目标就是找到从 A 走到 B 地最佳路径，如下图所示：  我们可以将上述的迷宫看做一张图，在简单的情况下（比如这个），生成的图由少量节点和边组成，BFS、DFS 和 Dijkstra 就足够了。然而，在现实生活中，因为我们通常要处理组合复杂性非常大的问题，">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/b034a9f77f034966a81f547473c07042.png#pic_center">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/789dbe327af1410daec07446cf011add.png">

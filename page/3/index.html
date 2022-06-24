@@ -278,6 +278,15 @@
 
       
           <h1 id="1-scikit-learn介绍"><a href="#1-scikit-learn介绍" class="headerlink" title="1    scikit-learn介绍"></a>1    scikit-learn介绍</h1><p>scikit-learn与机器学习的关系：</p>
+<ul>
+<li>Scikit-learn是基于Python语言的第三方机器学习库。它包含了几乎所有主流机器学习算法的实现，并提供一致的调用接口。</li>
+<li>Scikit-learn基于 NumPy 和 SciPy 等科学计算库，支持支持向量机、随机森林、梯度提升树、K 均值、聚类等机器学习算法。</li>
+</ul>
+<p>scikit-learn功能：</p>
+<ul>
+<li>Scikit-learn (简记sklearn)是当今非常流行的机器学习工具，也是最有名的Python机器学习库。</li>
+<li>Scikit-learn主要功能包括分类、回归、聚类、数据降维、模型选择和数据预处理六大部分。</li>
+</ul>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/KNN-%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB/#more" rel="contents">
@@ -383,6 +392,8 @@
 
       
           <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;&emsp;在人工智能带来的风险中，对抗攻击就是重要风险之一。攻击者可以通过各种手段绕过，或直接对机器学习模型进行攻击达到对抗目的，使我们的模型失效或误判。如果类似攻击发生在无人驾驶、金融AI等领域则将导致严重后果。所以，需要未雨绸缪，认识各种对抗攻击，并有效地破解各种对抗攻击。</p>
+<h1 id="1-原理"><a href="#1-原理" class="headerlink" title="1    原理"></a>1    原理</h1><p>&emsp;&emsp;对抗攻击最核心的手段就是制造对抗样本去迷惑模型，比如在计算机视觉领域，攻击样本就是向原始样本中添加一些人眼无法察觉的噪声，这些噪声不会影响人类识别，但却很容易迷惑机器学习模型，使它做出错误的判断。如下图所示，在雪山样本中增加一些噪声，结果分类模型就把它视为狗了。<br><img src="https://img-blog.csdnimg.cn/949bdab6932d41db8afe9a83ad323625.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>&emsp;&emsp;机器学习算法的输入形式为数值型向量（Numeric Vectors）。通过设计 一种特别的输入以使模型输出错误的结果，这便被称为对抗性攻击。<br>&emsp;&emsp;由于机器学习算法的输入形式是一种数值型向量（Numeric Vectors）， 所以攻击者就会通过设计一种有针对性的数值型向量从而让机器学习模型做 出误判，这便被称为对抗性攻击。和其他攻击不同，对抗性攻击主要发生在构造对抗性数据的时候，之后该对抗性数据就如正常数据一样输入机器学习模型并得到欺骗的识别结果。</p>
+<h1 id="2-攻击方式"><a href="#2-攻击方式" class="headerlink" title="2    攻击方式"></a>2    攻击方式</h1>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E5%AF%B9%E6%8A%97%E6%94%BB%E5%87%BB/#more" rel="contents">
@@ -488,6 +499,13 @@
 
       
           <h1 id="1-原理"><a href="#1-原理" class="headerlink" title="1    原理"></a>1    原理</h1><p>&emsp;&emsp;边界或者轮廓可以简单认为成将连续的点（连着边界）连在一起的曲线，具有相同的颜色或者灰度。轮廓在形状分析和物体的检测和识别中很有用。<br><img src="https://img-blog.csdnimg.cn/b693a0ef9e12450f992dd8a7008c4d38.png#pic_center" alt="在这里插入图片描述"><br>在机器视觉领域最常用的轮廓查找的算法之一是 <strong><em>Moore-Neighbor</em></strong> 算法，像素的摩尔邻域 $P$ 是与该像素共享顶点或边的 $8$ 个像素的集合。这些像素即 如下图所示的像素$P1$、$P2$、$P3$、$P4$、$P5$、$P6$、$P7$和$P8$。 摩尔邻域（也称为8 邻域或 间接邻域）是文献中经常出现的一个重要概念。<br><img src="https://img-blog.csdnimg.cn/7b438ebe573b4ad2940239b55e6eb119.png#pic_center" alt="在这里插入图片描述"></p>
+<p>其大概的原理如下：</p>
+<ul>
+<li>找到一个黑色像素，并将它定为你的起始像素。（定位一个起始像素可以以多种方式来完成的；我们将从网格的左下角开始，自下而上扫描每一列像素，从最左向右的每列像素，直到遇到一个黑色的像素，我们将其作为我们的起始像素）。</li>
+<li>每次碰到黑色像素P时，都回溯，即回到之前站立的白色像素，然后以顺时针方向绕过像素$P$，访问其摩尔邻域中的每个像素，直到击中黑色像素。</li>
+<li>重复这个过程，当起始像素被第二次访问时算法终止，在整个运行过程走过的黒色像素就是目标的边界像素。走过的黑色像素将成为图案的轮廓。<br><img src="https://img-blog.csdnimg.cn/8dbd5f94195643d487fd1958dd58d8e5.png#pic_center" alt="在这里插入图片描述"><br>动画演示，说明 <strong><em>Moore-Neighbor</em></strong> 跟踪如何继续跟踪给定模式的轮廓。（以顺时针方向跟踪轮廓）<br><img src="https://img-blog.csdnimg.cn/3582e3c5e5f246abacfa1e5de28981c0.gif#pic_center" alt="在这里插入图片描述"></li>
+</ul>
+<h1 id="2-API"><a href="#2-API" class="headerlink" title="2    API"></a>2    API</h1>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E3%80%90OpenCv%E3%80%91%E5%9B%BE%E5%83%8F%E7%9A%84%E8%BD%AE%E5%BB%93%E6%9F%A5%E6%89%BE/#more" rel="contents">
@@ -598,6 +616,8 @@
 <li>PyCharm 2021</li>
 <li>opencv-python</li>
 </ul>
+<h1 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h1><p>原始圆环：<br><img src="https://img-blog.csdnimg.cn/9dc57d6282ca431e8724d120c1939094.bmp?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_18,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>展平之后：<br><img src="https://img-blog.csdnimg.cn/e9c20d8ea6094e71808eac912222c3d3.png#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h1>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E3%80%90OpenCv%E3%80%91%E5%9C%86%E7%8E%AF%E5%B1%95%E5%B9%B3/#more" rel="contents">
@@ -708,6 +728,8 @@
 <li>Pycharm 2021</li>
 <li>opencv-Python</li>
 </ul>
+<h1 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h1><p><img src="https://img-blog.csdnimg.cn/244a523c9e3948aa9e859bbf9167a102.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-b5Ye755qE5Y2X5pa55LuU,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h1>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E3%80%90OpenCv%E3%80%91%E6%A3%80%E6%B5%8B%E9%BB%91%E7%99%BD%E6%A3%8B/#more" rel="contents">
@@ -813,6 +835,11 @@
 
       
           <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;&emsp;Hough变换是实现边缘检测的一种有效方法，其基本思想是将测量空间的一点变换到参量空间的一条曲线或曲面，而具有同一参量特征的点变换后在参量空间中相交，通过判断交点处的积累程度来完成特 征曲线的检测。</p>
+<h1 id="1-原理"><a href="#1-原理" class="headerlink" title="1    原理"></a>1    原理</h1><p>&emsp;&emsp;保罗·哈夫于1962年提出了Hough变换法，并申请了专利。该方法 将图像空间中的检测问题转换到参数空间，通过在参数空间里进行简单的累加统计完成检测任务，并用大多数边界点满足的某种参数形式来描述图像的区域边界曲线。这种方法对于被噪声干扰或间断区域边界的图像具有良好的容错性。Hough变换最初主要应用于检测图像空间中的直线，最早的直线变换是在两个笛卡儿坐标系之间进行的，这给检测斜率无穷大的直线带来了困难。1972年，杜达（Duda）将变换形式进行了转化，将数据空间中的点变换为$ρ-θ$参数空间中的曲线，改善了其检测直线的性能。该方法被不断地研究和发展，在图像分析、计算机视觉、模式识别等领域得到了非常广泛的应用，已经成为模式识别的一种重要工具。<br>&emsp;&emsp;直线的方程可由下面式子表示：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&y = kx + b
+\end{aligned}</script><p>其中，$k$和$b$分别是斜率和截距。现在将$y=kx+b$转换成$b=-xk+y$，因为$k$和$b$都是确定值所以在$x-y$平面上的一条线在$k-b$平面上代表一个点。<br><img src="https://img-blog.csdnimg.cn/64100f724418433081bc664409610d9d.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>反过来在$k-b$平面上的一条直线$b=-xk+y$在$x-y$平面上代表一个点，因为此时$x$和$y$在直线$b=-xk+y$中分别是斜率和截距为定值。<img src="https://img-blog.csdnimg.cn/d8b534a8ef3543029459d03145af5e50.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_17,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>其次是过$x-y$平面上的某一点（$x_0$，$y_0$） 的所有直线的参数都满足方程$y_0=kx_0+b$。即过$x-y$平面上点（$x_0$，$y_0$）的一族直线在参数$k-b$平面上对应于一条直线。同样的道理将该族直线$y_0=kx_0+b$转变到$k-b$平面上有$b=-x_0k+y_0$，此时斜率($-x_0$)和斜距($y_0$)固定，$b$为$k$的函数，所以在$k-b$平面上对应于一条直线。<br><img src="https://img-blog.csdnimg.cn/7ac9ad092de04348a84be04a4d4c0b8e.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_17,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>有了上面的知识，再来看看在$x-y$平面上三点共线是怎么等效到到$k-b$平面的。<img src="https://img-blog.csdnimg.cn/a220aa987f0e4e0698eedd3aa685e24d.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>可以看出如果笛卡尔坐标系的点共线，这些点在霍夫空间对应的直线交于一点：这也是必然，共线只有一种取值可能。再来考虑特殊情况，当三点共线恰好垂直$x$轴呢？此时直线的斜率$k$为无穷大，$y=kx+b$形式的直线方程无法表示$x=c$（$c$为常数）形式的直线。所以在实际应用中，一般采用距离和角度参数方程来表示如下：</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E3%80%90OpenCv%E3%80%91%E9%9C%8D%E5%A4%AB%E7%9B%B4%E7%BA%BF%E6%A3%80%E6%B5%8B/#more" rel="contents">
@@ -917,16 +944,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>﻿&emsp;&emsp;所有颜色都是由$R$(红)、$G$(绿)、$B$(蓝) 3个单色调配而成， 每种单色都人为地从$0～255$分成了$256$个级，所以根据$R$、 $G$、$B$的不同 组合可以表示$256×256×256=16777216$种颜色，被称为全彩色图像(full-color image)或者真彩色图像(true-color image)。一幅全彩色图像如果不压缩，文件将会很大。例如，一幅$640×480$像素的全彩色图像，一个像素由$3$个字节来表示$R$、 $G$、$B$各个分量，需要保存$640×480×3=921600$(约1MB)字节。<br>&emsp;&emsp;对于自然界的目标提取，可以根据目标的颜色特征，尽量使用$R$、 $G$、$B$分量及它们之间的差分组合，这样可以有效避免自然光变化的影响，快速有效地提取目标。<br>&emsp;&emsp;举例：要从果树上提取桃子的红色区域所在位置，如下面照片所示。<br><img src="https://img-blog.csdnimg.cn/313a98f1bee1467c9339e536403aa572.png#pic_center" alt="在这里插入图片描述"><br>由于成熟桃子一般带红色，因此对彩色原图像首先利用红、绿色差信息提取图像中桃子的红色区域。对图像中的像素点($x_i$，$y_i$)($x_i$、$y_i$分别为像素点$i$的$x$坐标和$y$坐标，$0≤i<n$，$n$为图像中像素点的总数)，设其红色($r$)分量和绿色($g$)分量的像素值分别为$r$($x_i$，$y_i$)和$g$($x_i$，$y_i$)，其差值为 $β_i$="$R$($x_i$，$y_i$)$-$$G$($x_i$，$y_i$)，由此获得一个灰度图像($RG$图像)，" 若$β_i>0$，设灰度图像上该点的像素值为βi，否则为0(黑色)。之后做出$RG$图像的直方图找出谷点$α$(作为二值化的阈值)。逐像素扫描$RG$图像，若$β_i&gt;α$，则将该点像素值设为$255$(白色)，否则设为$0$(黑色)，获得二值图像。然后再对图像进行形态学处理。<br>色差图：<img src="https://img-blog.csdnimg.cn/4adfb47ec7b94fba98ff2ed6019ee00f.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_7,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>直方图：<img src="https://img-blog.csdnimg.cn/1ba1842112184652bae36b507744b887.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_12,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>二值化：<img src="https://img-blog.csdnimg.cn/ece126cc2d1043278bc11c48829b8960.png#pic_center" alt="在这里插入图片描述"><br>形态学处理：<br><img src="https://img-blog.csdnimg.cn/94950280d75e4703917866a2cb779531.png#pic_center" alt="在这里插入图片描述"></n$，$n$为图像中像素点的总数)，设其红色($r$)分量和绿色($g$)分量的像素值分别为$r$($x_i$，$y_i$)和$g$($x_i$，$y_i$)，其差值为></p>
+          <p>﻿&emsp;&emsp;所有颜色都是由$R$(红)、$G$(绿)、$B$(蓝) 3个单色调配而成， 每种单色都人为地从$0～255$分成了$256$个级，所以根据$R$、 $G$、$B$的不同 组合可以表示$256×256×256=16777216$种颜色，被称为全彩色图像(full-color image)或者真彩色图像(true-color image)。一幅全彩色图像如果不压缩，文件将会很大。例如，一幅$640×480$像素的全彩色图像，一个像素由$3$个字节来表示$R$、 $G$、$B$各个分量，需要保存$640×480×3=921600$(约1MB)字节。<br>&emsp;&emsp;对于自然界的目标提取，可以根据目标的颜色特征，尽量使用$R$、 $G$、$B$分量及它们之间的差分组合，这样可以有效避免自然光变化的影响，快速有效地提取目标。<br>&emsp;&emsp;举例：要从果树上提取桃子的红色区域所在位置，如下面照片所示。<br><img src="https://img-blog.csdnimg.cn/313a98f1bee1467c9339e536403aa572.png#pic_center" alt="在这里插入图片描述"><br>由于成熟桃子一般带红色，因此对彩色原图像首先利用红、绿色差信息提取图像中桃子的红色区域。对图像中的像素点($x_i$，$y_i$)($x_i$、$y_i$分别为像素点$i$的$x$坐标和$y$坐标，$0≤i<n$，$n$为图像中像素点的总数)，设其红色($R$)分量和绿色($G$)分量的像素值分别为$R$($x_i$，$y_i$)和$G$($x_i$，$y_i$)，其差值为 $β_i$=$R$($x_i$，$y_i$)$-$$G$($x_i$，$y_i$)，由此获得一个灰度图像($RG$图像)， 若$β_i>0$，设灰度图像上该点的像素值为βi，否则为0(黑色)。之后做出$RG$图像的直方图找出谷点$α$(作为二值化的阈值)。逐像素扫描$RG$图像，若$β_i&gt;α$，则将该点像素值设为$255$(白色)，否则设为$0$(黑色)，获得二值图像。然后再对图像进行形态学处理。<br>色差图：<img src="https://img-blog.csdnimg.cn/4adfb47ec7b94fba98ff2ed6019ee00f.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_7,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>直方图：<img src="https://img-blog.csdnimg.cn/1ba1842112184652bae36b507744b887.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_12,color_FFFFFF,t_70,g_se,x_16#pic_center" alt="在这里插入图片描述"><br>二值化：<img src="https://img-blog.csdnimg.cn/ece126cc2d1043278bc11c48829b8960.png#pic_center" alt="在这里插入图片描述"><br>形态学处理：<br><img src="https://img-blog.csdnimg.cn/94950280d75e4703917866a2cb779531.png#pic_center" alt="在这里插入图片描述"></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line">img = cv2.imread(<span class="string">&#x27;peach.jpg&#x27;</span>, <span class="number">1</span>)</span><br><span class="line"><span class="comment">#因为cv2读取的照片类型是BGR类型，所以要转成RGB类型的照片</span></span><br><span class="line">img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)</span><br><span class="line"><span class="comment">#得到r, g, b通道的照片</span></span><br><span class="line">r, g, b = cv2.split(img_rgb)</span><br><span class="line"><span class="comment">#获得RG灰度图像</span></span><br><span class="line">c = r - g</span><br><span class="line"><span class="comment">#求出色差图的直方图，查看分割的最优阈值</span></span><br><span class="line">hist, bins = np.histogram(c, bins = <span class="number">256</span>, <span class="built_in">range</span> = (<span class="number">0</span>, <span class="number">256</span>))</span><br><span class="line">plt.plot(hist)</span><br><span class="line">plt.show()</span><br><span class="line"><span class="comment">#采用190作为阈值</span></span><br><span class="line">thresh_value = np.<span class="built_in">sum</span>(c[np.where(c != <span class="number">0</span>)]) / np.<span class="built_in">sum</span>(c != <span class="number">0</span>)</span><br><span class="line">_, peach = cv2.threshold(c, <span class="number">190</span>, <span class="number">255</span>, cv2.THRESH_BINARY_INV)</span><br><span class="line"><span class="comment">#进行腐蚀操作，将小白点去除</span></span><br><span class="line">kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (<span class="number">3</span>, <span class="number">3</span>))</span><br><span class="line">peach = cv2.erode(peach, kernel, iterations = <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/06/05/%E3%80%90Opencv%E3%80%91%E5%9F%BA%E4%BA%8E%E8%89%B2%E5%B7%AE%E7%9A%84%E7%AE%80%E5%8D%95%E7%9B%AE%E6%A0%87%E6%8F%90%E5%8F%96/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
+
       
     </div>
 
@@ -1024,6 +1044,8 @@
 
       
           <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;&emsp;卷积神经网络取得了突破性进展，效果也非常理想，但是卷积神经网络的学习过程难以从理论上难以解释，因此被不少人诟病。因此可视化其的学习过程十分重要，<strong><em>DeepDream</em></strong> 模型的目的也正是如此。<strong><em>DeepDearm</em></strong> 模型在2015年由谷歌提出，理论基础是2013年所提出的《<strong><em>Visualizing and Understanding Convolutional Neural Networks</em></strong>》，该文章提出了使用梯度上升的方法可视化网络每一层的特征，即用一张噪声图像输入网络，反向更新的时候不更新网络权重，而是更新初始图像的像素值，以这种训练图像的方式可视化网络。深度学习领域奠基性的经典教材《<strong><em>深度学习</em></strong>》的封面就是使用 <strong><em>DeepDream</em></strong> 模型生成的。<br><img src="https://img-blog.csdnimg.cn/a46f6ff3a5394b24bb104b813a2b0894.png#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="1-DeepDream原理"><a href="#1-DeepDream原理" class="headerlink" title="1    DeepDream原理"></a>1    DeepDream原理</h1><p>&emsp;&emsp;<strong><em>DeepDream</em></strong> 为了说明CNN学习到的各特征的意义，将采用放大处理的方式。具体来说就是使用梯度上升的方法可视化网络每一层的特征，即用一张噪声图像输入网络，但反向更新的时候不更新网络权重，而是更新初始图像的像素值，以这种“训练图像”的方式可视化网络。此外输入图像也可以是一些正常的图片，这样的话就是生成背景图像之类的。<br>&emsp;&emsp;<strong><em>DeepDream</em></strong> 如何放大图像特征？比如：有 一个网络学习了分类猫和狗的任务，给这个网络一张云的图像，这朵云可能比较像狗，那么机器提取的特征可能也会像狗。假设对应一个特征最后输入概率为[0.6，0.4]，0.6表示为狗的概率，0.4则表示为猫的概率，那么采用$L_2$范数可以很好达到放大特征的效果。对于这样一个特征，$L_2 = x_1^{2} + x_2^{2}$，若$x_1$ 越大，$x_2$越小，则$L_2$越大，所以只需要最大化$L_2$就能保证当$x_1$ &gt; $x_1$的时候， 迭代的轮数越多$x_1$越大，$x_2$越小，所以图像就会越来越像狗。每次迭代相当 于计算$L_2$范数，然后用梯度上升的方法调整图像。优化的就不再是优化权重参数，而是特征值或像素点，因此，构建损失函数时，不使用通常的交叉熵，而是最大化特征值的L2范数。使图像经过网络之后提取的特征更像网络隐含的特征。具体实现的时候还要通过多尺度、随机 移动等方法获取比较好的结果。</p>
+<h1 id="2-DeepDream算法流程"><a href="#2-DeepDream算法流程" class="headerlink" title="2    DeepDream算法流程"></a>2    DeepDream算法流程</h1>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/DeepDearm-%E6%A8%A1%E5%9E%8B/#more" rel="contents">
@@ -1129,6 +1151,8 @@
 
       
           <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;&emsp;迁移学习在计算机视觉任务和自然语言处理任务中经常使用，这些模型往往需要大数据、复杂的网络结构。如果使用迁移学习，可将预训练的模型作为新模型的起点，这些预训练的模型在开发神经网络的时候已经在大数据集上训练好、模型设计也比较好，这样的模型通用性也比较好。如果要解决的问题与这些模型相关性较强，那么使用这些预训练模型，将大大地提升模型的性能和泛化能力。</p>
+<h1 id="1-原理"><a href="#1-原理" class="headerlink" title="1    原理"></a>1    原理</h1><p>&emsp;&emsp;迁移学习(Transfer Learning)是机器学习的一个研究方向，主要研究如何将任务 A 上面学习到的知识迁移到任务 B 上，以提高在任务 B 上的泛化性能。例如任务 A 为猫狗分类问题，需要训练一个分类器能够较好的分辨猫和狗的样本图片，任务 B 为牛羊分类问题。可以发现，任务 A 和任务 B 存在大量的共享知识，比如这些动物都可以从毛发、体型、形 态、发色等方面进行辨别。因此在任务 A 训练获得的分类器已经掌握了这部份知识，在训练任务 B 的分类器时，可以不从零开始训练，而是在任务 A 上获得的知识的基础上面进行训练(Feature Extraction)或微调(Fine tuning)，这和“站在巨人的肩膀上”思想非常类似。通过迁移任务 A 上学习的知识，在任务 B 上训练分类器可以使用更少的样本和更少的训练代价，并且获得不错的泛化能力。<br><img src="https://img-blog.csdnimg.cn/71014ae2eca346d18f7e7a09c2d81e97.png#pic_center" alt="在这里插入图片描述"><br>在神经网络迁移学习中，主要有两个应用场景：特征提取和微调。<br> <strong><em>❑ 特征提取(Feature Extraction)</em></strong> ：冻结除最终完全连接层之外的所有网络的权重。最后一个全连接层被替换为具有随机权重的新层，因只需要更新最后一层全连接层，使得更新参数极大地减少，节省大量的 <strong><em>训练时间</em></strong> 和 <strong><em>GPU</em></strong> 资源。<br><strong><em>❑ 微调(Fine Tuning)</em></strong> ：对于卷积神经网络，一般认为它能够逐层提取特征，越末层的网络的抽象特征提取能力越强，输出层一般使用与类别数相同输出节点的全连接层，作为分类网络的概率分布预测。对于相似的任务 A 和 B，如果它们的特征提取方法是相近的，则网络的前面数层可以重用。而微调技术就是使用预训练网络初始化网络，而不是随机初始化，用新数据训练部分或整个网络。小幅度更新前面的层的参数。</p>
+<h1 id="2-实例"><a href="#2-实例" class="headerlink" title="2    实例"></a>2    实例</h1>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0/#more" rel="contents">
@@ -1235,6 +1259,8 @@
       
           <p>﻿# 前言</p>
 <p>&emsp;&emsp;强化学习是机器学习领域除有监督学习、无监督学习外的另一个研究分支，它主要利用智能体与环境进行交互，从而学习到能获得良好结果的策略。与有监督学习不同，强化学习的动作并没有明确的标注信息，只有来自环境的反馈的奖励信息，它通常具有一定的滞后性，用于反映动作的“好与坏”。一个完整的强化 学习过程是从一开始什么都不懂，通过不断尝试，从错误或惩罚中学习，最 后找到规律，学会达到目的的方法。<img src="https://img-blog.csdnimg.cn/dbc62de270404be49f3b1ece58c682b2.png#pic_center" alt="在这里插入图片描述"><br>应用领域：<br><strong><em>❑</em></strong> 游戏理论与多主体交互。<br><strong><em>❑</em></strong> 机器人。<br><strong><em>❑</em></strong> 电脑网络。<br><strong><em>❑</em></strong> 车载导航。<br><strong><em>❑</em></strong> 工业物流。</p>
+<h1 id="1-原理"><a href="#1-原理" class="headerlink" title="1    原理"></a>1    原理</h1><p>&emsp;&emsp;在强化学习问题中，具有感知和决策能力的对象叫作智能体(Agent)，它可以是一段算 法代码，也可以是具有机械结构的机器人软硬件系统。智能体通过与外界的环境进行交互从而完成某个任务，这里的环境(Environment)是指能受到智能体的动作而产生影响，并给出相应反馈的外界环境的总和。对于智能体来说，它通过感知环境的状态(State)而产生决策动作(Action)；对于环境来说，它从某个初始初始状态𝑠1开始，通过接受智能体的动作来动态地改变自身状态，并给出相应的奖励(Reward)信号。<br>&emsp;&emsp;从概率角度描述强化学习过程，它包含了如下 5 个基本对象：<br> <strong><em>❑ 状态𝑠</em></strong> ：反映了环境的状态特征，在时间戳𝑡上的状态记为$𝑠_𝑡$，它可以是原始的视觉图 像、语音波形等信号，也可以是高层抽象过后的特征，如小车的速度、位置等数据，所有的(有限)状态构成了状态空间$S$<br><strong><em>❑ 动作𝑎</em></strong> ：是智能体采取的行为，在时间戳𝑡上的状态记为$𝑎_𝑡$，可以是向左、向右等离散动 作，也可以是力度、位置等连续动作，所有的(有限)动作构成了动作空间$A$<br><strong><em>❑ 策略𝜋(𝑎|𝑠)</em></strong>　：代表了智能体的决策模型，接受输入为状态𝑠，并给出决策后执行动作的概率分布𝑝(𝑎|𝑠)，满足 <strong><em>∑𝜋(𝑎|𝑠)  = 1, 𝑎∈𝐴</em></strong>，这种具有一定随机性的动作概率输出称为随机性策略(Stochastic Policy)。特别地，当策略模型总是输出某个动作的概率为 1，其它为 0 时，这种策略模型称为确定性策略(Deterministic Policy)，即 <strong><em>𝑎 = 𝜋(𝑠)</em></strong><br><strong><em>❑ 奖励𝑟(𝑠, 𝑎)</em></strong> ：表达环境在状态𝑠时接受动作𝑎后给出的反馈信号，一般是一个标量值，它 在一定程度上反映了动作的好与坏，在时间戳𝑡上的获得的激励记为𝑟𝑡(部分资料上记为𝑟𝑡+1，这是因为激励往往具有一定滞后性)<br><strong><em>❑ 状态转移概率𝑝(𝑠′|𝑠, 𝑎)</em></strong> ：表达了环境模型状态的变化规律，即当前状态𝑠的环境在接受动作𝑎后，状态改变为𝑠′的概率分布，满足 <strong><em>∑ 𝑝(𝑠′|𝑠, 𝑎) = 1，𝑠′∈𝑆</em></strong><br>交互过程可由下图表示：<br><img src="https://img-blog.csdnimg.cn/d5d51d62eabd4c94a2f1b6562f5ba9ee.png#pic_center" alt="在这里插入图片描述"><br>由交互过程我们得到整个强化学习系统的输入是：<br><strong><em>❑</em></strong> State 为Observation。<br><strong><em>❑</em></strong> Actions 在每个状态下，有什么行动。<br><strong><em>❑</em></strong> Reward 进入每个状态时，能带来正面或负面的回报。<br>输出是：<br><strong><em>❑</em></strong> Policy 在每个状态下，会选择哪个行动。</p>
+<p>&emsp;&emsp;增强学习的任务就是找到一个最优的策略Policy，从而使Reward最多。智能体从环境的初始状态$𝑠_1$开始，通过策略模型𝜋(𝑎|𝑠)采样某个具体的动作$𝑎_1$执行，环境受到动作$𝑎_1$的影响，状态根据内部状态转移模型𝑝(𝑠′|𝑠, 𝑎)发生改变，变为新的状态$s_2$，同时给出智能体的反馈信号：奖励$𝑟_1$，由奖励函数𝑟($𝑠_1$, $𝑎_1$)产生。如此循环交互，直至达到游戏终止状态$𝑎_T$，这个过程产生了一系列的有序数据：𝜏 = $𝑠_1, 𝑎_1, 𝑟_1, 𝑠_2, 𝑎_2, 𝑟_2, ⋯ , 𝑠_𝑇$<br>&emsp;&emsp;这个序列代表了智能体与环境的一次交换过程，叫做轨迹(Trajectory)，记为𝜏，一次交互过程叫作一个回合(Episode)，𝑇代表了回合的时间戳数(或步数)。有些环境有明确的终止状态(Terminal State)，比如太空侵略者中的小飞机被击中后则游戏结束；而部分环境没有明确的终止标志，如部分游戏只要保持健康状态，则可以无限玩下去，此时𝑇代表∞。增强学习的算法就是需要根据这些样本来 改进策略，从而使得到的样本中的奖励更好。<br>&emsp;&emsp;强化学习有多种算法，目前比较常用的算法是，通过行为的价值来选取 特定行为的方法，如Q-learning、SARSA，使用神经网络学习的DQN(Deep Q Network)，以及DQN的后续算法，还有直接输出行为的Policy Gradients 等。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/#more" rel="contents">

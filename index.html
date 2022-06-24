@@ -280,7 +280,19 @@
           <p><center><font size="5"><strong>论文阅读：Generative Adversarial Transformers</strong></font></center></p>
 
 
-<h3 id="1-摘要"><a href="#1-摘要" class="headerlink" title="1    摘要"></a>1    摘要</h3>
+<h3 id="1-摘要"><a href="#1-摘要" class="headerlink" title="1    摘要"></a>1    摘要</h3><p>背景：</p>
+<ul>
+<li>本文的核心思想来自于认知科学领域经常讨论的人类感知的两种互惠机制：<strong>自下而上</strong>（从视网膜到视觉皮层 - 局部元素和显着刺激分层组合在一起形成整体）处理和 <strong>自上而下</strong>（围绕全局上下文、选择性注意和先验知识为特定的解释提供信息）处理；</li>
+<li>过去十年在计算机视觉领域取得巨大成功的卷积神经网络并没有反映视觉系统的这种双向性质。相反，它的前馈传播只是通过从原始感觉信号建立更高的抽象表示来模拟自下而上的处理；</li>
+<li>CNN 的局部感受野和刚性计算会使得 CNN 缺乏对全局上下文的理解，这样会导致许多问题：<ul>
+<li>模型难以建立和捕捉长期依赖关系；</li>
+<li>缺乏对全局形状和结构形成整体理解的能力；</li>
+<li>优化和训练稳定性问题，如 GAN 模型普遍存在难训练的问题，因为在生成图像的精细细节之间的协调存在着固有的困难。</li>
+</ul>
+</li>
+<li>需要新型模型来缓解上述问题。</li>
+</ul>
+<p>核心思想：</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/24/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB-Generative-Adversarial-Transformers/#more" rel="contents">
@@ -392,6 +404,13 @@
 <p>
     <font size="5"><strong>Here are some very important announcements: The content of this blog is from the Python experiment of probability theory and mathematical statistics at the School of Electronic and Information Engineering, Shenzhen University. If you happen to be completing this experiment, please only use this blog as a reference, please do not copy it directly. If this blog violates your rights, please contact me to delete it.</strong></font>
 </p>
+
+<p><strong>DataSet：</strong><a target="_blank" rel="noopener" href="https://www2.aueb.gr/users/ion/data/enron-spam/"><strong>https://www2.aueb.gr/users/ion/data/enron-spam/</strong></a></p>
+<h2 id="1-Experimental-Purposes"><a href="#1-Experimental-Purposes" class="headerlink" title="1. Experimental Purposes"></a>1. Experimental Purposes</h2><ul>
+<li>Familiar with the Bayes theorem.</li>
+<li>Understand the implementation of the Bayes theorem in python.</li>
+<li>Know how to use Naive Bayes for a practical task, e.g., text classification.</li>
+</ul>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/07/Bayesian-based-text-classification/#more" rel="contents">
@@ -497,6 +516,8 @@
 
       
           <h1 id="1-PCA"><a href="#1-PCA" class="headerlink" title="1    PCA"></a>1    PCA</h1><p>&emsp;&emsp;在解决实际问题的时候，多变量问题是经常会遇到的，变量太多，无疑会增加分析问题的难度与复杂性。同时，在许多实际问题中，多个变量之间是具有一定的相关关系的。因此，能否在各个变量之间相关关系研究的基础上， 用较少的新变量代替原来较多的变量，而且使这些较少的新变量尽可能多地保留原来较多的变量所反映的信息？事实上，这种想法是可以实现的。</p>
+<h2 id="1-1-原理"><a href="#1-1-原理" class="headerlink" title="1.1    原理"></a>1.1    原理</h2><p>&emsp;&emsp;<strong>PCA</strong>(Principal Components Analysis,，主成分分析)是将原来多个变量化为少数几个综合指标的一种统计分析方法，从数学角度来看，这是一种降维处理技术。  下面举例说明其原理，加入有以下数据：</p>
+<p><img src="https://th.bing.com/th/id/OIP.2LuHxwMc-MzJ1dVcPILd8gHaFj?w=232&amp;h=180&amp;c=7&amp;r=0&amp;o=5&amp;dpr=1.25&amp;pid=1.7" alt="img"></p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E5%9F%BA%E4%BA%8E-PCA-%E7%9A%84%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB%E7%B3%BB%E7%BB%9F%E5%92%8C%E5%A7%BF%E6%80%81%E5%88%86%E6%9E%90/#more" rel="contents">
@@ -602,6 +623,13 @@
 
       
           <h1 id="1-原理简述"><a href="#1-原理简述" class="headerlink" title="1    原理简述"></a>1    原理简述</h1><p>&emsp;&emsp;Self-Attention Layer 一次检查同一句子中的所有单词的注意力，这使得它成为一个简单的矩阵计算，并且能够在计算单元上并行计算。 此外，Self-Attention Layer 可以使用下面提到的 Multi-Head 架构来拓宽视野，也就是多头注意力机制。Self-Attention Layer 基本结构如下：<br><img src="https://img-blog.csdnimg.cn/fc65b9f0024549318aad9019931c293a.png" alt="在这里插入图片描述"></p>
+<p>对于每个输入 $\boldsymbol{x}$，首先经过 <strong>Embedding</strong> 层对每个输入进行编码得到 $\boldsymbol{a_1,a_2,a_3,a_4}$，后将输入特征经过三个全连接层分别得到 <strong>Query，Key，Value</strong>：</p>
+<ul>
+<li>$\boldsymbol{q^i(Query) = W^q a^i}$；</li>
+<li>$\boldsymbol{k^i(Key) = W^k a^i}$；</li>
+<li>$\boldsymbol{v^i(Value) = W^v a^i}$。</li>
+</ul>
+<p>$\boldsymbol{W^q, W^k,W^v}$ 由网络训练而来。注意力矩阵是由 Query 和 Key 计算得到，方式由许多种，如点积、缩放点积等。Value 可以看作是信息提取器，将根据单词的注意力提取一个唯一的值，也即某个特征有多少成分被提取出来。下面计算一种注意力矩阵的方式：缩放点积。<br><img src="https://img-blog.csdnimg.cn/6385301128964680b30be08f2ac35638.gif#pic_center" alt="在这里插入图片描述"><br>注意力矩阵 $\boldsymbol{A}$ 定义为 Query (giver) 和 Key (receiver) 的内积除以其维度的平方根。 每个单词通过提供 Query 来匹配作为注意力的目标单词的 Key，从而对所有单词产生注意力。为防止注意力分数随维度增大而增大，让注意力矩阵除以向量的维度的开方。 然后对得到的注意力矩阵 $\boldsymbol{A}$ 进行 <strong>Softmax</strong> 归一化得到 $\boldsymbol{\hat{A}}$，最后将  $\boldsymbol{\hat{A}}$ 乘以 Value 矩阵并相加得到最终的特征 $\boldsymbol{b}$。<br><img src="https://img-blog.csdnimg.cn/9c375b3ad70240f1b2014231cbdd5e14.gif#pic_center" alt="在这里插入图片描述"></p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/PyTorch%E2%80%94%E2%80%94%E5%AE%9E%E7%8E%B0%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6%EF%BC%88self-attention%EF%BC%89/#more" rel="contents">
@@ -708,7 +736,9 @@
       
           <center><font size="6"><font color="red">论文阅读：Pseudo-Label : The Simple and Efficient Semi-Supervised Learning Method for Deep Neural Networks</font></font></center>
 
-<h1 id="1-文章简述"><a href="#1-文章简述" class="headerlink" title="1    文章简述"></a>1    文章简述</h1>
+<h1 id="1-文章简述"><a href="#1-文章简述" class="headerlink" title="1    文章简述"></a>1    文章简述</h1><p>&emsp;&emsp;该文章的主要思想是将预测概率最大的标记作为无标记数据的伪标签，然后给未标记数据设一个权重，在训练过程中慢慢增加未标记数据的权重来进行训练，在手写体数据集上有了较好的性能。算法流程如下：</p>
+<hr>
+<p><strong>输入：样本集 $\boldsymbol{D1 = \{(x_1, y_1),(x_2,y_2),\cdots,(x_n, y_n)\}, D2 = \{x_1,x_2,,\cdots,x_n\}}$，其中 $\boldsymbol{D_1}$ 为已标注数据，$\boldsymbol{D_2}$ 为未标注数据；</strong></p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%EF%BC%9APseudo-Label-The-Simple-and-Efficient-Semi-Supervised-Learning-Method-for-Deep-Neural-Network/#more" rel="contents">
@@ -814,6 +844,13 @@
 
       
           <h1 id="1-网络结构"><a href="#1-网络结构" class="headerlink" title="1    网络结构"></a>1    网络结构</h1><p>&emsp;&emsp;MTCNN 是多任务级联 CNN 的人脸检测深度学习模型，该模型不仅考虑了人脸检测概率，还综合训练了人脸边框回归和面部关键点检测，多任务同时建立 loss function 并训练，因此为 MTCNN。级联 CNN 主要由三个子网络组成：P-Net、R-Net 和 O-Net。<br>&emsp;&emsp;P-Net 的结构如下：<br><img src="https://img-blog.csdnimg.cn/52bf5bf680944505ad1a4f52c5a94644.png#pic_center" alt="在这里插入图片描述\](https://img-blog.csdnimg.cn/a37a2812f2914fd48ae0c9f7ed16cb35.png"></p>
+<p>从网络结构上看，P-Net 接受大小为 (12，12，3) 的图片的输入，输出三种特征图，大小为 (1，1，C)，也就是说最终得到的特征图每一点都对应着一个大小为 12×12 的感受野。三种输出如下：</p>
+<ul>
+<li><strong>cls</strong>：图像是否包含人脸，输出向量大小为 (1，1，2)，也就是两个值，即图像不是人脸的概率和图像是人脸的概率。这两个值加起来严格等于 1，之所以使用两个值来表示，是为了方便定义交叉熵损失函数；</li>
+<li><strong>bounding_box</strong>：当前框位置相对完美的人脸框位置的偏移。这个偏移大小为 (1，1，4)，即表示框左上角和右下角的坐标的偏移量。网络结构中的输出叫做 <strong>bounding_boxes</strong>，如果按代码来说应该是 <strong>offsets</strong>；</li>
+<li><strong>landmark</strong>：5 个关键点相对于人脸框的偏移量。分别对应着左眼的位置、右眼的位置、鼻子的位置、左嘴巴的位置、右嘴巴的位置。每个关键点需要两维来表示，因此输出是向量大小为 (1，1，10)。</li>
+</ul>
+<p><strong>Tips：</strong></p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/MTCNN-%E6%B5%8B%E8%AF%95%E6%97%B6%E7%9A%84%E4%B8%80%E4%BA%9B-tips/#more" rel="contents">
@@ -919,6 +956,9 @@
 
       
           <h1 id="1-什么是A-算法"><a href="#1-什么是A-算法" class="headerlink" title="1    什么是A*算法"></a>1    什么是A*算法</h1><p>&emsp;&emsp;假设一个走迷宫游戏，我将 <strong>A</strong> 点定义成起点也就是开始状态，定义 <strong>B</strong> 为终点也就是结束状态。我们的目标就是找到从 A 走到 B 地最佳路径，如下图所示：</p>
+<p><img src="https://img-blog.csdnimg.cn/b034a9f77f034966a81f547473c07042.png#pic_center" alt="在这里插入图片描述"></p>
+<p>我们可以将上述的迷宫看做一张图，在简单的情况下（比如这个），生成的图由少量节点和边组成，BFS、DFS 和 Dijkstra 就足够了。然而，在现实生活中，因为我们通常要处理组合复杂性非常大的问题，我们将不得不处理大量的节点和边，而 BFS、DFS 和 Dijkstra 要不可避免地遍历整张图，搜索代价十分巨大。因此，我们必须使用某种意义上的引导算法（启发式算法）。A<em> 算法就是一种启发式算法。与其他图遍历算法不同，A</em> 仅根据其功能在看起来有希望且合理的情况下执行一个步骤。它朝着目标前进，不考虑任何非最佳步骤，所以 A<em> 所搜索出来的路径一定是最优路径。这使得 A</em> 对于人工智能系统非常有用——尤其是在机器学习和游戏开发中，因为这些系统复制了现实世界的场景。</p>
+<h2 id="1-1-A-的基本概念"><a href="#1-1-A-的基本概念" class="headerlink" title="1.1    A* 的基本概念"></a>1.1    A* 的基本概念</h2>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/Python-%E4%B8%AD%E7%9A%84%E5%9B%BE%EF%BC%9AA-%E7%AE%97%E6%B3%95/#more" rel="contents">
@@ -1024,6 +1064,9 @@
 
       
           <h2 id="344-反转字符串"><a href="#344-反转字符串" class="headerlink" title="344. 反转字符串"></a>344. 反转字符串</h2><p>&emsp;&emsp;编写一个函数，其作用是将输入的字符串反转过来。输入字符串以字符数组 <code>s</code> 的形式给出。不要给另外的数组分配额外的空间，你必须<strong>原地修改输入数组</strong>、使用 <code>O(1)</code> 的额外空间解决这一问题。</p>
+<p>示例一：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：s = [<span class="string">&quot;h&quot;</span>,<span class="string">&quot;e&quot;</span>,<span class="string">&quot;l&quot;</span>,<span class="string">&quot;l&quot;</span>,<span class="string">&quot;o&quot;</span>]</span><br><span class="line">输出：[<span class="string">&quot;o&quot;</span>,<span class="string">&quot;l&quot;</span>,<span class="string">&quot;l&quot;</span>,<span class="string">&quot;e&quot;</span>,<span class="string">&quot;h&quot;</span>]</span><br></pre></td></tr></table></figure>
+<p>示例二：</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/LeetCode%E5%88%B7%E9%A2%98%E2%80%94%E2%80%94%E5%AD%97%E7%AC%A6%E4%B8%B2/#more" rel="contents">
@@ -1129,6 +1172,8 @@
 
       
           <h1 id="1-什么是图"><a href="#1-什么是图" class="headerlink" title="1    什么是图"></a>1    什么是图</h1><p>&emsp;&emsp;图是一种数据结构，可用于对对象之间的层次结构和关系进行建模。它由<strong>一组节点</strong>和<strong>一组边</strong>组成。节点表示单个对象，而边表示这些对象之间的关系。<strong>注意</strong>：可能在不同的文献中节点也被称作<strong>顶点</strong>，它们指同一个意思。<br>&emsp;&emsp;如果图中的边可以通过双向遍历，则是<strong>无向图(undirected)</strong>，如果只能通过一个方向进行遍历，则是<strong>有向图(undirected)</strong>。<br><img src="https://img-blog.csdnimg.cn/2b04ebe1cbfb4c40b1634dde5bbcbb67.png" alt="在这里插入图片描述"><br>并非图的所有节点都需要与其他节点连接。如果可以从图中的每个节点 访问其他任何的节点，我们称该图为<strong>连接图(connected)</strong>，但有时你通过一些几点无法访问其他节点，那这个图就是<strong>未连接图(disconnected)</strong>。常见的误解是图的节点之间都必须连接，事实上，图可以不包含边，只有节点：<br><img src="https://img-blog.csdnimg.cn/1924b974e53047c992477123b99185a0.png" alt="在这里插入图片描述"><br>从实现的角度来看，在定义好节点之后，我们需要定义是<strong>边缘的权重(weights)</strong>。它是分配给边缘的数值，描述了遍历该边缘的成本。边的权重越小，遍历它的成本就越低。基于此，将权重分配给边缘的图称为<strong>加权图</strong>：<br><img src="https://img-blog.csdnimg.cn/15925167fb9c48648c311f39b2eebc80.png" alt="在这里插入图片描述"></p>
+<h1 id="2-图的三种存储方式"><a href="#2-图的三种存储方式" class="headerlink" title="2    图的三种存储方式"></a>2    图的三种存储方式</h1><p>&emsp;&emsp;一般来说，为了更简单的实现，任何给定图的节点都用数字(从零开始)标记，如果需要字符的方式进行定义节点名称，可用字典的方式进行转换。我将使用以下加权有向图作为后面部分中的示例：</p>
+<p><img src="https://img-blog.csdnimg.cn/de223cb8122a4d11a8d7d57818a9e96a.png" alt="在这里插入图片描述"><br>之所以选择加权有向图作为示例，因为它说明了大多数实现的细微差别。一般来说，加权图和未加权图之间的切换非常简单。在有向图和无向图之间切换也是一件非常容易的事情。如果需要，我们将在以下部分中介绍这些主题中的每一个。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/Python-%E4%B8%AD%E7%9A%84%E5%9B%BE%EF%BC%9A%E5%9B%BE%E7%9A%84%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84/#more" rel="contents">
@@ -1234,6 +1279,9 @@
 
       
           <h2 id="242-有效的字母异位词"><a href="#242-有效的字母异位词" class="headerlink" title="242. 有效的字母异位词"></a>242. 有效的字母异位词</h2><p>&emsp;&emsp;给定两个字符串 s 和 t ，编写一个函数来判断 t 是否是 s 的字母异位词。注意：若 s 和 t 中每个字符出现的次数都相同，则称 s 和 t 互为字母异位词。<br>示例 1:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入: s = <span class="string">&quot;anagram&quot;</span>, t = <span class="string">&quot;nagaram&quot;</span></span><br><span class="line">输出: true</span><br></pre></td></tr></table></figure>
+<p>示例二：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入: s = <span class="string">&quot;rat&quot;</span>, t = <span class="string">&quot;car&quot;</span></span><br><span class="line">输出: false</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/LeetCode%E2%80%94%E2%80%94%E5%93%88%E5%B8%8C%E8%A1%A8%E7%BB%8F%E5%85%B8%E4%BE%8B%E9%A2%98/#more" rel="contents">

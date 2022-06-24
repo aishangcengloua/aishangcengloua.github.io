@@ -278,6 +278,12 @@
 
       
           <h1 id="1-简介"><a href="#1-简介" class="headerlink" title="1    简介"></a>1    简介</h1><p>&emsp;&emsp;在本系列文章中，我有跟大家分享过神经网络中两种经典层：<strong>卷积层(CNN)</strong> 和 <strong>全连接层(FC)</strong>，这两种层的输入数据分别是：特征向量和图像(张量)，在具体实现时输入的多样本之间是相互独立的，无联系关系。而且，卷积神经网络利用数据的局部相关性和权值共享的思想大大减少了网络的参数量，非常适合于图片这种具有 <strong>空间(Spatial)</strong> 局部相关性的数据，但自然界的信号除了具有空间维度之外，还有一个 <strong>时间(Temporal)</strong> 维度。具有时间维度的数据(也称作序列数据)有以下特点：</p>
+<ul>
+<li>不同样本之间存在相互关联；</li>
+<li>模型的输出不仅    取决于当前输入，也受历史输入的影响。</li>
+</ul>
+<p>因此卷积神经网络并不擅长处理此类数据，本博客要介绍的循环神经网络可以较好地解决此类问题。<br>&emsp;&emsp;常见的序列数据有：语言、音乐、视频、股票、文字、DNA等等。</p>
+<h1 id="2-序列表示方法"><a href="#2-序列表示方法" class="headerlink" title="2    序列表示方法"></a>2    序列表示方法</h1>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%B8%80%EF%BC%89/#more" rel="contents">
@@ -383,6 +389,9 @@
 
       
           <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;&emsp;卷积神经网络发展非常迅速，应用非常广阔，所以近几年的卷积神经网络得到了长足的发展，下图为卷积神经网络近几年发展的大致轨迹。</p>
+<p><img src="https://img-blog.csdnimg.cn/ef0e1297e2104ce699fb786232ec8928.png#pic_center" alt="在这里插入图片描述"></p>
+<p>&emsp;&emsp;1998年LeCun提出了 <strong>LeNet</strong>，可谓是开山鼻祖，系统地提出了卷积层、 池化层、全连接层等概念。2012年Alex等提出 <strong>AlexNet</strong>，提出 一些训练深度网络的重要方法或技巧，如 Dropout、ReLu、GPU、数据增强方法等，随后各种各样的深度卷积神经网络模型相继被提出，其中比较有代表性的有 <strong>VGG</strong> 系列，<strong>GoogLeNet</strong> 系列，<strong>ResNet</strong> 系列，<strong>DenseNet</strong> 系列等，他们的网络层数整体趋势逐渐增多。以网络模型在 ILSVRC 挑战赛 ImageNet数据集上面的分类性能表现为例，如下图，在 AlexNet 出现之前的网络模型都是浅层的神经网络，<strong>Top-5</strong>（表示神经网络返回的前5个最大概率值代表的内容中有一个是正确的）错误率均在 25%以上，AlexNet 8 层的深层神经网络将 Top-5 错误率降低至 16.4%，性能提升巨大，后续的 VGG、GoogleNet 模型继续将错误率降低至 6.7%；ResNet 的出现首次将网络层数提升至 152 层，错误率也降低至 3.57%。<br><img src="https://img-blog.csdnimg.cn/cdf688521db043d18d72e0a6f063ecb8.png#pic_center" alt="在这里插入图片描述"></p>
+<h1 id="LeNet-5"><a href="#LeNet-5" class="headerlink" title="LeNet-5"></a>LeNet-5</h1>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%B8%89%EF%BC%89/#more" rel="contents">
@@ -488,6 +497,12 @@
 
       
           <h1 id="1-池化层"><a href="#1-池化层" class="headerlink" title="1    池化层"></a>1    池化层</h1><p>&emsp;&emsp;在上篇博客中，有跟大家分析过，在卷积层中没有 <strong>padding</strong> 的情况下，可以通过调节步长参数 $\boldsymbol{s}$ 实现特征图的高宽成倍缩小，从而降低了网络的参数量。但是在实际上我们通常使用 <strong>Same卷积</strong>，即输入和输出特征图的维度一样，这样一来将面临巨大的计算量挑战，而且容易产生过拟合的现象，因此我们需要一种专门的网络层可以实现尺寸缩减功能，它就是这里要介绍的 <strong>池化层</strong>(pooling layer)，通常，池化操作也被称作 <strong>下采样</strong>。<br>&emsp;&emsp;池化层同样基于局部相关性的思想，通过从局部相关的一组元素中进行采样或信息聚合，从而得到新的元素值。下面介绍两种池化方式：</p>
+<ul>
+<li>最大池化（Max Pooling）：选择 <strong>pooling</strong> 窗口中的最大值作为采样值；</li>
+<li>均值池化（Mean Pooling）：将 <strong>pooling</strong> 窗口中的所有值相加取平均， 以平均值作为采样值。</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/380e2764641f4fd3a00e461b67f04906.png#pic_center" alt="在这里插入图片描述"></p>
+<p>不管采用什么样的池化函数，当输入作出少量平移时，池化能够帮助输入的表示近似 <strong>不变（invariant）</strong>，对于平移的不变性是指当我们对输入进行少量平移时，经过池化函数后的大多数输出并不会发生改变。池化操作就是图像的 <strong>resize</strong>，平时一张狗的图像被缩小了一倍我们还能认出这是一张狗的照片，这说明这张图像中仍保留着狗最重要的特征，我们一看就能判断图像中画的是一只狗，图像压缩时去掉的信息只是一些无关紧要的信息，而留下的信息则是具有尺度不变性的特征，是最能表达图像的特征。说明池化能够提升模型的尺度不变性、旋转不变性。<br>&emsp;&emsp;以 $\boldsymbol{5 × 5}$ 输入 $\boldsymbol{X}$ 的最大池化层为例，考虑池化窗口大小 $\boldsymbol{ k =2}$ ，步长 $\boldsymbol{s = 2}$ 的情况。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%BA%8C%EF%BC%89/#more" rel="contents">
@@ -593,6 +608,16 @@
 
       
           <h1 id="1-简介"><a href="#1-简介" class="headerlink" title="1    简介"></a>1    简介</h1><p>&emsp;&emsp;<strong>卷积网络</strong>（convolutional network）(LeCun, 1989)，也叫做 <strong>卷积神经网络</strong>（convolutional neural network, CNN），是一种专门用来处理具有类似网格结构的数据的神经网络。例如时间序列数据（可以认为是在时间轴上有规律地采样形成的一维网格）和图像数据（可以看作是二维的像素网格）。卷积网络在诸多应用领域都表现优异。“卷积神经网络’’ 一词表明该网络使用了 <strong>卷积</strong>（convolution）这种数学运算。卷积是一种特殊的线性运算。卷积网络是指那些至少在网络的一层中使用卷积运算来替代一般的矩阵乘法运算的神经网络。<br>&emsp;&emsp;卷积网络为什么会出现？得先看看更早时期提出的 <strong>全连接网络</strong>（Fully Connected Neural Network，FC）在处理类似图片数据时会出现的问题：</p>
+<ul>
+<li>参数过多；</li>
+<li>破坏图像的空间分布和像素之间的距离关系；</li>
+</ul>
+<p>针对上述问题，图像的主要特点：</p>
+<ul>
+<li>图像的关键特征可能只是图像的一小部分；</li>
+<li>相同的特征可能出现在不同位置；</li>
+<li>对一张图像进行抽样，不改变预测目标。</li>
+</ul>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%EF%BC%88%E4%B8%80%EF%BC%89/#more" rel="contents">
@@ -693,7 +718,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="一、Learning-rate"><a href="#一、Learning-rate" class="headerlink" title="一、Learning rate"></a>一、Learning rate</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2>
+          <h1 id="一、Learning-rate"><a href="#一、Learning-rate" class="headerlink" title="一、Learning rate"></a>一、Learning rate</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>顾名思义，就是要给每个参数不同的learning rate，上一篇笔记中，我们提到了在沿着Loss函数我们可能会陷入local minima等一些gradient为零从而导致参数无法更新，Loss也就不再下降。但事实是当Loss不再下降的时候，gradient不一定很小，如下图<img src="https://img-blog.csdnimg.cn/d01b9835e2264c7b9e81ed8e431e8824.png#pic_center" alt="在这里插入图片描述"><br>当Loss很小时，gradient仍有在某时候是很大的，我们可以想象下面这样的情形导致的<img src="https://img-blog.csdnimg.cn/f5c537eea08244889a835027671b8d14.png#pic_center" alt="在这里插入图片描述"><br>由图知道Loss不再下降并不是因为卡在local minima或者saddle point，而是因为此时的learning rate太大导致点更新的步伐过大使gradient在“山谷”两侧“反复横跳”导致Loss不再下降。再如下面这个例子：假设只有两个参数不断计算gradient来降低Loss<img src="https://img-blog.csdnimg.cn/9e68d8dd538a43ccb978343394cfb365.png#pic_center" alt="在这里插入图片描述"><br>我们的目的就是能够使黑点到达黄色点的地方，此时Loss最小，设黄色点为山谷最低端，两旁是山壁，前文有说到当Loss不再下降时可能是因为“反复横跳”：<img src="https://img-blog.csdnimg.cn/3026ef9a40be4970a47e20184b7e2458.png#pic_center" alt="在这里插入图片描述"><br>接下来可能就有一个疑问就是，为什么不把learning rate设低一点让黑点跨的步伐小一点进入中间地区呢？嗯，是个好疑问，我们把learning rate设为10e-7看看<img src="https://img-blog.csdnimg.cn/d30a77a1a71848ddb1e40d45d9149c34.png#pic_center" alt="在这里插入图片描述"><br>从图可以看出，虽然黑点不再反复横跳，但他仍然不能到达黄点，这是因为此时的Loss函数已经十分平缓，而learning rate又太小而导致他不能继续再往前，所以我们需要更加特殊的gradient descent</p>
+<h2 id="1-1-不同的参数需要不同的learning-rate"><a href="#1-1-不同的参数需要不同的learning-rate" class="headerlink" title="1.1 不同的参数需要不同的learning rate"></a>1.1 不同的参数需要不同的learning rate</h2><p>当在某个地方的方向十分陡峭时我们就需要小的learning rate，反之需要大的learning rate<img src="https://img-blog.csdnimg.cn/ee5b846ca140495c89eb308077217486.png#pic_center" alt="在这里插入图片描述"><br>按照普通的gradient descent，我们更新参数的方法是这样的<img src="https://img-blog.csdnimg.cn/74f768cc249f499aa97ef276c10e4ec4.png#pic_center" alt="在这里插入图片描述"><br>而现在我们因为需要同时更新learning rate，所以将learning rate除以依赖于某个对应参数的未知参数δ<img src="https://img-blog.csdnimg.cn/2950f70ec1ba48ed8fd06236df08722c.png#pic_center" alt="在这里插入图片描述"><br>下面来计算δ的值</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E5%89%8D%E5%90%91%E4%BC%A0%E6%92%AD/#more" rel="contents">
@@ -794,7 +820,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="一、机器学习任务攻略"><a href="#一、机器学习任务攻略" class="headerlink" title="一、机器学习任务攻略"></a>一、机器学习任务攻略</h1><h2 id="1-1-Framework-of-ML"><a href="#1-1-Framework-of-ML" class="headerlink" title="1.1 Framework of ML"></a>1.1 Framework of ML</h2>
+          <h1 id="一、机器学习任务攻略"><a href="#一、机器学习任务攻略" class="headerlink" title="一、机器学习任务攻略"></a>一、机器学习任务攻略</h1><h2 id="1-1-Framework-of-ML"><a href="#1-1-Framework-of-ML" class="headerlink" title="1.1 Framework of ML"></a>1.1 Framework of ML</h2><p>  神经网络一共包含三个模块：训练模块、验证模块、预测模块。其中训练和验证模块共用数据是Training data，但要注意的是要把Training data分成训练和验证数据。<br>训练步骤包括三个步骤：<br>  1、要先写出一个有未知参数的函数f（x），x为input，也叫做feature<br>  2、定义Loss函数，输入为一组参数，计算这组参数所造成的误差<br>  3、定义optimization，找到一组最为合适的参数θ*，使得Loss最小<br>预测部分是用训练好的θ对Testing data进行预测结果。</p>
+<h2 id="1-2-提高结果的准确性"><a href="#1-2-提高结果的准确性" class="headerlink" title="1.2 提高结果的准确性"></a>1.2 提高结果的准确性</h2><p>检查training data的Loss</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%BB%BB%E5%8A%A1/#more" rel="contents">
@@ -895,7 +922,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="一、机器学习基本概念简介"><a href="#一、机器学习基本概念简介" class="headerlink" title="一、机器学习基本概念简介"></a>一、机器学习基本概念简介</h1><h2 id="1-1机器学习的定义"><a href="#1-1机器学习的定义" class="headerlink" title="1.1机器学习的定义"></a>1.1机器学习的定义</h2>
+          <h1 id="一、机器学习基本概念简介"><a href="#一、机器学习基本概念简介" class="headerlink" title="一、机器学习基本概念简介"></a>一、机器学习基本概念简介</h1><h2 id="1-1机器学习的定义"><a href="#1-1机器学习的定义" class="headerlink" title="1.1机器学习的定义"></a>1.1机器学习的定义</h2><p>我们所要求机器所能为我们做的事情均离不开两个最要的模块：输入和输出。比如对于无人驾驶来说，汽车必须根据路段信息来决定车辆的行驶，在此过程中，路段信息就是输入，车俩的行驶就是输出，但问题是他是怎么让输入变成输出的呢。而这就是机器学习所需要做的事情：寻找一个函数根据输入而输出合理的操作，表示为f（输入）—&gt; 输出，这也是机器学习的定义。</p>
+<h2 id="1-2函数的分类"><a href="#1-2函数的分类" class="headerlink" title="1.2函数的分类"></a>1.2函数的分类</h2><p>在机器学习中我们知道其定义是找一个函数来根据输入做出合理的输出，在这里介绍两种常见函数：<br>1.Regression（回归函数）：其输出是一个数值。如我们需要预测未来的PM2.5的浓度，当天的PM2.5浓度、气温、臭氧的浓度为输入然后经过一个回归函数来预测明天的PM2.5浓度。<br><img src="https://img-blog.csdnimg.cn/9489ec10768842349149893e675bc924.PNG#pic_center" alt="在这里插入图片描述"><br>2.Classification（分类函数）：其输出为一个类别。如我们在收到邮件时，常常有些骚扰或者垃圾邮件，这些邮件便是输入，经过分类函数可以将这些归类到“垃圾邮件”类别之中<br><img src="https://img-blog.csdnimg.cn/5b0de484b4574e60be7847a10579f8d1.PNG#pic_center" alt="在这里插入图片描述"></p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%A6%82%E8%BF%B0/#more" rel="contents">
@@ -1002,6 +1030,9 @@
       
           <p>﻿解决安装用pip tensorflow过程中的一些问题：<br>1.超时问题，使用镜像源下载</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install tensorflow -i https://pypi.mirrors.ustc.edu.cn/simple/</span><br></pre></td></tr></table></figure>
+<p>2  TensorFlow 软件包依赖项出现冲突，要安装以下包</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pip3 install six numpy wheel</span><br><span class="line">pip3 install keras_applications==<span class="number">1.0</span><span class="number">.6</span> --no-deps</span><br><span class="line">pip3 install keras_preprocessing==<span class="number">1.0</span><span class="number">.5</span> --no-deps</span><br></pre></td></tr></table></figure>
+<p>3.出现管理员权限问题<br><img src="https://img-blog.csdnimg.cn/00dc61c6fa204f72821627baeafefb9d.PNG#pic_center" alt><br>pip install …加入—user为pip install —user …</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/pip-%E5%AE%89%E8%A3%85-tensorflow-%E5%8F%AF%E8%83%BD%E5%87%BA%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98/#more" rel="contents">
@@ -1108,6 +1139,9 @@
       
           <p>﻿<strong>ModuleNotFoundError: No module named ‘tensorboard’</strong><br>解决方法：用pip安装两个包</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install tb-nightly或者pip install tb-nightly-gpu</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install future</span><br></pre></td></tr></table></figure>
+<p>但安装过程中可能会出现问题超时等问题</p>
+<p>所以建议使用镜像下载，我这里用的是豆瓣镜像：</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/05/pip-%E5%AE%89%E8%A3%85-tensorflow/#more" rel="contents">
@@ -1200,7 +1234,8 @@
 
       
           <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/03/hello-world/#more" rel="contents">

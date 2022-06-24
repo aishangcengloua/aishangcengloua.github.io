@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="1    原理简述&amp;emsp;&amp;emsp;Self-Attention Layer 一次检查同一句子中的所有单词的注意力，这使得它成为一个简单的矩阵计算，并且能够在计算单元上并行计算。 此外，Self-Attention Layer 可以使用下面提到的 Multi-Head 架构来拓宽视野，也就是多头注意力机制。Self-Attention Layer 基本结构如下：">
+  <meta name="description" content="1    原理简述&amp;emsp;&amp;emsp;Self-Attention Layer 一次检查同一句子中的所有单词的注意力，这使得它成为一个简单的矩阵计算，并且能够在计算单元上并行计算。 此外，Self-Attention Layer 可以使用下面提到的 Multi-Head 架构来拓宽视野，也就是多头注意力机制。Self-Attention Layer 基本结构如下： 对于每个输入 $\bolds">
 <meta property="og:type" content="article">
 <meta property="og:title" content="PyTorch——实现自注意力机制（self-attention）">
 <meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/PyTorch%E2%80%94%E2%80%94%E5%AE%9E%E7%8E%B0%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6%EF%BC%88self-attention%EF%BC%89/index.html">
 <meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
-<meta property="og:description" content="1    原理简述&amp;emsp;&amp;emsp;Self-Attention Layer 一次检查同一句子中的所有单词的注意力，这使得它成为一个简单的矩阵计算，并且能够在计算单元上并行计算。 此外，Self-Attention Layer 可以使用下面提到的 Multi-Head 架构来拓宽视野，也就是多头注意力机制。Self-Attention Layer 基本结构如下：">
+<meta property="og:description" content="1    原理简述&amp;emsp;&amp;emsp;Self-Attention Layer 一次检查同一句子中的所有单词的注意力，这使得它成为一个简单的矩阵计算，并且能够在计算单元上并行计算。 此外，Self-Attention Layer 可以使用下面提到的 Multi-Head 架构来拓宽视野，也就是多头注意力机制。Self-Attention Layer 基本结构如下： 对于每个输入 $\bolds">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/fc65b9f0024549318aad9019931c293a.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/6385301128964680b30be08f2ac35638.gif#pic_center">

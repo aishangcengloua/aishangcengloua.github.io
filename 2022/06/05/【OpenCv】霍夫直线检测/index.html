@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="前言&amp;emsp;&amp;emsp;Hough变换是实现边缘检测的一种有效方法，其基本思想是将测量空间的一点变换到参量空间的一条曲线或曲面，而具有同一参量特征的点变换后在参量空间中相交，通过判断交点处的积累程度来完成特 征曲线的检测。">
+  <meta name="description" content="前言&amp;emsp;&amp;emsp;Hough变换是实现边缘检测的一种有效方法，其基本思想是将测量空间的一点变换到参量空间的一条曲线或曲面，而具有同一参量特征的点变换后在参量空间中相交，通过判断交点处的积累程度来完成特 征曲线的检测。 1    原理&amp;emsp;&amp;emsp;保罗·哈夫于1962年提出了Hough变换法，并申请了专利。该方法 将图像空间中的检测问题转换到参数空间，通过在参数空间里进行简单的累">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【OpenCv】霍夫直线检测">
 <meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/%E3%80%90OpenCv%E3%80%91%E9%9C%8D%E5%A4%AB%E7%9B%B4%E7%BA%BF%E6%A3%80%E6%B5%8B/index.html">
 <meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
-<meta property="og:description" content="前言&amp;emsp;&amp;emsp;Hough变换是实现边缘检测的一种有效方法，其基本思想是将测量空间的一点变换到参量空间的一条曲线或曲面，而具有同一参量特征的点变换后在参量空间中相交，通过判断交点处的积累程度来完成特 征曲线的检测。">
+<meta property="og:description" content="前言&amp;emsp;&amp;emsp;Hough变换是实现边缘检测的一种有效方法，其基本思想是将测量空间的一点变换到参量空间的一条曲线或曲面，而具有同一参量特征的点变换后在参量空间中相交，通过判断交点处的积累程度来完成特 征曲线的检测。 1    原理&amp;emsp;&amp;emsp;保罗·哈夫于1962年提出了Hough变换法，并申请了专利。该方法 将图像空间中的检测问题转换到参数空间，通过在参数空间里进行简单的累">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/64100f724418433081bc664409610d9d.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/d8b534a8ef3543029459d03145af5e50.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5Zyo5Y2X5pa55YaN5LiK5LiA5bGC5qW8,size_17,color_FFFFFF,t_70,g_se,x_16#pic_center">

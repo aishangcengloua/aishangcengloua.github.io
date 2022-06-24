@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"aishangcengloua.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="代码所需数据聚类就是根据数据之间的相似度将数据集划分为多个类别或组，使类别内的数据相似度较大而类别间的数据相似度较小。如下图所示，左边是原始数据，右边是聚类之后的效果，不同的颜色代表不同的类别。 对于本次代码聚类步骤如下（聚类算法大体步骤，可根据需求进行修改）：">
+  <meta name="description" content="代码所需数据聚类就是根据数据之间的相似度将数据集划分为多个类别或组，使类别内的数据相似度较大而类别间的数据相似度较小。如下图所示，左边是原始数据，右边是聚类之后的效果，不同的颜色代表不同的类别。 对于本次代码聚类步骤如下（聚类算法大体步骤，可根据需求进行修改）：  1.设置初始类别中心和类别数，初始化是要注意在题目所给数据的x、y的最小值和最大值进行。2.根据类别中心对全部数据进行类别划分：每个">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Numpy 实现 K_means 算法">
 <meta property="og:url" content="https://aishangcengloua.github.io/2022/06/05/Numpy-%E5%AE%9E%E7%8E%B0-K-means-%E7%AE%97%E6%B3%95/index.html">
 <meta property="og:site_name" content="Z.H.Chen&#39;s Blog">
-<meta property="og:description" content="代码所需数据聚类就是根据数据之间的相似度将数据集划分为多个类别或组，使类别内的数据相似度较大而类别间的数据相似度较小。如下图所示，左边是原始数据，右边是聚类之后的效果，不同的颜色代表不同的类别。 对于本次代码聚类步骤如下（聚类算法大体步骤，可根据需求进行修改）：">
+<meta property="og:description" content="代码所需数据聚类就是根据数据之间的相似度将数据集划分为多个类别或组，使类别内的数据相似度较大而类别间的数据相似度较小。如下图所示，左边是原始数据，右边是聚类之后的效果，不同的颜色代表不同的类别。 对于本次代码聚类步骤如下（聚类算法大体步骤，可根据需求进行修改）：  1.设置初始类别中心和类别数，初始化是要注意在题目所给数据的x、y的最小值和最大值进行。2.根据类别中心对全部数据进行类别划分：每个">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/798a5b8629b348c29c9b58c281d4d1cc.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/713872beed8f409ba91d8cfe5bba3e1a.png#pic_center">
